@@ -294,16 +294,25 @@ function Shipping() {
       // Request service provider of the new booking
 
       const firstServiceProvider = availableServiceProviders[0];
-      const requestingToServiceProvider = await axios.post(
-        "/api/users/update",
-        {
-          ...firstServiceProvider,
-          bookings: [...firstServiceProvider.bookings, response.data._id],
-        }
-      );
-      console.log({
-        requestingToServiceProvider: requestingToServiceProvider.data,
-      });
+      availableServiceProviders.map(async(sp) =>{
+        await axios.post(
+          "/api/users/update",
+          {
+            ...sp,
+            bookings: [...sp.bookings, response.data._id],
+          }
+        )
+      })
+      // const requestingToServiceProvider = await axios.post(
+      //   "/api/users/update",
+      //   {
+      //     ...firstServiceProvider,
+      //     bookings: [...firstServiceProvider.bookings, response.data._id],
+      //   }
+      // );
+      // console.log({
+      //   requestingToServiceProvider: requestingToServiceProvider.data,
+      // });
       // Update user bookings
 
       await axios.post("/api/users/update", updatedUser);

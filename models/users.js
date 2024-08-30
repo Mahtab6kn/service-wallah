@@ -26,7 +26,7 @@ const userSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: ["male", "female", "service-provider"], // Example enum values, adjust as needed
+      enum: ["male", "female", "Unspecified"], // Example enum values, adjust as needed
     },
     locations: {
       type: [],
@@ -52,7 +52,6 @@ const userSchema = new Schema(
     },
     aadhar: {
       type: String,
-      unique: true,
     },
     services: {
       type: Array,

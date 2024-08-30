@@ -16,37 +16,24 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
+import axios from "axios";
 
 export default function Home() {
   const [topServices, setTopServices] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const gettingServices = async () => {
+    setLoading(true);
     try {
-      const fetchedData = await fetch("/api/services", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const response = await fetchedData.json();
-      function getTopBookedServices(services, topN) {
-        return services
-          .sort((a, b) => b.rank - a.rank)
-          .filter(
-            (service) =>
-              service.status === "active" && service.subServices?.length > 0
-          )
-          .slice(0, topN);
-      }
-
-      const topBookedServices = getTopBookedServices(response, 10);
-
-      setTopServices(topBookedServices);
-      setLoading(false);
+      const fetchedData = await axios.get("/api/services/top-booked?limit=10");
+      const response = await fetchedData.data;
+      setTopServices(response);
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
+
   useEffect(() => {
     gettingServices();
   }, []);
@@ -102,9 +89,8 @@ export default function Home() {
             <li className="shape3"></li>
           </ul>
         </div>
-        <div className="flex flex-col lg:flex-row">
-          {/* Left half */}
 
+        <div className="flex flex-col lg:flex-row">
           <div className="lg:w-1/2 pb-4 md:pb-20 pt-4 md:px-10 px-4 flex items-center">
             <div className="w-full">
               <p className="text-xl mb-1">Get Your Work done in a</p>
@@ -199,7 +185,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-          {/* Right half */}
           <div className="lg:w-1/2 py-5 px-5 hidden md:block">
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-4">
@@ -241,7 +226,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-          {/* MObile View Carosel */}
           <Carousel
             className="md:hidden"
             loop={true}
@@ -286,6 +270,7 @@ export default function Home() {
             />
           </Carousel>
         </div>
+
         <div
           style={{
             backgroundImage: "url(/image/shape-3-2.png)",

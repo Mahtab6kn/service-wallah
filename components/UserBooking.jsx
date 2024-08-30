@@ -405,16 +405,29 @@ const UserBooking = ({ user }) => {
                       <div className="text-gray-800 font-bold flex flex-col gap-2">
                         About Service Provider:
                         <div className="flex gap-2 items-center">
-                          <Image
-                            src={
-                              selectedUserBooking?.assignedServiceProviders
-                                ?.image?.url
-                            }
-                            className="rounded-full h-12 w-12 object-cover"
-                            alt="Booking"
-                            width={96}
-                            height={96}
-                          />
+                          {selectedUserBooking?.assignedServiceProviders?.image
+                            ?.url ? (
+                            <Image
+                              src={
+                                selectedUserBooking?.assignedServiceProviders
+                                  ?.image?.url
+                              }
+                              className="rounded-full h-12 w-12 object-cover"
+                              alt="Booking"
+                              width={96}
+                              height={96}
+                            />
+                          ) : (
+                            <div className="w-12 h-12 text-xl text-black rounded-full flex justify-center items-center font-junge bg-gray-400">
+                              {selectedUserBooking?.assignedServiceProviders
+                                ?.name &&
+                                Array.from(
+                                  selectedUserBooking?.assignedServiceProviders
+                                    ?.name
+                                )[0].toUpperCase()}
+                            </div>
+                          )}
+
                           <div className="flex flex-col">
                             <div className="text-gray-700 font-semibold text-xl">
                               {
@@ -475,16 +488,14 @@ const UserBooking = ({ user }) => {
                           <div className="mb-4 flex flex-col   border-b border-blue-gray-50 pb-4">
                             <div className="flex items-center gap-3">
                               <div>
-                                <Image
-                                  src={
-                                    selectedUserBooking
-                                      ?.assignedServiceProviders?.image?.url
-                                  }
-                                  className="rounded-full h-16 w-16 object-cover"
-                                  alt="Booking"
-                                  width={96}
-                                  height={96}
-                                />
+                                <div className="w-12 h-12 text-xl text-black rounded-full flex justify-center items-center font-junge bg-gray-400">
+                                  {selectedUserBooking?.assignedServiceProviders
+                                    ?.name &&
+                                    Array.from(
+                                      selectedUserBooking
+                                        ?.assignedServiceProviders?.name
+                                    )[0].toUpperCase()}
+                                </div>
                               </div>
                               <div>
                                 <Typography
@@ -818,7 +829,7 @@ const UserBooking = ({ user }) => {
                             </IconButton>
                           </div>
                           <div>
-                          {/* {selectedUserBooking?.cartItems?.map(booking => {
+                            {/* {selectedUserBooking?.cartItems?.map(booking => {
 
                           })} */}
                           </div>

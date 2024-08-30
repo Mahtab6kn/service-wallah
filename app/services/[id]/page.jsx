@@ -81,11 +81,17 @@ const ReviewCard = ({ name, review, rating, image }) => (
   <div className="w-full p-2 h-full">
     <div className="bg-white p-4 h-full shadow rounded-lg flex items-start space-x-4">
       <div className="relative w-12 h-12">
-        <img
-          src={image?.url}
-          alt={name}
-          className="rounded-full w-12 h-12 object-cover"
-        />
+        {image?.url ? (
+          <img
+            src={image?.url}
+            alt={name}
+            className="rounded-full w-12 h-12 object-cover"
+          />
+        ) : (
+          <div className="w-12 h-12 text-xl text-black rounded-full flex justify-center items-center font-junge bg-gray-400">
+            {name && Array.from(name)[0].toUpperCase()}
+          </div>
+        )}
       </div>
       <div className="flex-1">
         <div className="flex justify-between items-center">
@@ -221,28 +227,38 @@ const Service = () => {
   const [rating, setRating] = useState(0);
 
   useEffect(() => {
-    setRatingArray((prev) => {
-      return prev.concat(service?.reviews?.map((review) => review.rating));
-    });
+    if (service?.reviews?.length) {
+      setRatingArray(service.reviews.map((review) => review.rating));
+    }
   }, [service]);
+
   useEffect(() => {
-    const countRatings = ratingArray.reduce((acc, rating) => {
-      acc[rating] = (acc[rating] || 0) + 1;
-      return acc;
-    }, {});
+    if (ratingArray.length > 0) {
+      const countRatings = ratingArray.reduce((acc, rating) => {
+        acc[rating] = (acc[rating] || 0) + 1;
+        return acc;
+      }, {});
 
-    const {
-      1: r1 = 0,
-      2: r2 = 0,
-      3: r3 = 0,
-      4: r4 = 0,
-      5: r5 = 0,
-    } = countRatings;
+      const {
+        1: r1 = 0,
+        2: r2 = 0,
+        3: r3 = 0,
+        4: r4 = 0,
+        5: r5 = 0,
+      } = countRatings;
 
-    const result =
-      (5 * r5 + 4 * r4 + 3 * r3 + 2 * r2 + 1 * r1) / (r5 + r4 + r3 + r2 + r1);
+      const totalRatings = r5 + r4 + r3 + r2 + r1;
 
-    setRating(result.toFixed(1));
+      if (totalRatings > 0) {
+        const result =
+          (5 * r5 + 4 * r4 + 3 * r3 + 2 * r2 + 1 * r1) / totalRatings;
+        setRating(result.toFixed(1));
+      } else {
+        setRating(0); // or handle this case as you prefer
+      }
+    } else {
+      setRating(0); // No ratings available
+    }
   }, [ratingArray]);
 
   return (

@@ -323,7 +323,7 @@ const User = () => {
                               className="w-full h-full text-center cursor-pointer"
                               htmlFor="profile"
                             >
-                              Chnage Profile Image
+                              change Profile Image
                             </label>
                             <input
                               type="file"

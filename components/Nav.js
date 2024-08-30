@@ -65,6 +65,7 @@ import axios from "axios";
 import Fuse from "fuse.js";
 import Map from "./Map";
 import { RiLoginCircleFill } from "react-icons/ri";
+import { toast } from "sonner";
 
 const services = [
   {
@@ -449,7 +450,7 @@ export default function Nav() {
   async function handleLogin(e) {
     e.preventDefault();
     if (!loginData.phoneNumber || !loginData.password) {
-      setErrorMessage("Invalid data");
+      toast.error("Invalid data");
       return;
     }
     try {
@@ -465,7 +466,7 @@ export default function Nav() {
         { cache: "no-store" }
       );
       const data = await response.json();
-      // console.log({ data });
+      console.log({ data });
       if (data.status !== 400) {
         localStorage.setItem("token", data._id);
         setOpen3(false);
@@ -473,13 +474,12 @@ export default function Nav() {
           phoneNumber: "",
           password: "",
         });
-        setErrorMessage("");
         gettingUser();
       } else {
-        setErrorMessage(data.message);
+        toast.error(data.message);
       }
     } catch {
-      setErrorMessage(
+      toast.error(
         `Something went wrong while logging ${loginData.phoneNumber}`
       );
     }
@@ -506,7 +506,13 @@ export default function Nav() {
       !registerData.phoneNumber ||
       !registerData.password
     ) {
-      setRegisterError("Invalid data");
+      toast.error("Invalid data");
+      return;
+    }
+    const response = await axios.post(`/api/users/checking`, registerData);
+    const data = await response.data;
+    if (!data.success) {
+      toast.error(data.message);
       return;
     }
     const authkey = "15d7c1359e59f369";
@@ -531,22 +537,13 @@ export default function Nav() {
       return;
     }
     try {
+      // console.log(registerData.name, registerData.phoneNumber, registerData.password);
+      // console.log(otp, generatedOTP)
       if (otp === undefined || otp !== generatedOTP) {
         setRegisterError("Invalid OTP");
         return;
       }
-      const response = await fetch(
-        "/api/users/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(registerData),
-        },
-        { cache: "no-store" }
-      );
-      await response.json();
+      const response = await axios.post(`/api/users/register`, registerData);
       const loginResponse = await fetch(
         "/api/users/login",
         {
@@ -562,14 +559,13 @@ export default function Nav() {
         { cache: "no-store" }
       );
       const data = await loginResponse.json();
-      // console.log({ data });
       if (data.status !== 400) {
         localStorage.setItem("token", data._id);
         gettingUser();
-        if (response.ok) {
+        if (loginResponse.ok) {
           setRegisterError("");
-          setOpen4(false);
-          setOpen3(false);
+          setOpen4(false)
+          setOpen3(false)
           setRegisterData({
             name: "",
             phoneNumber: "",
@@ -579,7 +575,7 @@ export default function Nav() {
         }
       }
     } catch (err) {
-      setRegisterError(`Something went wrong while Regestering`);
+      setRegisterError(`Something went wrong while Registering`);
     }
   }
   useEffect(() => {
@@ -928,7 +924,6 @@ export default function Nav() {
                         <Button
                           fullWidth
                           size="lg"
-                          type="submit"
                           variant="outlined"
                           color="blue-gray"
                           onClick={handleOpenForgotPassword}
