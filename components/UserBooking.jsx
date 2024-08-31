@@ -229,9 +229,21 @@ const UserBooking = ({ user }) => {
   //   };
   //   setInvoice(invoice);
   // };
-
+  const [bookingCreatedDate, setBookingCreatedDate] = useState("");
+  const options = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
   useEffect(() => {
     checkBetweenTimeAndDate();
+
+    const date = new Date(selectedUserBooking?.createdAt);
+
+    const formattedDate = date.toLocaleDateString("en-US", options);
+    setBookingCreatedDate(formattedDate);
   }, [selectedUserBooking]);
 
   return (
@@ -273,6 +285,12 @@ const UserBooking = ({ user }) => {
                             />
                           </div>
                           <div className="flex-grow">
+                            <p className="text-xs">
+                              {new Date(service?.createdAt).toLocaleDateString(
+                                "en-US",
+                                options
+                              )}
+                            </p>
                             <h2 className="text-lg font-semibold text-gray-800">
                               {item.name}
                             </h2>
@@ -393,7 +411,7 @@ const UserBooking = ({ user }) => {
                       <div>
                         Booking Date:{" "}
                         <strong className="text-gray-600">
-                          {selectedUserBooking?.date}
+                          {bookingCreatedDate}
                         </strong>
                       </div>
                       <div className="text-gray-800 font-bold flex items-center gap-2">

@@ -5,8 +5,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import UserBooking from "@/components/UserBooking";
 import ServiceProviderBooking from "@/components/ServiceProviderBooking";
+import { VscLoading } from "react-icons/vsc";
 
 const Booking = () => {
+  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true); // Add a loading state
+
   const checkingAuthorization = async () => {
     const id = localStorage.getItem("token");
     if (!id) {
@@ -29,8 +33,6 @@ const Booking = () => {
     checkingAuthorization();
   }, []);
 
-  const [user, setUser] = useState({});
-
   const gettingUser = async () => {
     try {
       const id = localStorage.getItem("token");
@@ -39,8 +41,11 @@ const Booking = () => {
       setUser(data);
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false); // Set loading to false after the user is fetched
     }
   };
+
   useEffect(() => {
     gettingUser();
   }, []);
@@ -50,12 +55,15 @@ const Booking = () => {
       <div className="w-full">
         <Nav />
       </div>
-      {user?.role === "user" ? (
+      {loading ? (
+        <div className="flex justify-center items-center h-full">
+          <div className="text-lg font-semibold animate-spin my-56"><VscLoading size={50} /></div>
+        </div>
+      ) : user?.role === "user" ? (
         <UserBooking user={user} />
       ) : (
         <ServiceProviderBooking user={user} />
       )}
-
       <Footer />
     </div>
   );

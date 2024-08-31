@@ -66,7 +66,7 @@ export default function Home() {
   };
   return (
     <>
-      <div
+      {/* <div
         className={`grid place-items-center min-h-screen absolute w-full bg-white transition-all duration-700 top-0 ${
           loading ? "opacity-100" : "opacity-0"
         } ${loading ? "z-50" : "-z-50"}`}
@@ -75,7 +75,7 @@ export default function Home() {
           <div className="loaction-loader"></div>
           <div className="text-2xl font-julius">Loading</div>
         </div>
-      </div>
+      </div> */}
       <main
         className={`${
           loading ? "hidden" : "block"

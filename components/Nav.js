@@ -13,6 +13,7 @@ import {
   MenuItem,
   Dialog,
   DialogBody,
+  Avatar,
 } from "@material-tailwind/react";
 import {
   ChevronDownIcon,
@@ -423,17 +424,28 @@ export default function Nav() {
       name: "",
     },
   });
+  const [userLoading, setUserLoading] = useState(true);
   const gettingUser = async () => {
-    const id = localStorage.getItem("token");
-    const response = await fetch(`/api/users/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    // console.log(data);
-    setUser(data);
+    try {
+      const id = localStorage.getItem("token");
+      if (!id) {
+        setUserLoading(false);
+        return;
+      }
+      const response = await fetch(`/api/users/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      setUser(data);
+    } catch (err) {
+      console.log(err);
+      toast.error("Error fetching user");
+    } finally {
+      setUserLoading(false);
+    }
   };
   const [registerData, setRegisterData] = useState({
     name: "",
@@ -466,7 +478,6 @@ export default function Nav() {
         { cache: "no-store" }
       );
       const data = await response.json();
-      console.log({ data });
       if (data.status !== 400) {
         localStorage.setItem("token", data._id);
         setOpen3(false);
@@ -564,8 +575,8 @@ export default function Nav() {
         gettingUser();
         if (loginResponse.ok) {
           setRegisterError("");
-          setOpen4(false)
-          setOpen3(false)
+          setOpen4(false);
+          setOpen3(false);
           setRegisterData({
             name: "",
             phoneNumber: "",
@@ -579,10 +590,7 @@ export default function Nav() {
     }
   }
   useEffect(() => {
-    const id = localStorage.getItem("token");
-    if (id) {
-      gettingUser();
-    }
+    gettingUser();
   }, []);
   useEffect(() => {
     window.addEventListener(
@@ -660,7 +668,19 @@ export default function Nav() {
         </Link>
         <div className="hidden gap-2 lg:flex lg:items-center lg:justify-end w-full">
           <NavList />
-          {user?.role ? (
+          {userLoading ? (
+            <div className="animate-pulse">
+              <Avatar
+                as="div"
+                variant="circular"
+                size="md"
+                alt="Profile"
+                color="blue-gray"
+                className=" p-0.5 cursor-progress"
+                src={"/profile.svg"}
+              />
+            </div>
+          ) : user?.role ? (
             <Menu allowHover={true} placement="bottom-start">
               <MenuHandler>
                 {user?.image?.url ? (
@@ -1228,7 +1248,19 @@ export default function Nav() {
             )}
           </IconButton>
           <div className="flex w-fit items-center gap-2 lg:hidden">
-            {user?.role ? (
+            {userLoading ? (
+              <div className="animate-pulse">
+                <Avatar
+                  as="div"
+                  variant="circular"
+                  size="md"
+                  alt="Profile"
+                  color="blue-gray"
+                  className=" p-0.5 cursor-progress"
+                  src={"/profile.svg"}
+                />
+              </div>
+            ) : user?.role ? (
               <Menu allowHover={true} placement="bottom-start">
                 <MenuHandler>
                   {user?.image?.url ? (

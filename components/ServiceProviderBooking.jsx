@@ -24,6 +24,7 @@ import Link from "next/link";
 
 import Invoice from "@/components/Invoice";
 import { IoMdOpen } from "react-icons/io";
+import { toast } from "sonner";
 
 const ServiceProviderBooking = ({ user }) => {
   const mapContainerStyle = {
@@ -196,7 +197,7 @@ const ServiceProviderBooking = ({ user }) => {
         `/api/users/update`,
         updateServiceProviderData
       );
-      console.log({ existingServiceProviderResponse });
+      // console.log({ existingServiceProviderResponse });
 
       // Get the current booking data
       const selectedBookingResponse = await axios.get(`/api/bookings/${id}`);
@@ -231,37 +232,37 @@ const ServiceProviderBooking = ({ user }) => {
         return;
       }
 
-      // Get the index of current service provider
-      const currentIndexOfAvailableServiceProvider =
-        selectedNewBooking.availableServiceProviders.findIndex(
-          (sp) => sp._id === user._id
-        );
+      // // Get the index of current service provider
+      // const currentIndexOfAvailableServiceProvider =
+      //   selectedNewBooking.availableServiceProviders.findIndex(
+      //     (sp) => sp._id === user._id
+      //   );
 
-      // Get the next service provider
-      const nextServiceProvider =
-        selectedNewBooking.availableServiceProviders[
-          currentIndexOfAvailableServiceProvider + 1
-        ];
+      // // Get the next service provider
+      // const nextServiceProvider =
+      //   selectedNewBooking.availableServiceProviders[
+      //     currentIndexOfAvailableServiceProvider + 1
+      //   ];
 
-      // Update bookings for the next service provider
-      const nextServiceProviderData = {
-        ...nextServiceProvider,
-        bookings: [...nextServiceProvider.bookings, selectedNewBooking._id],
-      };
+      // // Update bookings for the next service provider
+      // const nextServiceProviderData = {
+      //   ...nextServiceProvider,
+      //   bookings: [...nextServiceProvider.bookings, selectedNewBooking._id],
+      // };
 
-      // Update next service provider's bookings
-      const nextServiceProviderResponse = await axios.post(
-        `/api/users/update`,
-        nextServiceProviderData
-      );
-      console.log({ nextServiceProviderResponse });
+      // // Update next service provider's bookings
+      // const nextServiceProviderResponse = await axios.post(
+      //   `/api/users/update`,
+      //   nextServiceProviderData
+      // );
+      // console.log({ nextServiceProviderResponse });
 
-      // Update booking data with the updated available service providers
-      const updateBookingResponse = await axios.put(
-        `/api/bookings/${id}`,
-        bookingData
-      );
-      console.log({ updateBookingResponse });
+      // // Update booking data with the updated available service providers
+      // const updateBookingResponse = await axios.put(
+      //   `/api/bookings/${id}`,
+      //   bookingData
+      // );
+      // console.log({ updateBookingResponse });
 
       // Reload page after all updates
       window.location.reload();
@@ -271,21 +272,38 @@ const ServiceProviderBooking = ({ user }) => {
   };
 
   const handleAcceptRequest = async (id) => {
-    const postData = {
-      ...selectedNewBooking,
-      acceptedByServiceProvider: true,
-      assignedServiceProviders: user,
-      status: "Service is not started",
-    };
-    try {
-      const response = await axios.put(`/api/bookings/${id}`, postData);
-      console.log(response);
-      if (response.status === 201) {
-        setSelectedNewBooking(postData);
+    const serviceProviderId = localStorage.getItem("token");
+
+    const eliminateServiceProviders =
+      selectedNewBooking.availableServiceProviders.filter((serviceProvider) => {
+        return serviceProvider._id !== serviceProviderId;
+      });
+    if (eliminateServiceProviders.length > 0) {
+      const res = axios.post(
+        `api/bookings/eliminate-service-providers`,
+        {eliminateServiceProviders, bookingId: id}
+      );
+      const response = res.data;
+
+      if (!response) {
+        toast.error(response);
+        return;
       }
-    } catch (err) {
-      console.log(err);
     }
+    // const postData = {
+    //   ...selectedNewBooking,
+    //   acceptedByServiceProvider: true,
+    //   assignedServiceProviders: user,
+    //   status: "Service is not started",
+    // };
+    // try {
+    //   const response = await axios.put(`/api/bookings/${id}`, postData);
+    //   if (response.status === 201) {
+    //     setSelectedNewBooking(postData);
+    //   }
+    // } catch (err) {
+    //   console.log(err);
+    // }
   };
 
   return (
@@ -1262,7 +1280,7 @@ const ServiceProviderBooking = ({ user }) => {
                             <RiVerifiedBadgeFill size={75} /> OTP Verified
                           </div>
                         </div>
-                      ): (
+                      ) : (
                         <div className="bg-white rounded-lg shadow-md w-full min-h-44 p-4 flex items-center flex-col justify-center">
                           <div className="text-2xl font-julius text-red-500 font-bold flex flex-col items-center gap-1">
                             <RiVerifiedBadgeFill size={75} /> OTP Not Verified
@@ -1274,7 +1292,10 @@ const ServiceProviderBooking = ({ user }) => {
                         <div className="flex gap-4 flex-col md:flex-row items-center justify-center">
                           <div className="flex justify-center">
                             <img
-                              src={selectedCompletedBooking?.verificationImage?.url || "https://placehold.co/400"}
+                              src={
+                                selectedCompletedBooking?.verificationImage
+                                  ?.url || "https://placehold.co/400"
+                              }
                               alt="Uploaded"
                               className="w-32 h-32 rounded-lg object-cover"
                             />
