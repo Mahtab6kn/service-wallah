@@ -110,7 +110,7 @@ const Invoice = ({ selectedBooking, setSelectedBooking }) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col gap-4">
+    <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col justify-center gap-4">
       <div className="text-center text-xl text-gray-700">
         Create an invoice!
       </div>

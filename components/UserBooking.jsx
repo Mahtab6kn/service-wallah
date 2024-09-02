@@ -248,6 +248,21 @@ const UserBooking = ({ user }) => {
 
   return (
     <div>
+      {userBookings.length === 0 &&
+        userCompletedBookings.length === 0 &&
+        userCanceledBookings &&
+        userNoServiceProviderAvailableBookings.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+            <div className="text-2xl font-semibold text-gray-700 mb-6">
+              Uh uh! There is no booking yet
+            </div>
+            <Link href="/services">
+              <Button color="blue" variant="gradient">
+                Services
+              </Button>
+            </Link>
+          </div>
+        )}
       {userBookings.length > 0 && (
         <div className="px-10 my-10">
           <h2 className="text-2xl text-blue-500 font-semibold">

@@ -25,6 +25,7 @@ import Link from "next/link";
 import Invoice from "@/components/Invoice";
 import { IoMdOpen } from "react-icons/io";
 import { toast } from "sonner";
+import UpdateServiceStatus from "./bookings/UpdateServiceStatus";
 
 const ServiceProviderBooking = ({ user }) => {
   const mapContainerStyle = {
@@ -92,7 +93,7 @@ const ServiceProviderBooking = ({ user }) => {
   const [otp, setOtp] = useState(["", "", "", ""]);
 
   const handleChangeOtp = (element, index) => {
-    if (isNaN(element.value)) return false;
+    if (isNaN(element.value)) return;
 
     let newOtp = [...otp];
     newOtp[index] = element.value;
@@ -101,6 +102,14 @@ const ServiceProviderBooking = ({ user }) => {
     // Move to the next input box if the current one is filled
     if (element.nextSibling && element.value) {
       element.nextSibling.focus();
+    }
+  };
+
+  const handleKeyDownOtp = (e, index) => {
+    if (e.key === "Backspace") {
+      if (!otp[index] && e.target.previousSibling) {
+        e.target.previousSibling.focus();
+      }
     }
   };
   const [otpVerified, setOtpVerified] = useState(false);
@@ -113,12 +122,17 @@ const ServiceProviderBooking = ({ user }) => {
     }
     setOtpVerified(true);
     setOtp(["", "", "", ""]);
-    const postData = { ...selectedNewBooking, otpVerified: true };
+    const postData = {
+      ...selectedNewBooking,
+      otpVerified: true,
+      status: "Service is in progress",
+    };
+
+    setSelectedNewBooking(postData);
     const res = await axios.put(
       `/api/bookings/${selectedNewBooking._id}`,
       postData
     );
-    console.log(res);
   };
 
   const [uploadedImage, setUploadedImage] = useState("");
@@ -164,22 +178,6 @@ const ServiceProviderBooking = ({ user }) => {
     }
     setOtpVerifyingError("");
   }, [selectedNewBooking]);
-
-  const handleUpdateServiceStatusByServiceProvider = async (e) => {
-    try {
-      const updatedStatusBooking = {
-        ...selectedNewBooking,
-        status: e,
-      };
-      setSelectedNewBooking(updatedStatusBooking);
-      await axios.put(
-        `/api/bookings/${selectedNewBooking._id}`,
-        updatedStatusBooking
-      );
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const handleRejectRequest = async (id) => {
     try {
@@ -279,32 +277,43 @@ const ServiceProviderBooking = ({ user }) => {
         return serviceProvider._id !== serviceProviderId;
       });
     if (eliminateServiceProviders.length > 0) {
-      const res = axios.post(
-        `api/bookings/eliminate-service-providers`,
-        {eliminateServiceProviders, bookingId: id}
-      );
+      const res = await axios.post(`api/bookings/eliminate-service-providers`, {
+        eliminateServiceProviders,
+        bookingId: id,
+      });
       const response = res.data;
 
-      if (!response) {
-        toast.error(response);
+      if (!response.success) {
+        toast.error(response.message);
         return;
       }
     }
-    // const postData = {
-    //   ...selectedNewBooking,
-    //   acceptedByServiceProvider: true,
-    //   assignedServiceProviders: user,
-    //   status: "Service is not started",
-    // };
-    // try {
-    //   const response = await axios.put(`/api/bookings/${id}`, postData);
-    //   if (response.status === 201) {
-    //     setSelectedNewBooking(postData);
-    //   }
-    // } catch (err) {
-    //   console.log(err);
-    // }
+    const postData = {
+      ...selectedNewBooking,
+      acceptedByServiceProvider: true,
+      assignedServiceProviders: user,
+      status: "Service is not started",
+    };
+    try {
+      const response = await axios.put(`/api/bookings/${id}`, postData);
+      if (response.status === 201) {
+        setSelectedNewBooking(postData);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
+  const options = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+
+  useEffect(() => {
+    gettingServiceProviderBookings();
+  }, [selectedNewBooking]);
 
   return (
     <div>
@@ -366,6 +375,11 @@ const ServiceProviderBooking = ({ user }) => {
                               />
                             </div>
                             <div className="flex-grow">
+                              <p className="text-xs">
+                                {new Date(
+                                  service?.createdAt
+                                ).toLocaleDateString("en-US", options)}
+                              </p>
                               <h2 className="text-lg font-semibold text-gray-800">
                                 {item.name}
                               </h2>
@@ -422,7 +436,7 @@ const ServiceProviderBooking = ({ user }) => {
                   </IconButton>
                 </DialogHeader>
                 <div className="max-h-[32rem] overflow-auto px-4">
-                  <section className="mb-8">
+                  <div className="mb-8">
                     <div className="grid md:grid-cols-2 grid-cols-1 gap-4 mb-4">
                       {selectedNewBooking?.cartItems?.map((item) => {
                         return (
@@ -503,7 +517,7 @@ const ServiceProviderBooking = ({ user }) => {
                         </p>
                       </div>
                     </div>
-                  </section>
+                  </div>
                   <LoadScriptNext
                     googleMapsApiKey={
                       process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
@@ -518,7 +532,7 @@ const ServiceProviderBooking = ({ user }) => {
                       <Marker position={selectedNewBooking?.location} />
                     </GoogleMap>
                   </LoadScriptNext>
-                  <section className="mb-8 mt-4">
+                  <div className="mb-8 mt-4">
                     <table className="min-w-full">
                       <thead>
                         <tr>
@@ -585,7 +599,7 @@ const ServiceProviderBooking = ({ user }) => {
                         </tr>
                       </tbody>
                     </table>
-                  </section>
+                  </div>
                   {selectedNewBooking?.acceptedByServiceProvider && (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
                       {otpVerified ? (
@@ -596,7 +610,7 @@ const ServiceProviderBooking = ({ user }) => {
                         </div>
                       ) : (
                         <div className="bg-white rounded-lg shadow-md w-full min-h-44 p-4 flex items-center flex-col justify-center">
-                          <h2 className="font-julius md:text-xl sm:text-xl text-lg text-gray-500 font-bold">
+                          <h2 className="md:text-xl sm:text-xl text-lg text-gray-500 font-normal">
                             Enter reached verification OTP
                           </h2>
 
@@ -615,6 +629,9 @@ const ServiceProviderBooking = ({ user }) => {
                                       handleChangeOtp(e.target, index)
                                     }
                                     onFocus={(e) => e.target.select()}
+                                    onKeyDown={(e) =>
+                                      handleKeyDownOtp(e, index)
+                                    }
                                   />
                                 );
                               })}
@@ -646,7 +663,7 @@ const ServiceProviderBooking = ({ user }) => {
                             />
                           </div>
                           <div className="flex flex-col items-center md:items-start justify-center gap-2">
-                            <h2 className="font-julius md:text-xl sm:text-xl text-md text-gray-500 font-bold">
+                            <h2 className="md:text-xl sm:text-xl text-md text-gray-500 font-normal">
                               Upload verification image
                             </h2>
                             <label
@@ -665,49 +682,16 @@ const ServiceProviderBooking = ({ user }) => {
                           </div>
                         </div>
                       </div>
-                      <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col gap-4">
-                        <div>Update the status of working</div>
-                        <Select
-                          label="Choose a status"
-                          success={
-                            selectedNewBooking?.status ===
-                            "Service is Completed"
-                          }
-                          error={
-                            selectedNewBooking?.status ===
-                            "Service is not started"
-                          }
-                          animate={{
-                            mount: { y: 0 },
-                            unmount: { y: 25 },
-                          }}
-                          value={selectedNewBooking?.status}
-                          onChange={handleUpdateServiceStatusByServiceProvider}
-                        >
-                          <Option
-                            value="Service is not started"
-                            className="text-red-500"
-                          >
-                            Service is not started
-                          </Option>
-                          <Option
-                            value="Service is in progress"
-                            className="text-amber-500"
-                          >
-                            Service is in progress
-                          </Option>
-                          <Option
-                            value="Service is Completed"
-                            className="text-teal-500"
-                          >
-                            Service is Completed
-                          </Option>
-                        </Select>
-                      </div>
                       <Invoice
                         selectedBooking={selectedNewBooking}
                         setSelectedBooking={setSelectedNewBooking}
                       />
+                      {selectedNewBooking.otpVerified && (
+                        <UpdateServiceStatus
+                          selectedNewBooking={selectedNewBooking}
+                          setSelectedNewBooking={setSelectedNewBooking}
+                        />
+                      )}
                     </div>
                   )}
 
@@ -1109,7 +1093,7 @@ const ServiceProviderBooking = ({ user }) => {
                   </IconButton>
                 </DialogHeader>
                 <div className="max-h-[30rem] overflow-auto px-4">
-                  <section className="mb-8">
+                  <div className="mb-8">
                     <div className="grid md:grid-cols-2 grid-cols-1 gap-4 mb-4">
                       {selectedCompletedBooking?.cartItems?.map((item) => {
                         return (
@@ -1189,7 +1173,7 @@ const ServiceProviderBooking = ({ user }) => {
                         </p>
                       </div>
                     </div>
-                  </section>
+                  </div>
                   <LoadScriptNext
                     googleMapsApiKey={
                       process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
@@ -1204,7 +1188,7 @@ const ServiceProviderBooking = ({ user }) => {
                       <Marker position={selectedCompletedBooking?.location} />
                     </GoogleMap>
                   </LoadScriptNext>
-                  <section className="mb-8 mt-4">
+                  <div className="mb-8 mt-4">
                     <table className="min-w-full">
                       <thead>
                         <tr>
@@ -1271,7 +1255,7 @@ const ServiceProviderBooking = ({ user }) => {
                         </tr>
                       </tbody>
                     </table>
-                  </section>
+                  </div>
                   {selectedCompletedBooking?.acceptedByServiceProvider && (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
                       {selectedCompletedBooking?.otpVerified ? (
