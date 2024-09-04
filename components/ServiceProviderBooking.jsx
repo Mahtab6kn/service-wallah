@@ -1022,6 +1022,7 @@ const ServiceProviderBooking = ({ user }) => {
                     key={index}
                     className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col justify-between"
                   >
+                    
                     <div className="p-4 flex gap-4 flex-col">
                       {service.cartItems.map((item, itemIndex) => (
                         <div className="flex flex-col gap-2" key={item._id}>

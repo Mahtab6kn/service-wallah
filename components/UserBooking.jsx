@@ -1103,6 +1103,9 @@ const UserBooking = ({ user }) => {
                   key={index}
                   className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col justify-between"
                 >
+                  <div className="bg-teal-100 text-sm text-teal-500 py-1 flex justify-center items-center uppercase">
+                    {service.status}
+                  </div>
                   <div className="p-4 flex gap-4 flex-col">
                     {service.cartItems.map((item, itemIndex) => (
                       <div className="flex flex-col gap-2" key={item._id}>

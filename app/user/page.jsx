@@ -225,10 +225,10 @@ const User = () => {
                   </div>
                   <div className="flex gap-4">
                     <Link
-                      href={`/user/history`}
+                      href={`/booking`}
                       className="px-4 py-2 bg-indigo-500 text-white font-bold rounded shadow"
                     >
-                      See History
+                      bookings
                     </Link>
                     <button
                       onClick={handleOpen}
