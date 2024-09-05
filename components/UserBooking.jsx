@@ -15,13 +15,14 @@ import { GrStatusInfo } from "react-icons/gr";
 import { RxCross1, RxCross2 } from "react-icons/rx";
 import { Typography } from "@material-tailwind/react";
 import { FaEye, FaPhone } from "react-icons/fa6";
-import { IoMdMailOpen, IoMdOpen } from "react-icons/io";
+import { IoMdDownload, IoMdMailOpen, IoMdOpen } from "react-icons/io";
 import { FaBookmark } from "react-icons/fa";
 import { Rating } from "@material-tailwind/react";
 import { PiGenderIntersexFill } from "react-icons/pi";
 import axios from "axios";
 import Link from "next/link";
 import { GoAlertFill } from "react-icons/go";
+import { IoCheckmark } from "react-icons/io5";
 
 const UserBooking = ({ user }) => {
   //Service Provider detail showing to user dialog
@@ -153,11 +154,11 @@ const UserBooking = ({ user }) => {
       const scheduleDateTimeMinusValidation =
         Number(formattedScheduleDateTime) - cancelValidationValueInMinutes;
 
-      console.log({
-        currentDateTime,
-        formattedScheduleDateTime: Number(formattedScheduleDateTime),
-        scheduleDateTimeMinusValidation,
-      });
+      // console.log({
+      //   currentDateTime,
+      //   formattedScheduleDateTime: Number(formattedScheduleDateTime),
+      //   scheduleDateTimeMinusValidation,
+      // });
 
       if (currentDateTime > scheduleDateTimeMinusValidation) {
         setDisableCancelBookingButton(true);
@@ -212,23 +213,23 @@ const UserBooking = ({ user }) => {
   const handleViewInvoicesDialog = () =>
     setOpenViewInvoicesDialog(!openViewInvoicesDialog);
 
-  // const [invoice, setInvoice] = useState({});
+  const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
+  const handleInvoiceDialog = () => setInvoiceDialogOpen(!invoiceDialogOpen);
 
-  // const gettingCurrentInvoice = () => {
-  //   if (!selectedUserBooking.name) {
-  //     return;
-  //   }
-  //   const invoice = {
-  //     serviceProviderName: selectedUserBooking.acceptedByServiceProvider
-  //       ? selectedUserBooking.acceptedByServiceProvider.name
-  //       : "Not available yet",
-  //     bookingDate: selectedUserBooking.date,
-  //     bookingTime: selectedUserBooking.time,
-  //     totalAmount: ,
-  //     cartItems: selectedUserBooking.cartItems,
-  //   };
-  //   setInvoice(invoice);
-  // };
+  const openInvoiceDialog = () => {
+    if (selectedUserBooking?.invoices?.title) {
+      handleInvoiceDialog();
+    }
+  };
+
+  useEffect(() => {
+    openInvoiceDialog();
+  }, [selectedUserBooking]);
+
+  const handleRejectInvoice = () => {
+    return;
+  };
+
   const [bookingCreatedDate, setBookingCreatedDate] = useState("");
   const options = {
     year: "numeric",
@@ -354,6 +355,105 @@ const UserBooking = ({ user }) => {
                   key={selectedUserBooking._id}
                   className="container overflow-auto bg-white rounded-lg p-6 h-[36rem]"
                 >
+                  {/* Invoice Dialog  */}
+                  <Dialog
+                    open={invoiceDialogOpen}
+                    handler={handleInvoiceDialog}
+                    size="md"
+                    animate={{
+                      mount: { scale: 1, y: 0 },
+                      unmount: { scale: 0.1, y: 500 },
+                    }}
+                    className="p-6"
+                  >
+                    <header className="flex items-center justify-between gap-2">
+                      <h1 className="text-center text-xl lg:text-2xl text-gray-700">
+                        Invoice Detail
+                      </h1>
+                      <IconButton variant="text" onClick={handleInvoiceDialog}>
+                        <RxCross2 size={25} />
+                      </IconButton>
+                    </header>
+                    <div className="border p-4 bg-white rounded-lg">
+                      <div className="flex justify-between items-start flex-col lg:flex-row mb-2 gap-2">
+                        <div className="flex flex-col">
+                          <div className="flex gap-2 items-center">
+                            Title:
+                            <div className="text-gray-700 font-medium">
+                              {selectedUserBooking.invoices?.title}
+                            </div>
+                          </div>
+                          <div className="flex gap-2 items-center">
+                            Date & Time:
+                            <div className="text-gray-700 font-medium">
+                              {selectedUserBooking.invoices?.date},{" "}
+                              {selectedUserBooking.invoices?.time}
+                            </div>
+                          </div>
+                          <div className="flex gap-2 items-center">
+                            Total:
+                            <div className="text-gray-700 font-medium">
+                              ₹{selectedUserBooking.invoices?.total}
+                            </div>
+                          </div>
+                        </div>
+                        {selectedUserBooking.invoices.status ? (
+                          <div className="bg-teal-100 text-teal-800 rounded-full px-3 py-1 text-sm capitalize">
+                            Accepted
+                          </div>
+                        ) : (
+                          <div className="bg-red-100 text-red-800 rounded-full px-3 py-1 text-sm capitalize">
+                            Not accepted yet!
+                          </div>
+                        )}
+                      </div>
+                      <table className="w-full flex flex-row flex-no-wrap sm:bg-white rounded-lg border overflow-auto">
+                        <thead className="text-white">
+                          <tr className="bg-gray-600 flex flex-col flex-no wrap sm:table-row rounded-l-lg sm:rounded-none mb-2 sm:mb-0">
+                            <th className="p-3 text-left">Description</th>
+                            <th className="p-3 text-left">Quantity</th>
+                            <th className="p-3 text-left">Unit Price</th>
+                            <th className="p-3 text-left">Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody className="flex-1 sm:flex-none">
+                          {selectedUserBooking.invoices?.items?.map(
+                            (item, index) => (
+                              <tr
+                                className="flex flex-col flex-no wrap sm:table-row mb-2 sm:mb-0"
+                                key={index}
+                              >
+                                <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                                  {item.description}
+                                </td>
+                                <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                                  {item.quantity}
+                                </td>
+                                <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                                  ₹{item.unitPrice}
+                                </td>
+                                <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                                  ₹{item.amount}
+                                </td>
+                              </tr>
+                            )
+                          )}
+                        </tbody>
+                      </table>
+                      <div className="flex gap-2 items-center mt-4 justify-end">
+                        <Button
+                          color="red"
+                          variant="gradient"
+                          onClick={handleRejectInvoice}
+                        >
+                          Reject
+                        </Button>
+                        <Button color="teal" variant="gradient">
+                          Accept
+                        </Button>
+                      </div>
+                    </div>
+                  </Dialog>
                   <header className="flex items-center justify-between gap-2">
                     <h1 className="text-center text-xl lg:text-2xl text-gray-700">
                       Booking Details
@@ -839,51 +939,10 @@ const UserBooking = ({ user }) => {
                         variant="gradient"
                         color="blue"
                         className="rounded"
-                        onClick={handleViewInvoicesDialog}
+                        onClick={handleInvoiceDialog}
                       >
                         View invoice
                       </Button>
-                      <Dialog
-                        open={openViewInvoicesDialog}
-                        animate={{
-                          mount: { scale: 1, y: 0 },
-                          unmount: { scale: 0.1, y: 500 },
-                        }}
-                        handler={handleViewInvoicesDialog}
-                      >
-                        <div className="p-6 flex flex-col justify-between gap-4">
-                          <div className="flex justify-between items-center">
-                            <div className="text-2xl">Invoice</div>
-                            <IconButton
-                              variant="text"
-                              onClick={handleViewInvoicesDialog}
-                            >
-                              <RxCross1 size={20} />
-                            </IconButton>
-                          </div>
-                          <div>
-                            {/* {selectedUserBooking?.cartItems?.map(booking => {
-
-                          })} */}
-                          </div>
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              onClick={handleViewInvoicesDialog}
-                              className="rounded"
-                              variant="outlined"
-                            >
-                              Reject
-                            </Button>
-                            <Button
-                              onClick={handleViewInvoicesDialog}
-                              className="rounded"
-                              variant="gradient"
-                            >
-                              Accept
-                            </Button>
-                          </div>
-                        </div>
-                      </Dialog>
                     </div>
                   </section>
                 </div>

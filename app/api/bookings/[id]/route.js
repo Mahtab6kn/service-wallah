@@ -22,7 +22,9 @@ export async function PUT(request, { params }) {
   const data = await request.json();
   // console.log(id, data);
   await connectMongoDB();
-  const updatedBooking = await Booking.findByIdAndUpdate(id, data);
+  const updatedBooking = await Booking.findByIdAndUpdate(id, data, {
+    new: true,
+  });
   return NextResponse.json(updatedBooking, { status: 201 });
 }
 

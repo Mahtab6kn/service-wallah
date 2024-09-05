@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
 import { v4 } from "uuid";
+import { toast } from "sonner";
 
 const Invoice = ({ selectedBooking, setSelectedBooking }) => {
   const [openInvoiceDialog, setOpenInvoiceDialog] = useState(false);
@@ -19,15 +20,12 @@ const Invoice = ({ selectedBooking, setSelectedBooking }) => {
   const handleCreateInvoiceDialog = () =>
     setOpenCreateInvoiceDialog(!openCreateInvoiceDialog);
 
-  const [error, setError] = useState("");
   const [disableTitleInput, setDisableTitleInput] = useState(false);
 
   const initialInvoice = {
-    id: v4(),
     title: "",
     date: dayjs().format("YYYY-MM-DD"),
     time: dayjs().format("HH:mm"),
-    status: false,
     items: [],
     total: 0,
   };
@@ -45,7 +43,7 @@ const Invoice = ({ selectedBooking, setSelectedBooking }) => {
   const handleAddItem = () => {
     const { description, quantity, unitPrice } = newItem;
     if (!description || !quantity || !unitPrice) {
-      setError("Please fill in all fields for the item.");
+      toast.error("Please fill in all fields for the item.");
       return;
     }
     const amount = parseFloat(quantity) * parseFloat(unitPrice);
@@ -59,55 +57,55 @@ const Invoice = ({ selectedBooking, setSelectedBooking }) => {
     if (newInvoice.title !== "") {
       setDisableTitleInput(true);
     }
-    setError("");
   };
 
   const handleCreateInvoice = async () => {
     if (!newInvoice.title || newInvoice.items.length === 0) {
-      setError(
+      toast.error(
         "Please fill in all fields for the invoice and add at least one item."
       );
       return;
     }
     try {
-      const response = await axios.put(`/api/bookings/${selectedBooking._id}`, {
+      const postData = {
         ...selectedBooking,
-        invoices: [...selectedBooking.invoices, newInvoice],
-      });
-      setSelectedBooking((prevBooking) => ({
-        ...prevBooking,
-        invoices: [...prevBooking.invoices, newInvoice],
-      }));
+        invoices: newInvoice,
+      };
+      const response = await axios.put(
+        `/api/bookings/${selectedBooking._id}`,
+        postData
+      );
+      setSelectedBooking(postData);
       console.log("Invoice created successfully:", response.data);
+      toast.success("Invoice created successfully");
       handleCreateInvoiceDialog();
-      setError("");
       setNewInvoice(initialInvoice);
       setDisableTitleInput(false);
     } catch (error) {
       console.error("Error creating invoice:", error);
-      setError("Error creating invoice. Please try again.");
+      toast.error("Error creating invoice. Please try again.");
     }
   };
 
-  const handleDeleteInvoice = async (invoiceId) => {
-    try {
-      const updatedInvoices = selectedBooking.invoices.filter(
-        (inv) => inv.id !== invoiceId
-      );
-      const updatedBooking = {
-        ...selectedBooking,
-        invoices: updatedInvoices,
-      };
-      setSelectedBooking(updatedBooking);
-      const response = await axios.put(
-        `/api/bookings/${selectedBooking._id}`,
-        updatedBooking
-      );
-      console.log("Invoice deleted successfully:", response.data);
-    } catch (error) {
-      console.error("Error deleting invoice:", error);
-    }
-  };
+  // const handleDeleteInvoice = async (invoiceId) => {
+  //   try {
+  //     const updatedInvoices = selectedBooking.invoices.filter(
+  //       (inv) => inv.id !== invoiceId
+  //     );
+  //     const updatedBooking = {
+  //       ...selectedBooking,
+  //       invoices: {},
+  //     };
+  //     setSelectedBooking(updatedBooking);
+  //     const response = await axios.put(
+  //       `/api/bookings/${selectedBooking._id}`,
+  //       updatedBooking
+  //     );
+  //     console.log("Invoice deleted successfully:", response.data);
+  //   } catch (error) {
+  //     console.error("Error deleting invoice:", error);
+  //   }
+  // };
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col justify-center gap-4">
@@ -174,11 +172,6 @@ const Invoice = ({ selectedBooking, setSelectedBooking }) => {
                   </svg>
                 </IconButton>
               </div>
-              {error && (
-                <Alert color="red" className="mb-4">
-                  {error}
-                </Alert>
-              )}
               <div className="mb-4 flex flex-col sm:flex-row gap-4">
                 <Input
                   label="Title - invoice for"
@@ -284,75 +277,78 @@ const Invoice = ({ selectedBooking, setSelectedBooking }) => {
             </div>
           </Dialog>
         </div>
-        <div>
-          {selectedBooking?.invoices?.map((invoice) => (
-            <div
-              key={invoice?.id}
-              className="border p-4 bg-white rounded-lg m-0 md:m-6"
-            >
-              <div className="flex justify-between items-center flex-col lg:flex-row mb-2 gap-2">
-                <div className="flex flex-col">
-                  <div className="flex gap-2 items-center">
-                    Title:
-                    <div className="text-gray-700 font-medium">
-                      {invoice?.title}
-                    </div>
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    Date & Time:
-                    <div className="text-gray-700 font-medium">
-                      {invoice?.date}, {invoice?.time}
-                    </div>
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    Total:
-                    <div className="text-gray-700 font-medium">
-                      ₹{invoice?.total}
-                    </div>
-                  </div>
+        <div className="border p-4 bg-white rounded-lg m-0 md:m-6">
+          <div className="flex justify-between items-start flex-col lg:flex-row mb-2 gap-2">
+            <div className="flex flex-col">
+              <div className="flex gap-2 items-center">
+                Title:
+                <div className="text-gray-700 font-medium">
+                  {selectedBooking.invoices?.title}
                 </div>
-                <Button
-                  color="red"
-                  variant="gradient"
-                  onClick={() => handleDeleteInvoice(invoice.id)}
-                  className="rounded"
-                >
-                  Delete invoice
-                </Button>
               </div>
-              <table className="w-full flex flex-row flex-no-wrap sm:bg-white rounded-lg border overflow-auto">
-                <thead className="text-white">
-                  <tr className="bg-teal-400 flex flex-col flex-no wrap sm:table-row rounded-l-lg sm:rounded-none mb-2 sm:mb-0">
-                    <th className="p-3 text-left">Description</th>
-                    <th className="p-3 text-left">Quantity</th>
-                    <th className="p-3 text-left">Unit Price</th>
-                    <th className="p-3 text-left">Amount</th>
-                  </tr>
-                </thead>
-                <tbody className="flex-1 sm:flex-none">
-                  {invoice?.items?.map((item, index) => (
-                    <tr
-                      className="flex flex-col flex-no wrap sm:table-row mb-2 sm:mb-0"
-                      key={index}
-                    >
-                      <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
-                        {item.description}
-                      </td>
-                      <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
-                        {item.quantity}
-                      </td>
-                      <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
-                        ₹{item.unitPrice}
-                      </td>
-                      <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
-                        ₹{item.amount}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="flex gap-2 items-center">
+                Date & Time:
+                <div className="text-gray-700 font-medium">
+                  {selectedBooking.invoices?.date},{" "}
+                  {selectedBooking.invoices?.time}
+                </div>
+              </div>
+              <div className="flex gap-2 items-center">
+                Total:
+                <div className="text-gray-700 font-medium">
+                  ₹{selectedBooking.invoices?.total}
+                </div>
+              </div>
             </div>
-          ))}
+            {selectedBooking.invoices.status ? (
+              <div className="bg-teal-100 text-teal-800 rounded-full px-3 py-1 text-sm capitalize">
+                Accepted
+              </div>
+            ) : (
+              <div className="bg-red-100 text-red-800 rounded-full px-3 py-1 text-sm capitalize">
+                Not accepted yet!
+              </div>
+            )}
+            {/* <Button
+                color="red"
+                variant="gradient"
+                onClick={() => handleDeleteInvoice(selectedBooking.invoices.id)}
+                className="rounded"
+              >
+                Delete invoice
+              </Button> */}
+          </div>
+          <table className="w-full flex flex-row flex-no-wrap sm:bg-white rounded-lg border overflow-auto">
+            <thead className="text-white">
+              <tr className="bg-teal-400 flex flex-col flex-no wrap sm:table-row rounded-l-lg sm:rounded-none mb-2 sm:mb-0">
+                <th className="p-3 text-left">Description</th>
+                <th className="p-3 text-left">Quantity</th>
+                <th className="p-3 text-left">Unit Price</th>
+                <th className="p-3 text-left">Amount</th>
+              </tr>
+            </thead>
+            <tbody className="flex-1 sm:flex-none">
+              {selectedBooking.invoices?.items?.map((item, index) => (
+                <tr
+                  className="flex flex-col flex-no wrap sm:table-row mb-2 sm:mb-0"
+                  key={index}
+                >
+                  <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                    {item.description}
+                  </td>
+                  <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                    {item.quantity}
+                  </td>
+                  <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                    ₹{item.unitPrice}
+                  </td>
+                  <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                    ₹{item.amount}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </Dialog>
     </div>
