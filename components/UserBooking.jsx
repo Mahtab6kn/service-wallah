@@ -12,19 +12,20 @@ import {
   Alert,
 } from "@material-tailwind/react";
 import { GrStatusInfo } from "react-icons/gr";
-import { RxCross1, RxCross2 } from "react-icons/rx";
+import { RxCross2 } from "react-icons/rx";
 import { Typography } from "@material-tailwind/react";
 import { FaEye, FaPhone } from "react-icons/fa6";
-import { IoMdDownload, IoMdMailOpen, IoMdOpen } from "react-icons/io";
+import { IoMdMailOpen, IoMdOpen } from "react-icons/io";
 import { FaBookmark } from "react-icons/fa";
 import { Rating } from "@material-tailwind/react";
 import { PiGenderIntersexFill } from "react-icons/pi";
 import axios from "axios";
 import Link from "next/link";
 import { GoAlertFill } from "react-icons/go";
-import { IoCheckmark } from "react-icons/io5";
+import UserInvoiceDialog from "./bookings/user/UserInvoiceDialog";
+import UserCompletedBooking from "./bookings/user/UserCompletedBooking";
 
-const UserBooking = ({ user }) => {
+const UserBooking = ({ user, allBookings }) => {
   //Service Provider detail showing to user dialog
   const [openServiceProviderDetailDialog, setOpenServiceProviderDetailDialog] =
     useState(false);
@@ -83,25 +84,20 @@ const UserBooking = ({ user }) => {
 
   const getUserBookings = async () => {
     try {
-      const response = await axios.post(
-        `/api/bookings/bookings-from-array-of-id`,
-        user?.bookings
-      );
-      const data = response.data;
-      const incompleteBookings = data.filter(
+      const incompleteBookings = allBookings.filter(
         (booking) =>
           !booking.completed &&
           !booking.noServiceProviderAvailable &&
           !booking.canceledByCustomer
       );
-      const canceledBookings = data.filter(
+      const canceledBookings = allBookings.filter(
         (booking) =>
           booking.canceledByCustomer && !booking.noServiceProviderAvailable
       );
 
-      const completedBookings = data.filter((booking) => booking.completed);
+      const completedBookings = allBookings.filter((booking) => booking.completed);
 
-      const noServiceProviderAvailableBookings = data.filter(
+      const noServiceProviderAvailableBookings = allBookings.filter(
         (booking) => booking.noServiceProviderAvailable
       );
 
@@ -154,12 +150,6 @@ const UserBooking = ({ user }) => {
       const scheduleDateTimeMinusValidation =
         Number(formattedScheduleDateTime) - cancelValidationValueInMinutes;
 
-      // console.log({
-      //   currentDateTime,
-      //   formattedScheduleDateTime: Number(formattedScheduleDateTime),
-      //   scheduleDateTimeMinusValidation,
-      // });
-
       if (currentDateTime > scheduleDateTimeMinusValidation) {
         setDisableCancelBookingButton(true);
       } else {
@@ -209,15 +199,14 @@ const UserBooking = ({ user }) => {
     }
   };
 
-  const [openViewInvoicesDialog, setOpenViewInvoicesDialog] = useState(false);
-  const handleViewInvoicesDialog = () =>
-    setOpenViewInvoicesDialog(!openViewInvoicesDialog);
-
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
   const handleInvoiceDialog = () => setInvoiceDialogOpen(!invoiceDialogOpen);
 
   const openInvoiceDialog = () => {
-    if (selectedUserBooking?.invoices?.title) {
+    const invoiceStatus = selectedUserBooking?.invoices?.status;
+    const invoiceTitle = selectedUserBooking?.invoices?.title;
+
+    if (invoiceTitle && invoiceStatus == "Not Accepted Yet!") {
       handleInvoiceDialog();
     }
   };
@@ -225,10 +214,6 @@ const UserBooking = ({ user }) => {
   useEffect(() => {
     openInvoiceDialog();
   }, [selectedUserBooking]);
-
-  const handleRejectInvoice = () => {
-    return;
-  };
 
   const [bookingCreatedDate, setBookingCreatedDate] = useState("");
   const options = {
@@ -251,7 +236,7 @@ const UserBooking = ({ user }) => {
     <div>
       {userBookings.length === 0 &&
         userCompletedBookings.length === 0 &&
-        userCanceledBookings &&
+        userCanceledBookings.length === 0 &&
         userNoServiceProviderAvailableBookings.length === 0 && (
           <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
             <div className="text-2xl font-semibold text-gray-700 mb-6">
@@ -356,104 +341,12 @@ const UserBooking = ({ user }) => {
                   className="container overflow-auto bg-white rounded-lg p-6 h-[36rem]"
                 >
                   {/* Invoice Dialog  */}
-                  <Dialog
-                    open={invoiceDialogOpen}
-                    handler={handleInvoiceDialog}
-                    size="md"
-                    animate={{
-                      mount: { scale: 1, y: 0 },
-                      unmount: { scale: 0.1, y: 500 },
-                    }}
-                    className="p-6"
-                  >
-                    <header className="flex items-center justify-between gap-2">
-                      <h1 className="text-center text-xl lg:text-2xl text-gray-700">
-                        Invoice Detail
-                      </h1>
-                      <IconButton variant="text" onClick={handleInvoiceDialog}>
-                        <RxCross2 size={25} />
-                      </IconButton>
-                    </header>
-                    <div className="border p-4 bg-white rounded-lg">
-                      <div className="flex justify-between items-start flex-col lg:flex-row mb-2 gap-2">
-                        <div className="flex flex-col">
-                          <div className="flex gap-2 items-center">
-                            Title:
-                            <div className="text-gray-700 font-medium">
-                              {selectedUserBooking.invoices?.title}
-                            </div>
-                          </div>
-                          <div className="flex gap-2 items-center">
-                            Date & Time:
-                            <div className="text-gray-700 font-medium">
-                              {selectedUserBooking.invoices?.date},{" "}
-                              {selectedUserBooking.invoices?.time}
-                            </div>
-                          </div>
-                          <div className="flex gap-2 items-center">
-                            Total:
-                            <div className="text-gray-700 font-medium">
-                              ₹{selectedUserBooking.invoices?.total}
-                            </div>
-                          </div>
-                        </div>
-                        {selectedUserBooking.invoices.status ? (
-                          <div className="bg-teal-100 text-teal-800 rounded-full px-3 py-1 text-sm capitalize">
-                            Accepted
-                          </div>
-                        ) : (
-                          <div className="bg-red-100 text-red-800 rounded-full px-3 py-1 text-sm capitalize">
-                            Not accepted yet!
-                          </div>
-                        )}
-                      </div>
-                      <table className="w-full flex flex-row flex-no-wrap sm:bg-white rounded-lg border overflow-auto">
-                        <thead className="text-white">
-                          <tr className="bg-gray-600 flex flex-col flex-no wrap sm:table-row rounded-l-lg sm:rounded-none mb-2 sm:mb-0">
-                            <th className="p-3 text-left">Description</th>
-                            <th className="p-3 text-left">Quantity</th>
-                            <th className="p-3 text-left">Unit Price</th>
-                            <th className="p-3 text-left">Amount</th>
-                          </tr>
-                        </thead>
-                        <tbody className="flex-1 sm:flex-none">
-                          {selectedUserBooking.invoices?.items?.map(
-                            (item, index) => (
-                              <tr
-                                className="flex flex-col flex-no wrap sm:table-row mb-2 sm:mb-0"
-                                key={index}
-                              >
-                                <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
-                                  {item.description}
-                                </td>
-                                <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
-                                  {item.quantity}
-                                </td>
-                                <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
-                                  ₹{item.unitPrice}
-                                </td>
-                                <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
-                                  ₹{item.amount}
-                                </td>
-                              </tr>
-                            )
-                          )}
-                        </tbody>
-                      </table>
-                      <div className="flex gap-2 items-center mt-4 justify-end">
-                        <Button
-                          color="red"
-                          variant="gradient"
-                          onClick={handleRejectInvoice}
-                        >
-                          Reject
-                        </Button>
-                        <Button color="teal" variant="gradient">
-                          Accept
-                        </Button>
-                      </div>
-                    </div>
-                  </Dialog>
+                  <UserInvoiceDialog
+                    selectedUserBooking={selectedUserBooking}
+                    handleInvoiceDialog={handleInvoiceDialog}
+                    invoiceDialogOpen={invoiceDialogOpen}
+                    setSelectedUserBooking={setSelectedUserBooking}
+                  />
                   <header className="flex items-center justify-between gap-2">
                     <h1 className="text-center text-xl lg:text-2xl text-gray-700">
                       Booking Details
@@ -935,14 +828,16 @@ const UserBooking = ({ user }) => {
                           </Button>
                         </div>
                       </Dialog>
-                      <Button
-                        variant="gradient"
-                        color="blue"
-                        className="rounded"
-                        onClick={handleInvoiceDialog}
-                      >
-                        View invoice
-                      </Button>
+                      {selectedUserBooking.invoices.title && (
+                        <Button
+                          variant="gradient"
+                          color="blue"
+                          className="rounded"
+                          onClick={handleInvoiceDialog}
+                        >
+                          View invoice
+                        </Button>
+                      )}
                     </div>
                   </section>
                 </div>
@@ -1150,296 +1045,15 @@ const UserBooking = ({ user }) => {
         </div>
       )}
       {userCompletedBookings.length > 0 && (
-        <div className="px-10 my-10">
-          <h2 className="text-2xl text-teal-500 font-semibold">
-            Service History!
-          </h2>
-          <div className="h-px bg-gray-300 w-full my-4"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {userCompletedBookings.map((service, index) => {
-              return (
-                <div
-                  key={index}
-                  className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col justify-between"
-                >
-                  <div className="bg-teal-100 text-sm text-teal-500 py-1 flex justify-center items-center uppercase">
-                    {service.status}
-                  </div>
-                  <div className="p-4 flex gap-4 flex-col">
-                    {service.cartItems.map((item, itemIndex) => (
-                      <div className="flex flex-col gap-2" key={item._id}>
-                        <div
-                          key={itemIndex}
-                          className={`flex items-center space-x-2`}
-                        >
-                          <div className="flex-shrink-0">
-                            <img
-                              className="w-16 h-16 rounded-full object-cover"
-                              src={item.icon?.url}
-                              alt={item.name}
-                            />
-                          </div>
-                          <div className="flex-grow">
-                            <h2 className="text-lg font-semibold text-gray-800">
-                              {item.name}
-                            </h2>
-                            <div className="flex items-center justify-between gap-4 mt-1">
-                              <p className="text-lg font-bold text-teal-600">
-                                ₹{item.price}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                Qty: {item.quantity}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        {itemIndex < service.cartItems.length - 1 ? (
-                          <div className="h-px bg-gray-300 w-full"></div>
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <button
-                    className="px-4 py-2 bg-teal-500 text-white text-sm font-medium transition-all hover:bg-teal-600 flex items-center gap-2 justify-center"
-                    onClick={() => {
-                      setSelectedUserCompletedBooking(service);
-                      handleOpenUserBookingCompletedDialog();
-                    }}
-                  >
-                    View <IoMdOpen />
-                  </button>
-                </div>
-              );
-            })}
-            <Dialog
-              open={openUserBookingCompletedDialog}
-              handler={handleOpenUserBookingCompletedDialog}
-              // dismiss={{ enabled: false }}
-              size="xl"
-              // className="p-6"
-              animate={{
-                mount: { scale: 1, y: 0 },
-                unmount: { scale: 0.1, y: 500 },
-              }}
-            >
-              <div
-                key={selectedUserCompletedBooking._id}
-                className="container overflow-auto bg-white rounded-lg p-6 h-[36rem]"
-              >
-                <header className="flex flex-col sm:flex-row items-center justify-between gap-2">
-                  <h1 className="text-center text-3xl text-gray-700">
-                    Booking Details
-                  </h1>
-                  <IconButton
-                    variant="text"
-                    onClick={handleOpenUserBookingCompletedDialog}
-                  >
-                    <RxCross2 size={25} />
-                  </IconButton>
-                </header>
-                <div className="h-px bg-gray-300 w-full my-4"></div>
-                <section>
-                  <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
-                    {selectedUserCompletedBooking?.cartItems?.map((item) => {
-                      return (
-                        <div className="flex items-center gap-3" key={item._id}>
-                          <img
-                            src={item.icon?.url}
-                            className="rounded-md w-28 h-28 object-cover"
-                            alt="Booking"
-                          />
-                          <div className="flex flex-col gap-1">
-                            <h3 className="md:text-2xl sm:text-2xl text-xl text-gray-700 ">
-                              {item.name}
-                            </h3>
-                            <p>
-                              Price:{" "}
-                              <strong className="text-teal-500 font-semibold">
-                                ₹{item.price}
-                              </strong>
-                            </p>
-                            <p>
-                              Qty:{" "}
-                              <strong className="text-gray-600">
-                                {item.quantity}
-                              </strong>
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <h4 className="text-blue-500 font-semibold text-xl mt-4">
-                    Your Information
-                  </h4>
-                  <div className="h-px bg-gray-300 w-full mt-2 mb-1"></div>
-                  <div className="flex flex-col justify-between gap-4">
-                    <div>
-                      Full Name:{" "}
-                      <strong className="text-gray-600">
-                        {selectedUserCompletedBooking?.fullname}
-                      </strong>
-                    </div>
-                    <div>
-                      Phone:{" "}
-                      <strong className="text-gray-600">
-                        +91 {selectedUserCompletedBooking?.phoneNumber}
-                      </strong>
-                    </div>
-                    <div>
-                      Address:{" "}
-                      <strong className="text-gray-600">
-                        {selectedUserCompletedBooking?.address}
-                      </strong>
-                    </div>
-                    <div>
-                      Booking Date:{" "}
-                      <strong className="text-gray-600">
-                        {selectedUserCompletedBooking?.date}
-                      </strong>
-                    </div>
-                    <div className="text-gray-800 font-bold flex items-center gap-2">
-                      Status:{" "}
-                      <span className="text-teal-500 rounded-md">
-                        {selectedUserCompletedBooking?.status}
-                      </span>
-                    </div>
-                    <div className="text-gray-800 font-bold flex items-center gap-2">
-                      About Service Provider:{" "}
-                      <span className="text-teal-500 rounded-md">
-                        {
-                          selectedUserCompletedBooking?.assignedServiceProviders
-                            ?.name
-                        }
-                      </span>
-                      <div
-                        onClick={handleServiceProviderDetailDialog}
-                        className="flex gap-2 cursor-pointer underline items-center "
-                      >
-                        View Detail <FaEye fontSize={20} />
-                      </div>
-                    </div>
-                    <div className="h-px bg-gray-300 w-full"></div>
-                    <div>
-                      Day of departure:{" "}
-                      <strong className="text-gray-600">
-                        {selectedUserCompletedBooking?.date}
-                      </strong>
-                    </div>
-                    <div>
-                      Time of departure:{" "}
-                      <strong className="text-gray-600">
-                        {selectedUserCompletedBooking?.time}
-                      </strong>
-                    </div>
-                    <div>
-                      Quantity: <strong className="text-gray-600">1</strong>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex gap-2 flex-col">
-                        <div className="text-gray-800 font-bold flex gap-2 items-center">
-                          Verification OTP:{" "}
-                          <span className="flex items-center gap-2">
-                            {selectedUserCompletedBooking.otp
-                              .split("")
-                              .map((code) => {
-                                return (
-                                  <span className="w-10 h-10 flex items-center justify-center text-lg rounded-md bg-gray-700 text-white">
-                                    {code}
-                                  </span>
-                                );
-                              })}
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-500">
-                          Verification code is used to verify the service
-                          provider when they reached to you!
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-                <section className="my-4">
-                  <table className="min-w-full  ">
-                    <thead>
-                      <tr>
-                        <th className="text-left text-2xl text-gray-700 font-normal">
-                          Summary
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td className="py-2 px-4 border-b">Subtotal</td>
-                        <td className="py-2 px-4 border-b text-right">
-                          ₹
-                          {selectedUserCompletedBooking?.cartItems
-                            ? new Intl.NumberFormat("en-IN", {
-                                style: "currency",
-                                currency: "INR",
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })
-                                .format(
-                                  selectedUserCompletedBooking?.cartItems.reduce(
-                                    (acc, cur) =>
-                                      acc + cur.price * cur.quantity,
-                                    0
-                                  )
-                                )
-                                .replace("₹", "")
-                                .trim()
-                            : "0.00"}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="py-2 px-4 border-b">Convenience Fee</td>
-                        <td className="py-2 px-4 border-b text-right">
-                          ₹18.00
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="py-2 px-4 font-bold">Total</td>
-                        <td className="py-2 px-4 text-right font-bold">
-                          ₹
-                          {selectedUserCompletedBooking?.cartItems
-                            ? new Intl.NumberFormat("en-IN", {
-                                style: "currency",
-                                currency: "INR",
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })
-                                .format(
-                                  selectedUserCompletedBooking?.cartItems.reduce(
-                                    (acc, cur) =>
-                                      acc + cur.price * cur.quantity,
-                                    18
-                                  )
-                                )
-                                .replace("₹", "")
-                                .trim()
-                            : "0.00"}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </section>
-                <section className="flex justify-end items-center">
-                  <Button
-                    variant="gradient"
-                    color="blue"
-                    className="rounded"
-                    onClick={handleOpenUserBookingCompletedDialog}
-                  >
-                    Close Dialog
-                  </Button>
-                </section>
-              </div>
-            </Dialog>
-          </div>
-        </div>
+        <UserCompletedBooking
+          userCompletedBookings={userCompletedBookings}
+          setSelectedUserCompletedBooking={setSelectedUserCompletedBooking}
+          handleOpenUserBookingCompletedDialog={
+            handleOpenUserBookingCompletedDialog
+          }
+          openUserBookingCompletedDialog={openUserBookingCompletedDialog}
+          selectedUserCompletedBooking={selectedUserCompletedBooking}
+        />
       )}
       {userCanceledBookings.length > 0 && (
         <div className="px-10 my-10">

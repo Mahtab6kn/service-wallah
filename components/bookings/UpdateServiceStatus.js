@@ -84,6 +84,7 @@ const UpdateServiceStatus = ({ selectedNewBooking, setSelectedNewBooking }) => {
         ...selectedNewBooking,
         status: "Service is Completed",
         completed: true,
+        invoices: { ...selectedNewBooking.invoices, paid: true },
       };
       setSelectedNewBooking(updatedStatusBooking);
       const res = await axios.put(
@@ -94,6 +95,7 @@ const UpdateServiceStatus = ({ selectedNewBooking, setSelectedNewBooking }) => {
         toast.error("Failed to update the status!");
         return;
       }
+      window.location.reload();
     } catch (err) {
       console.log(err);
     }

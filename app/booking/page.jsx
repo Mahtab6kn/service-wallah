@@ -9,7 +9,7 @@ import { VscLoading } from "react-icons/vsc";
 
 const Booking = () => {
   const [user, setUser] = useState({});
-  const [loading, setLoading] = useState(true); // Add a loading state
+  const [loading, setLoading] = useState(true);
 
   const checkingAuthorization = async () => {
     const id = localStorage.getItem("token");
@@ -32,12 +32,18 @@ const Booking = () => {
   useEffect(() => {
     checkingAuthorization();
   }, []);
-
+  const [serviceProviderBookings, setServiceProviderBookings] = useState([]);
   const gettingUser = async () => {
     try {
       const id = localStorage.getItem("token");
       const response = await axios.get(`/api/users/${id}`);
       const data = response.data;
+      const res = await axios.post(
+        `/api/bookings/bookings-from-array-of-id`,
+        data?.bookings
+      );
+      const allBookings = res.data;
+      setServiceProviderBookings(allBookings);
       setUser(data);
     } catch (err) {
       console.log(err);
@@ -57,12 +63,17 @@ const Booking = () => {
       </div>
       {loading ? (
         <div className="flex justify-center items-center h-full">
-          <div className="text-lg font-semibold animate-spin my-56"><VscLoading size={50} /></div>
+          <div className="text-lg font-semibold animate-spin my-56">
+            <VscLoading size={50} />
+          </div>
         </div>
       ) : user?.role === "user" ? (
-        <UserBooking user={user} />
+        <UserBooking user={user} allBookings={serviceProviderBookings} />
       ) : (
-        <ServiceProviderBooking user={user} />
+        <ServiceProviderBooking
+          user={user}
+          serviceProviderBookings={serviceProviderBookings}
+        />
       )}
       <Footer />
     </div>

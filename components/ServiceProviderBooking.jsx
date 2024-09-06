@@ -27,12 +27,11 @@ import { IoMdOpen } from "react-icons/io";
 import { toast } from "sonner";
 import UpdateServiceStatus from "./bookings/UpdateServiceStatus";
 
-const ServiceProviderBooking = ({ user }) => {
+const ServiceProviderBooking = ({ user, serviceProviderBookings }) => {
   const mapContainerStyle = {
     width: "100%",
     height: "60vh",
   };
-  const [serviceProviderBookings, setServiceProviderBookings] = useState([]);
   const [serviceProviderNewBookings, setServiceProviderNewBookings] = useState(
     []
   );
@@ -62,20 +61,14 @@ const ServiceProviderBooking = ({ user }) => {
 
   const gettingServiceProviderBookings = async () => {
     try {
-      const response = await axios.post(
-        `/api/bookings/bookings-from-array-of-id`,
-        user?.bookings
-      );
-      const data = response.data;
-      // console.log(data);
-      const newBookings = data.filter(
+      const newBookings = serviceProviderBookings.filter(
         (booking) => !booking.completed && !booking.canceledByCustomer
       );
-      const completedBookings = data.filter((booking) => booking.completed);
-      const canceledBookings = data.filter(
+      const completedBookings = serviceProviderBookings.filter((booking) => booking.completed);
+      const canceledBookings = serviceProviderBookings.filter(
         (booking) => booking.canceledByCustomer
       );
-      setServiceProviderBookings(data);
+      // setServiceProviderBookings(data);
       setServiceProviderNewBookings(newBookings);
       setServiceProviderCompletedBookings(completedBookings);
       setServiceProviderCanceledBookings(canceledBookings);
@@ -113,11 +106,10 @@ const ServiceProviderBooking = ({ user }) => {
     }
   };
   const [otpVerified, setOtpVerified] = useState(false);
-  const [otpVerifyingError, setOtpVerifyingError] = useState("");
   const handleVerifyOtp = async () => {
     const otpValue = otp.join("");
     if (otpValue != selectedNewBooking.otp) {
-      setOtpVerifyingError("Invalid otp");
+      toast.error("Invalid otp");
       return;
     }
     setOtpVerified(true);
@@ -125,7 +117,7 @@ const ServiceProviderBooking = ({ user }) => {
     const postData = {
       ...selectedNewBooking,
       otpVerified: true,
-      status: "Service is in progress",
+      status: "Service provider has been reached!",
     };
 
     setSelectedNewBooking(postData);
@@ -176,7 +168,6 @@ const ServiceProviderBooking = ({ user }) => {
     if (selectedNewBooking?.verificationImage?.url) {
       setUploadedImage(selectedNewBooking?.verificationImage?.url);
     }
-    setOtpVerifyingError("");
   }, [selectedNewBooking]);
 
   const handleRejectRequest = async (id) => {
@@ -501,6 +492,12 @@ const ServiceProviderBooking = ({ user }) => {
                             {selectedNewBooking?.date}
                           </strong>
                         </p>
+                        <p>
+                          Status:{" "}
+                          <strong className="text-gray-600">
+                            {selectedNewBooking?.status}
+                          </strong>
+                        </p>
                       </div>
                       <div className="w-1/2 flex flex-col gap-1">
                         <p>
@@ -645,11 +642,6 @@ const ServiceProviderBooking = ({ user }) => {
                               Verify <FaCheckCircle />
                             </button>
                           </div>
-                          {otpVerifyingError && (
-                            <div className="text-red-500 text-xs">
-                              {otpVerifyingError}
-                            </div>
-                          )}
                         </div>
                       )}
 
@@ -682,10 +674,13 @@ const ServiceProviderBooking = ({ user }) => {
                           </div>
                         </div>
                       </div>
-                      <Invoice
-                        selectedBooking={selectedNewBooking}
-                        setSelectedBooking={setSelectedNewBooking}
-                      />
+                      {selectedNewBooking.otpVerified && (
+                        <Invoice
+                          selectedBooking={selectedNewBooking}
+                          setSelectedBooking={setSelectedNewBooking}
+                        />
+                      )}
+
                       {selectedNewBooking.otpVerified && (
                         <UpdateServiceStatus
                           selectedNewBooking={selectedNewBooking}
@@ -1022,7 +1017,6 @@ const ServiceProviderBooking = ({ user }) => {
                     key={index}
                     className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col justify-between"
                   >
-                    
                     <div className="p-4 flex gap-4 flex-col">
                       {service.cartItems.map((item, itemIndex) => (
                         <div className="flex flex-col gap-2" key={item._id}>

@@ -1,15 +1,7 @@
-"use client";
-import {
-  Button,
-  Dialog,
-  IconButton,
-  Input,
-  Alert,
-} from "@material-tailwind/react";
-import { useEffect, useState } from "react";
+import { Button, Dialog, IconButton, Input } from "@material-tailwind/react";
+import { useState } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
-import { v4 } from "uuid";
 import { toast } from "sonner";
 
 const Invoice = ({ selectedBooking, setSelectedBooking }) => {
@@ -35,6 +27,8 @@ const Invoice = ({ selectedBooking, setSelectedBooking }) => {
     quantity: "",
     unitPrice: "",
     amount: 0,
+    paid: false,
+    status: "Not Accepted Yet!",
   };
 
   const [newInvoice, setNewInvoice] = useState(initialInvoice);
@@ -75,8 +69,7 @@ const Invoice = ({ selectedBooking, setSelectedBooking }) => {
         `/api/bookings/${selectedBooking._id}`,
         postData
       );
-      setSelectedBooking(postData);
-      console.log("Invoice created successfully:", response.data);
+      setSelectedBooking(response.data);
       toast.success("Invoice created successfully");
       handleCreateInvoiceDialog();
       setNewInvoice(initialInvoice);
@@ -86,26 +79,6 @@ const Invoice = ({ selectedBooking, setSelectedBooking }) => {
       toast.error("Error creating invoice. Please try again.");
     }
   };
-
-  // const handleDeleteInvoice = async (invoiceId) => {
-  //   try {
-  //     const updatedInvoices = selectedBooking.invoices.filter(
-  //       (inv) => inv.id !== invoiceId
-  //     );
-  //     const updatedBooking = {
-  //       ...selectedBooking,
-  //       invoices: {},
-  //     };
-  //     setSelectedBooking(updatedBooking);
-  //     const response = await axios.put(
-  //       `/api/bookings/${selectedBooking._id}`,
-  //       updatedBooking
-  //     );
-  //     console.log("Invoice deleted successfully:", response.data);
-  //   } catch (error) {
-  //     console.error("Error deleting invoice:", error);
-  //   }
-  // };
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col justify-center gap-4">
@@ -300,23 +273,15 @@ const Invoice = ({ selectedBooking, setSelectedBooking }) => {
                 </div>
               </div>
             </div>
-            {selectedBooking.invoices.status ? (
+            {selectedBooking.invoices.status === "Invoice Accepted" ? (
               <div className="bg-teal-100 text-teal-800 rounded-full px-3 py-1 text-sm capitalize">
-                Accepted
+                {selectedBooking.invoices.status}
               </div>
             ) : (
               <div className="bg-red-100 text-red-800 rounded-full px-3 py-1 text-sm capitalize">
-                Not accepted yet!
+                {selectedBooking.invoices.status}
               </div>
             )}
-            {/* <Button
-                color="red"
-                variant="gradient"
-                onClick={() => handleDeleteInvoice(selectedBooking.invoices.id)}
-                className="rounded"
-              >
-                Delete invoice
-              </Button> */}
           </div>
           <table className="w-full flex flex-row flex-no-wrap sm:bg-white rounded-lg border overflow-auto">
             <thead className="text-white">

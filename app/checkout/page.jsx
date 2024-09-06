@@ -23,6 +23,7 @@ import { Player } from "@lottiefiles/react-lottie-player";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { getDistance } from "@/utils/distance";
+import { toast } from "sonner";
 
 function Shipping() {
   const [formData, setFormData] = useState({
@@ -174,7 +175,7 @@ function Shipping() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.time <= getCurrentTime()) {
-      alert("Please select a time after 1 hour of the current time at least.");
+      toast.error("Kindly choose a time that is at least one hour from now.");
       return;
     }
     handlePaymentDailog();

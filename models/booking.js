@@ -69,7 +69,8 @@ const bookingSchema = new Schema(
         date: String,
         time: String,
         paymentMethod: { type: String },
-        status: { type: Boolean, required: true, default: false },
+        paid: { type: Boolean },
+        status: { type: String },
         items: [
           {
             description: String,

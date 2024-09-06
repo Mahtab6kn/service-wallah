@@ -17,7 +17,7 @@ export async function POST(request) {
     // Connect to MongoDB
     await connectMongoDB();
     // Fetch the services using the $in operator
-    const services = await Booking.find({ _id: { $in: serviceIds } });
+    const services = await Booking.find({ _id: { $in: serviceIds } }).sort({createdAt: -1}).limit(50);
 
     return NextResponse.json(services, { status: 201 });
   } catch (error) {
