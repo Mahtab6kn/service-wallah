@@ -8,6 +8,13 @@ const bookingSchema = new Schema(
     },
     status: {
       type: String,
+      required: true,
+      default: "Payment failed!",
+    },
+    paid: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
     completed: {
       type: Boolean,
@@ -31,10 +38,6 @@ const bookingSchema = new Schema(
       default: false,
     },
     acceptedByServiceProvider: {
-      type: Boolean,
-      default: false,
-    },
-    paymentCompleted: {
       type: Boolean,
       default: false,
     },

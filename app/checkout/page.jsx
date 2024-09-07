@@ -166,8 +166,8 @@ function Shipping() {
     }));
   }, []);
 
-  const [paymentDailog, setPaymentDailog] = useState(false);
-  const handlePaymentDailog = () => setPaymentDailog(!paymentDailog);
+  // const [paymentDailog, setPaymentDailog] = useState(false);
+  // const handlePaymentDailog = () => setPaymentDailog(!paymentDailog);
 
   const [completedDailog, setCompletedDailog] = useState(false);
   const handleCompletedDailog = () => setCompletedDailog(!completedDailog);
@@ -178,7 +178,7 @@ function Shipping() {
       toast.error("Kindly choose a time that is at least one hour from now.");
       return;
     }
-    handlePaymentDailog();
+    // handlePaymentDailog();
   };
   function generateOTP() {
     // Generate a random number between 1000 and 9999
@@ -239,8 +239,21 @@ function Shipping() {
   const [serviceProviderNotFoundError, setServiceProviderNotFoundError] =
     useState("Try a different location!");
 
-  const handleSumbitOrderViaPod = async () => {
-    handleCompletedDailog();
+  const handleSubmitOrder = async (e) => {
+    e.preventDefault();
+    const today = new Date();
+
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const year = today.getFullYear();
+    const formattedToday = `${day}-${month}-${year}`;
+
+    if (formData.date == formattedToday) {
+      if (formData.time <= getCurrentTime()) {
+        toast.error("Kindly choose a time that is at least one hour from now.");
+        return;
+      }
+    }
     const location = JSON.parse(localStorage.getItem("location"));
 
     const { lat, lng } = location;
@@ -279,13 +292,9 @@ function Shipping() {
       location,
       cartItems,
       availableServiceProviders: availableServiceProviders,
-      status:
-        "Request has been sent to service provider, wait for them to be available for you.",
       otp,
     };
-    console.log({ availableServiceProviders });
     try {
-      // Add new booking
       const response = await axios.post("/api/bookings/add", postData);
       const updatedUser = {
         ...user,
@@ -294,27 +303,12 @@ function Shipping() {
 
       // Request service provider of the new booking
 
-      const firstServiceProvider = availableServiceProviders[0];
-      availableServiceProviders.map(async(sp) =>{
-        await axios.post(
-          "/api/users/update",
-          {
-            ...sp,
-            bookings: [...sp.bookings, response.data._id],
-          }
-        )
-      })
-      // const requestingToServiceProvider = await axios.post(
-      //   "/api/users/update",
-      //   {
-      //     ...firstServiceProvider,
-      //     bookings: [...firstServiceProvider.bookings, response.data._id],
-      //   }
-      // );
-      // console.log({
-      //   requestingToServiceProvider: requestingToServiceProvider.data,
-      // });
-      // Update user bookings
+      availableServiceProviders.map(async (sp) => {
+        await axios.post("/api/users/update", {
+          ...sp,
+          bookings: [...sp.bookings, response.data._id],
+        });
+      });
 
       await axios.post("/api/users/update", updatedUser);
       gettingUser();
@@ -325,8 +319,34 @@ function Shipping() {
         orderId: response.data._id,
       });
       localStorage.removeItem("cart");
+      const amount = (
+        response.data.cartItems.reduce(
+          (acc, product) => acc + product.price * product.quantity,
+          0
+        ) + 18
+      ).toFixed(2);
+      const userId = localStorage.getItem("token");
+      const initiatePayment = await axios.post(
+        `/api/payments/initiate-payment`,
+        {
+          bookingId: response.data._id,
+          amount,
+          userId,
+          userPhoneNumber: response.data.phoneNumber,
+        }
+      );
+      console.log(initiatePayment);
+      if (initiatePayment.data.success) {
+        const phonePeRedirectUrl =
+          initiatePayment.data.data.instrumentResponse.redirectInfo.url;
+        console.log(phonePeRedirectUrl);
+        router.push(phonePeRedirectUrl);
+      } else {
+        toast.error(initiatePayment.data);
+      }
     } catch (error) {
-      console.error(`Error updating service ${serviceId}:`, error);
+      console.log(`Error updating service:`, error);
+      toast.error("An error occurred while placing order.");
     }
   };
 
@@ -393,7 +413,7 @@ function Shipping() {
           <h2 className="font-julius text-center lg:text-4xl md:text-4xl sm:text-3xl text-3xl mb-4 text-gray-700">
             Checkout
           </h2>
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmitOrder}>
             <Input
               label="Full name"
               className="bg-white"
@@ -485,13 +505,17 @@ function Shipping() {
                 there is an issue with your order.
               </p>
             </div>
-            <button
-              className="w-full bg-gray-700 transition-all hover:bg-gray-800 text-white p-2 rounded mt-4"
+            <Button
+              className="mt-4"
+              size="lg"
+              color="teal"
+              fullWidth
+              variant="gradient"
               type="submit"
             >
               Continue to payments
-            </button>
-            <Dialog
+            </Button>
+            {/* <Dialog
               size="md"
               open={paymentDailog}
               handler={handlePaymentDailog}
@@ -512,7 +536,6 @@ function Shipping() {
                     <Player autoplay loop src="/lottie/online.json"></Player>
                   </div>
                   <div className="font-semibold font-julius text-md text-gray-600 flex items-center gap-2">
-                    {/* <SiPhonepe size={30} color="#6739b7" /> */}
                     Pay Before service
                   </div>
                 </div>
@@ -609,7 +632,6 @@ function Shipping() {
                       </div>
                       <Player
                         autoplay
-                        // loop
                         keepLastFrame={true}
                         src="/lottie/found.json"
                       ></Player>
@@ -627,7 +649,7 @@ function Shipping() {
                   )}
                 </Dialog>
               </div>
-            </Dialog>
+            </Dialog> */}
           </form>
         </div>
       </div>
