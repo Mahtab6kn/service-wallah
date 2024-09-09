@@ -95,6 +95,7 @@ const bookingSchema = new Schema(
     noServiceProviderAvailable: { type: Boolean, default: false },
     canceledByCustomer: { type: String, default: "" },
     serviceCompletedOtp: { type: String },
+    transactionId: { type: String },
   },
   {
     timestamps: true,

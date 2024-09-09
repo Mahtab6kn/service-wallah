@@ -21,7 +21,7 @@ import Image from "next/image";
 
 export default function Home() {
   const [topServices, setTopServices] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const gettingServices = async () => {
     setLoading(true);
     try {
@@ -67,7 +67,7 @@ export default function Home() {
   };
   return (
     <>
-      {/* <div
+      <div
         className={`grid place-items-center min-h-screen absolute w-full bg-white transition-all duration-700 top-0 ${
           loading ? "opacity-100" : "opacity-0"
         } ${loading ? "z-50" : "-z-50"}`}
@@ -76,7 +76,7 @@ export default function Home() {
           <div className="loaction-loader"></div>
           <div className="text-2xl font-julius">Loading</div>
         </div>
-      </div> */}
+      </div>
       <main
         className={`${
           loading ? "hidden" : "block"
@@ -194,17 +194,17 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-4">
                 <Image
-                  width={100}
-                  height={100}
-                  className="ml-auto rounded-lg"
+                  width={1000}
+                  height={1000}
+                  className="ml-auto rounded-lg w-full"
                   src="/image/hero1.webp"
                   alt=""
                 />
                 <div className="ml-auto">
                   <Image
-                    width={100}
-                    height={100}
-                    className="float-right rounded-lg"
+                    width={1000}
+                    height={1000}
+                    className="ml-auto rounded-lg w-full h-full"
                     src="/image/hero3.webp"
                     alt=""
                   />
@@ -212,9 +212,9 @@ export default function Home() {
               </div>
               <div className="grid gap-4">
                 <Image
-                  width={100}
-                  height={100}
-                  className="  h-full rounded-lg"
+                  width={1000}
+                  height={1000}
+                  className="rounded-lg w-full"
                   src="/image/hero2.webp"
                   alt=""
                 />
@@ -222,9 +222,9 @@ export default function Home() {
               <div className="grid gap-4">
                 <div className="ml-auto">
                   <Image
-                    width={100}
-                    height={100}
-                    className="h-full rounded-lg"
+                    width={1000}
+                    height={1000}
+                    className="rounded-lg w-full h-full"
                     src="/image/hero4.webp"
                     alt=""
                   />
@@ -232,9 +232,9 @@ export default function Home() {
               </div>
               <div className="grid gap-4">
                 <Image
-                  width={100}
-                  height={100}
-                  className="w-full rounded-lg"
+                  width={1000}
+                  height={1000}
+                  className="w-full h-full rounded-lg"
                   src="/image/hero5.webp"
                   alt=""
                 />

@@ -14,35 +14,34 @@ const PaymentStatusPage = () => {
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const checkStatus = async () => {
-    if (!MTID) {
-      toast.error("Transaction Id is required");
-      return;
-    }
-    try {
-      const response = await fetch(
-        `/api/payments/check-status/${MTID}?bookingId=${bookingId}`,
-        { cache: "no-store" }
-      );
-      const data = await response.json();
-      console.log(data);
-      if (data.success) {
-        setPaymentStatus(true);
-      } else {
-        setPaymentStatus(false);
-        throw new Error();
-      }
-    } catch (error) {
-      setPaymentStatus(false);
-      toast.error("Invalid Transaction Id");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const checkStatus = async () => {
+      if (!MTID) {
+        toast.error("Transaction Id is required");
+        return;
+      }
+      try {
+        const response = await fetch(
+          `/api/payments/check-status/${MTID}?bookingId=${bookingId}`,
+          { cache: "no-store" }
+        );
+        const data = await response.json();
+        console.log(data);
+        if (data.success) {
+          setPaymentStatus(true);
+        } else {
+          setPaymentStatus(false);
+          throw new Error();
+        }
+      } catch (error) {
+        setPaymentStatus(false);
+        toast.error("Invalid Transaction Id");
+      } finally {
+        setLoading(false);
+      }
+    };
     checkStatus();
-  }, [MTID]);
+  }, [MTID, bookingId]);
 
   if (loading) {
     return (

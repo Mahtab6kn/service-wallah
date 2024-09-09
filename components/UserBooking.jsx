@@ -1,7 +1,7 @@
 "use client";
 import { Player } from "@lottiefiles/react-lottie-player";
 import Image from "next/image";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   IconButton,
@@ -242,7 +242,7 @@ const UserBooking = ({ user, allBookings }) => {
         userCompletedBookings.length === 0 &&
         userCanceledBookings.length === 0 &&
         userNoServiceProviderAvailableBookings.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+          <div className="flex flex-col items-center justify-center h-96 bg-gray-100">
             <div className="text-2xl font-semibold text-gray-700 mb-6">
               Uh uh! There is no booking yet
             </div>

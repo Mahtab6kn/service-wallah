@@ -170,11 +170,12 @@ const Service = () => {
         setService(data);
       } catch (err) {
         console.log(err);
+      } finally {
+        setLoading(false);
       }
     };
     getService();
     setCartItems(JSON.parse(localStorage.getItem("cart")) || []);
-    setLoading(false);
   }, [id]);
 
   const [review, setReview] = useState({
@@ -317,8 +318,8 @@ const Service = () => {
               return (
                 <div key={item._id} className="flex items-center gap-2">
                   <Image
-                    width={100}
-                    height={100}
+                    width={1000}
+                    height={1000}
                     src={item.icon?.url} // Replace with actual path
                     alt="Service Icon"
                     className="w-28 h-28 object-cover rounded shadow"
@@ -495,8 +496,8 @@ const Service = () => {
               {service.images?.map((image) => {
                 return (
                   <Image
-                    width={100}
-                    height={100}
+                    width={1000}
+                    height={1000}
                     key={image.name}
                     src={image.url}
                     alt=""

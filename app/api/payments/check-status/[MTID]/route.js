@@ -1,3 +1,5 @@
+import connectMongoDB from "@/libs/mongodb";
+import Booking from "@/models/booking";
 import axios from "axios";
 import { NextResponse } from "next/server";
 import sha256 from "sha256";
@@ -6,11 +8,11 @@ export async function GET(req, { params }) {
   const { MTID } = params;
 
   const { searchParams } = new URL(req.url);
-  const orderId = searchParams.get("bookingId");
+  const bookingId = searchParams.get("bookingId");
 
   if (!MTID)
     return NextResponse.json("Transaction is not found!", { status: 400 });
-  if (!orderId)
+  if (!bookingId)
     return NextResponse.json("Order id is required!", { status: 400 });
 
   const { PHONEPE_MERCHANT_ID, PHONEPE_BASE_URL, PHONEPE_SALT_KEY } =
@@ -40,19 +42,20 @@ export async function GET(req, { params }) {
     };
 
     const response = await axios.request(options);
+    await connectMongoDB();
 
-    // if (response.data.success) {
-    //   const order = await Order.findById(orderId);
-    //   if (!order) {
-    //     return NextResponse.json("Invalid order id", { status: 500 });
-    //   }
-    //   order.isPaid = true;
-    //   order.transactionId = MTID;
-    //   order.status = "pending";
-    //   order.canceledBy = null;
-    //   order.cancellationReason = null;
-    //   await order.save();
-    // }
+    // Fix this code and the data should be updated!
+
+    if (response.data.success) {
+      const booking = await Booking.findById(bookingId);
+      if (!booking) {
+        return NextResponse.json("Invalid booking id", { status: 500 });
+      }
+      booking.paid = true;
+      booking.transactionId = MTID;
+      booking.status = "Request has been sent to service provider!";
+      await booking.save();
+    }
     return NextResponse.json(response.data, { status: 200 });
   } catch (error) {
     console.error("Error during checking payment status:", error);
