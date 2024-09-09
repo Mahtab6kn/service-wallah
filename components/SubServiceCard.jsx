@@ -21,6 +21,7 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
+import Image from "next/image";
 import React, { useState } from "react";
 import { IoMdOpen } from "react-icons/io";
 import { MdDelete, MdEdit } from "react-icons/md";
@@ -127,9 +128,11 @@ const SubServiceCard = ({ sub, index, serviceId }) => {
   return (
     <Card className="w-full max-w-72 shadow-lg" key={index}>
       <CardHeader floated={false} color="blue-gray">
-        <img
+        <Image
+          width={100}
+          height={100}
           src={subService.icon.url}
-          alt="Service Iconr"
+          alt="Service Icon"
           className="object-cover"
         />
         {/* <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " /> */}
@@ -217,7 +220,9 @@ const SubServiceCard = ({ sub, index, serviceId }) => {
           </div>
 
           <div className="flex gap-4 px-6">
-            <img
+            <Image
+              width={100}
+              height={100}
               src={subService.icon?.url}
               alt=""
               className="w-32 h-full rounded-md object-cover drop-shadow-lg"

@@ -51,7 +51,9 @@ const UserCompletedBooking = ({
                       className={`flex items-center space-x-2`}
                     >
                       <div className="flex-shrink-0">
-                        <img
+                        <Image
+                          width={100}
+                          height={100}
                           className="w-16 h-16 rounded-full object-cover"
                           src={item.icon?.url}
                           alt={item.name}
@@ -127,7 +129,9 @@ const UserCompletedBooking = ({
                 {selectedUserCompletedBooking?.cartItems?.map((item) => {
                   return (
                     <div className="flex items-center gap-3" key={item._id}>
-                      <img
+                      <Image
+                        width={100}
+                        height={100}
                         src={item.icon?.url}
                         className="rounded-md w-28 h-28 object-cover"
                         alt="Booking"
@@ -364,9 +368,12 @@ const UserCompletedBooking = ({
                       <span className="flex items-center gap-2">
                         {selectedUserCompletedBooking.otp
                           .split("")
-                          .map((code) => {
+                          .map((code, index) => {
                             return (
-                              <span className="w-10 h-10 flex items-center justify-center text-lg rounded-md bg-gray-700 text-white">
+                              <span
+                                key={index}
+                                className="w-10 h-10 flex items-center justify-center text-lg rounded-md bg-gray-700 text-white"
+                              >
                                 {code}
                               </span>
                             );

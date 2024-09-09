@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import { Button, ButtonGroup } from "@material-tailwind/react";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -14,26 +15,29 @@ const Cart = () => {
   const router = useRouter();
   const [products, setProducts] = useState([]);
   const [user, setUser] = useState({});
-  const gettingUser = useCallback(async () => {
-    try {
-      const id = localStorage.getItem("token");
-      const response = await fetch(`/api/service-providers/${id}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-      const data = await response.json();
-      setUser(data);
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cart"));
     if (cart) {
       setProducts(cart);
     }
-    gettingUser();
-  }, []);
+
+    const gettingUser = async () => {
+      try {
+        const id = localStorage.getItem("token");
+        const response = await fetch(`/api/service-providers/${id}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+        const data = await response.json();
+        setUser(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    gettingUser(); // Call inside useEffect
+  }, []); // Empty dependency array, no external dependencies
+
   const [validationMessage, setValidationMessage] = useState("");
 
   const handleQuantityChange = (index, change) => {
@@ -71,10 +75,6 @@ const Cart = () => {
       return updatedProducts;
     });
   };
-
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
 
   return (
     <div>
@@ -125,8 +125,10 @@ const Cart = () => {
                   className="flex flex-col lg:flex-row items-start lg:items-center justify-between border-b pb-4"
                 >
                   <div className="flex items-start lg:items-center">
-                    <img
+                    <Image
                       src={product.icon?.url}
+                      width={100}
+                      height={100}
                       alt={product.name}
                       className="w-20 h-20 object-cover rounded"
                     />

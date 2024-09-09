@@ -24,6 +24,7 @@ import {
 import { storage } from "@/firebase";
 import axios from "axios";
 import Footer from "@/components/Footer";
+import Image from "next/image";
 
 const User = () => {
   const [user, setUser] = useState({
@@ -48,13 +49,6 @@ const User = () => {
       name: "",
     },
   });
-  const gettingUser = async () => {
-    const id = localStorage.getItem("token");
-    const response = await axios.get(`/api/users/${id}`);
-    const data = await response.data;
-    console.log(data);
-    setUser(data);
-  };
   function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
     const date = new Date(dateString);
@@ -122,30 +116,31 @@ const User = () => {
       setOpen(false);
     }
   };
-  useEffect(() => {
-    setUpdateUser({ ...user });
-  }, [user]);
-  const chechingAuthorization = async () => {
-    const id = localStorage.getItem("token");
-    if (!id) {
-      window.location.href = "/";
-      return;
-    }
-    const response = await axios.get(`/api/users/${id}`);
-    const data = response.data;
-
-    if (data.role !== "user") {
-      window.location.href = "/";
-    }
-  };
   const [loading, setLoading] = useState(true);
-  const loadingFunction = () => {
-    chechingAuthorization();
-    gettingUser();
-    setLoading(false);
-  };
+
   useEffect(() => {
-    loadingFunction();
+    const fetchingInitialData = async () => {
+      try {
+        const id = localStorage.getItem("token");
+        if (!id) {
+          window.location.href = "/";
+          return;
+        }
+        const response = await axios.get(`/api/users/${id}`);
+        const data = response.data;
+
+        if (data.role !== "user") {
+          window.location.href = "/";
+        }
+        setUser(data);
+        setUpdateUser(data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchingInitialData();
   }, []);
   return (
     <>
@@ -306,8 +301,10 @@ const User = () => {
                           />
                         </div>
                         <figure className="relative h-72 w-3/5 rounded-md">
-                        {updateUser?.image?.url || user?.image?.url ? (
-                            <img
+                          {updateUser?.image?.url || user?.image?.url ? (
+                            <Image
+                              width={100}
+                              height={100}
                               className="h-full w-full rounded-xl object-cover object-center"
                               src={updateUser?.image?.url || user?.image?.url}
                               alt="Profile image"

@@ -8,10 +8,9 @@ import {
   IoMdOpen,
 } from "react-icons/io";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 const ServiceShow = ({ service }) => {
-
-
   const [ratingArray, setRatingArray] = useState([]);
   const [rating, setRating] = useState(0);
 
@@ -47,7 +46,9 @@ const ServiceShow = ({ service }) => {
     <div className="max-w-sm mx-auto bg-white p-6 mb-4 shadow-md rounded-lg overflow-hidden h-96 flex flex-col justify-between">
       <div>
         <div className="flex items-center mb-4">
-          <img
+          <Image
+            width={100}
+            height={100}
             src={service.icon?.url}
             alt={service.name}
             className="w-16 h-16 rounded mr-4 object-cover drop-shadow-lg"
@@ -94,7 +95,9 @@ const ServiceShow = ({ service }) => {
                   key={i}
                   className="flex items-center gap-4   bg-gray-100 p-3 rounded-md"
                 >
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     src={sub.icon?.url}
                     alt={sub.name}
                     className="w-16 h-16 rounded mr-4 drop-shadow-lg object-cover"
@@ -115,7 +118,5 @@ const ServiceShow = ({ service }) => {
     </div>
   );
 };
-
-
 
 export default ServiceShow;

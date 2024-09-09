@@ -39,31 +39,27 @@ export default function Location() {
       setMarkerPosition(storedLocation);
       getAddress(storedLocation);
     } else {
-      askForGeolocation();
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            const newLocation = { lat: latitude, lng: longitude };
+            setLocation(newLocation);
+            setMarkerPosition(newLocation);
+            getAddress(newLocation);
+            localStorage.setItem("location", JSON.stringify(newLocation));
+          },
+          (error) => {
+            console.error("Error getting the location:", error);
+            setLocation(defaultCenter);
+          }
+        );
+      } else {
+        console.error("Geolocation not supported");
+        setLocation(defaultCenter);
+      }
     }
-  }, []);
-
-  const askForGeolocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const newLocation = { lat: latitude, lng: longitude };
-          setLocation(newLocation);
-          setMarkerPosition(newLocation);
-          getAddress(newLocation);
-          localStorage.setItem("location", JSON.stringify(newLocation));
-        },
-        (error) => {
-          console.error("Error getting the location:", error);
-          setLocation(defaultCenter);
-        }
-      );
-    } else {
-      console.error("Geolocation not supported");
-      setLocation(defaultCenter);
-    }
-  };
+  }, []); // No need to add askForGeolocation in the dependency array
 
   const getAddress = async ({ lat, lng }) => {
     try {

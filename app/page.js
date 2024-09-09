@@ -17,6 +17,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import axios from "axios";
+import Image from "next/image";
 
 export default function Home() {
   const [topServices, setTopServices] = useState([]);
@@ -154,7 +155,9 @@ export default function Home() {
               </div>
               <div className="flex flex-col md:flex-row w-full justify-center items-center mt-12 gap-1">
                 <div className="flex gap-2 items-center">
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     className="w-20 md:w-24"
                     src="/image/hero-child.png"
                     alt=""
@@ -170,7 +173,9 @@ export default function Home() {
                 </div>
 
                 <div className="flex flex-col items-center justify-center w-full md:w-1/4">
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     className="max-w-full text-center rounded-lg w-20 md:w-24"
                     src="/image/start.png"
                     alt=""
@@ -188,13 +193,17 @@ export default function Home() {
           <div className="lg:w-1/2 py-5 px-5 hidden md:block">
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-4">
-                <img
+                <Image
+                  width={100}
+                  height={100}
                   className="ml-auto rounded-lg"
                   src="/image/hero1.webp"
                   alt=""
                 />
                 <div className="ml-auto">
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     className="float-right rounded-lg"
                     src="/image/hero3.webp"
                     alt=""
@@ -202,7 +211,9 @@ export default function Home() {
                 </div>
               </div>
               <div className="grid gap-4">
-                <img
+                <Image
+                  width={100}
+                  height={100}
                   className="  h-full rounded-lg"
                   src="/image/hero2.webp"
                   alt=""
@@ -210,7 +221,9 @@ export default function Home() {
               </div>
               <div className="grid gap-4">
                 <div className="ml-auto">
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     className="h-full rounded-lg"
                     src="/image/hero4.webp"
                     alt=""
@@ -218,7 +231,9 @@ export default function Home() {
                 </div>
               </div>
               <div className="grid gap-4">
-                <img
+                <Image
+                  width={100}
+                  height={100}
                   className="w-full rounded-lg"
                   src="/image/hero5.webp"
                   alt=""
@@ -243,27 +258,37 @@ export default function Home() {
               </div>
             )}
           >
-            <img
+            <Image
+              width={100}
+              height={100}
               src="/image/slider2.webp"
               alt="image 2"
               className="h-[32rem] w-full object-cover"
             />
-            <img
+            <Image
+              width={100}
+              height={100}
               src="/image/slider3.webp"
               alt="image 3"
               className="h-[32rem] w-full object-cover"
             />
-            <img
+            <Image
+              width={100}
+              height={100}
               src="/image/slider4.webp"
               alt="image 4"
               className="h-[32rem] w-full object-cover"
             />
-            <img
+            <Image
+              width={100}
+              height={100}
               src="/image/slider5.webp"
               alt="image 5"
               className="h-[32rem] w-full object-cover"
             />
-            <img
+            <Image
+              width={100}
+              height={100}
               src="/image/slider6.webp"
               alt="image 6"
               className="h-[32rem] w-full object-cover"
@@ -319,7 +344,9 @@ export default function Home() {
             How to book a service
             <WiStars color="orange" />
           </h1>
-          <img
+          <Image
+            width={100}
+            height={100}
             className=" lg:w-96  md:w-96 sm:w-80 w-64"
             src="/image/line2.svg"
             alt=""

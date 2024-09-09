@@ -6,6 +6,7 @@ import { IoLogoInstagram } from "react-icons/io";
 import { SlSocialLinkedin } from "react-icons/sl";
 import { PiTelegramLogoLight } from "react-icons/pi";
 import { Input, Textarea } from "@material-tailwind/react";
+import Image from "next/image";
 
 const Footer = () => {
   const [formData, setFormData] = useState({
@@ -56,12 +57,20 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gray-300 shadow-inner text-black py-10 "   style={{backgroundImage: 'url(/image/shape-3-2.png)', backgroundRepeat: 'no-repeat'}}>
+    <footer
+      className="bg-gray-300 shadow-inner text-black py-10 "
+      style={{
+        backgroundImage: "url(/image/shape-3-2.png)",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <div className="px-14 flex   justify-between flex-col md:flex-row ">
         {/* Company Description */}
         <div className="md:w-1/3 mb-6 lg:mb-0 px-4 w-full">
           <h2 className="text-2xl items-center font-bold mb-4 flex gap-1">
-            <img
+            <Image
+              width={100}
+              height={100}
               className="h-full w-12 rounded-xl object-cover object-center"
               src="/icon.ico"
               alt="Profile image"

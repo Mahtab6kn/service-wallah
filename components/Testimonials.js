@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const testimonials = [
@@ -10,19 +11,22 @@ const testimonials = [
   },
   {
     name: "Anil Kumar",
-    image: "https://img.freepik.com/free-photo/beautiful-male-half-length-portrait-isolated-white-studio-background-young-emotional-hindu-man-blue-shirt-facial-expression-human-emotions-advertising-concept-standing-smiling_155003-25250.jpg?t=st=1716364719~exp=1716368319~hmac=546ca7bf121267955fa0beaa40b7945c65ddc621f33d8bbe5734070783a628cf&w=996",
+    image:
+      "https://img.freepik.com/free-photo/beautiful-male-half-length-portrait-isolated-white-studio-background-young-emotional-hindu-man-blue-shirt-facial-expression-human-emotions-advertising-concept-standing-smiling_155003-25250.jpg?t=st=1716364719~exp=1716368319~hmac=546ca7bf121267955fa0beaa40b7945c65ddc621f33d8bbe5734070783a628cf&w=996",
     testimonial:
       "I had a ceiling fan that was making a terrible noise. Service Wallah came and fixed it quickly and efficiently. The technician was polite, on time, and knew exactly what to do. Thank you for the excellent service!",
   },
   {
     name: "Sunita Kumari",
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1888&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image:
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1888&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     testimonial:
       "The plumbing services from Service Wallah were outstanding. They resolved a persistent issue with my bathroom sink that other services couldn't fix. I appreciate their dedication and thoroughness. Will definitely use them again!",
   },
   {
     name: "Anita Kumari",
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1888&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image:
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1888&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     testimonial:
       "Service Wallah is my go-to for any home maintenance needs. Their appliance maintenance service is top-notch. My washing machine is now running like new. Their team is always friendly, reliable, and professional.",
   },
@@ -57,11 +61,15 @@ const Testimonials = () => {
             <div
               key={index}
               className={`absolute inset-0 flex flex-col justify-center items-center transition-all duration-1000 ease-in-out ${
-                index === activeIndex ? "opacity-100 scale-100" : "opacity-0 scale-95"
+                index === activeIndex
+                  ? "opacity-100 scale-100"
+                  : "opacity-0 scale-95"
               }`}
               style={{ transitionProperty: "opacity, transform" }}
             >
-              <img
+              <Image
+                width={100}
+                height={100}
                 className="mx-auto mb-6 rounded-full shadow-lg dark:shadow-black/20 w-28 h-28 object-cover"
                 src={testimonial.image}
                 alt="avatar"

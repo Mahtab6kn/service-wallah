@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { getDistance } from "@/utils/distance";
 import { toast } from "sonner";
+import Image from "next/image";
 
 function Shipping() {
   const [formData, setFormData] = useState({
@@ -153,33 +154,24 @@ function Shipping() {
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     if (cart.length === 0) router.back();
+  }, [router]); // Separate effect to handle routing
+  
+  useEffect(() => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartItems(cart);
     gettingUser();
     const dates = getFourDays();
     setDates(dates);
     getAddress();
-
+  
     // Set the initial date in formData
     setFormData((prevFormData) => ({
       ...prevFormData,
       date: dates[0],
     }));
-  }, []);
+  }, []); // No router dependency here
+  
 
-  // const [paymentDailog, setPaymentDailog] = useState(false);
-  // const handlePaymentDailog = () => setPaymentDailog(!paymentDailog);
-
-  const [completedDailog, setCompletedDailog] = useState(false);
-  const handleCompletedDailog = () => setCompletedDailog(!completedDailog);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (formData.time <= getCurrentTime()) {
-      toast.error("Kindly choose a time that is at least one hour from now.");
-      return;
-    }
-    // handlePaymentDailog();
-  };
   function generateOTP() {
     // Generate a random number between 1000 and 9999
     const otp = Math.floor(1000 + Math.random() * 9000);
@@ -339,7 +331,6 @@ function Shipping() {
       if (initiatePayment.data.success) {
         const phonePeRedirectUrl =
           initiatePayment.data.data.instrumentResponse.redirectInfo.url;
-        console.log(phonePeRedirectUrl);
         router.push(phonePeRedirectUrl);
       } else {
         toast.error(initiatePayment.data);
@@ -361,9 +352,11 @@ function Shipping() {
           <div className="space-y-4">
             {cartItems.map((item, index) => (
               <div key={index} className="flex items-center">
-                <img
+                <Image
                   src={item.icon?.url}
                   alt="Product"
+                  width={100}
+                  height={100}
                   className="w-24 h-24 mr-3 object-cover rounded-lg"
                 />
                 <div>

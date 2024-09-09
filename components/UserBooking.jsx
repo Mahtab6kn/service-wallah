@@ -1,7 +1,7 @@
 "use client";
 import { Player } from "@lottiefiles/react-lottie-player";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Dialog,
   IconButton,
@@ -82,85 +82,8 @@ const UserBooking = ({ user, allBookings }) => {
       otp: "",
     });
 
-  const getUserBookings = async () => {
-    try {
-      const incompleteBookings = allBookings.filter(
-        (booking) =>
-          !booking.completed &&
-          !booking.noServiceProviderAvailable &&
-          !booking.canceledByCustomer
-      );
-      const canceledBookings = allBookings.filter(
-        (booking) =>
-          booking.canceledByCustomer && !booking.noServiceProviderAvailable
-      );
-
-      const completedBookings = allBookings.filter((booking) => booking.completed);
-
-      const noServiceProviderAvailableBookings = allBookings.filter(
-        (booking) => booking.noServiceProviderAvailable
-      );
-
-      setUserBookings(incompleteBookings);
-      setUserCanceledBookings(canceledBookings);
-      setUserCompletedBookings(completedBookings);
-      setUserNoServiceProviderAvailableBookings(
-        noServiceProviderAvailableBookings
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    if (user?.bookings) {
-      getUserBookings();
-    }
-  }, [user?.bookings]);
-
   const [disableCancelBookingButton, setDisableCancelBookingButton] =
     useState(false);
-
-  const checkBetweenTimeAndDate = () => {
-    const cancelValidationValueInMinutes = 120; // minutes
-
-    const getCurrentDateTime = () => {
-      const date = new Date();
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      const hours = String(date.getHours()).padStart(2, "0");
-      const minutes = String(date.getMinutes()).padStart(2, "0");
-      return `${year}${month}${day}${hours}${minutes}`;
-    };
-
-    const getFormattedScheduleDateTime = () => {
-      if (selectedUserBooking?.date && selectedUserBooking?.time) {
-        const [day, month, year] = selectedUserBooking.date.split("-"); // e.g., 29-06-2024
-        const [hours, minutes] = selectedUserBooking.time.split(":"); // e.g., 20:16
-        return `${year}${month}${day}${hours}${minutes}`;
-      }
-      return null;
-    };
-
-    const currentDateTime = Number(getCurrentDateTime());
-    const formattedScheduleDateTime = getFormattedScheduleDateTime();
-
-    if (formattedScheduleDateTime) {
-      const scheduleDateTimeMinusValidation =
-        Number(formattedScheduleDateTime) - cancelValidationValueInMinutes;
-
-      if (currentDateTime > scheduleDateTimeMinusValidation) {
-        setDisableCancelBookingButton(true);
-      } else {
-        setDisableCancelBookingButton(false);
-      }
-    } else {
-      // Handle the case where the booking date or time is not available
-      console.error("Booking date or time is not available");
-      setDisableCancelBookingButton(true); // or handle as needed
-    }
-  };
 
   const [cancellationReasonDialog, setCancellationReasonDialog] =
     useState(false);
@@ -200,37 +123,118 @@ const UserBooking = ({ user, allBookings }) => {
   };
 
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
-  const handleInvoiceDialog = () => setInvoiceDialogOpen(!invoiceDialogOpen);
-
-  const openInvoiceDialog = () => {
-    const invoiceStatus = selectedUserBooking?.invoices?.status;
-    const invoiceTitle = selectedUserBooking?.invoices?.title;
-
-    if (invoiceTitle && invoiceStatus == "Not Accepted Yet!") {
-      handleInvoiceDialog();
-    }
-  };
-
-  useEffect(() => {
-    openInvoiceDialog();
-  }, [selectedUserBooking]);
+  const handleInvoiceDialog = useCallback(
+    () => setInvoiceDialogOpen((prev) => !prev),
+    []
+  );
 
   const [bookingCreatedDate, setBookingCreatedDate] = useState("");
-  const options = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
+  
+  const options = useMemo(
+    () => ({
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    []
+  );
+
   useEffect(() => {
-    checkBetweenTimeAndDate();
+    const getUserBookings = async () => {
+      try {
+        const incompleteBookings = allBookings.filter(
+          (booking) =>
+            !booking.completed &&
+            !booking.noServiceProviderAvailable &&
+            !booking.canceledByCustomer
+        );
+        const canceledBookings = allBookings.filter(
+          (booking) =>
+            booking.canceledByCustomer && !booking.noServiceProviderAvailable
+        );
+
+        const completedBookings = allBookings.filter(
+          (booking) => booking.completed
+        );
+
+        const noServiceProviderAvailableBookings = allBookings.filter(
+          (booking) => booking.noServiceProviderAvailable
+        );
+
+        setUserBookings(incompleteBookings);
+        setUserCanceledBookings(canceledBookings);
+        setUserCompletedBookings(completedBookings);
+        setUserNoServiceProviderAvailableBookings(
+          noServiceProviderAvailableBookings
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    if (user?.bookings) {
+      getUserBookings();
+    }
+  }, [user?.bookings, allBookings]);
+
+  useEffect(() => {
+    const openInvoiceDialog = () => {
+      const invoiceStatus = selectedUserBooking?.invoices?.status;
+      const invoiceTitle = selectedUserBooking?.invoices?.title;
+
+      if (invoiceTitle && invoiceStatus == "Not Accepted Yet!") {
+        handleInvoiceDialog();
+      }
+    };
+    const checkBetweenTimeAndDate = () => {
+      const cancelValidationValueInMinutes = 120; // minutes
+
+      const getCurrentDateTime = () => {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        return `${year}${month}${day}${hours}${minutes}`;
+      };
+
+      const getFormattedScheduleDateTime = () => {
+        if (selectedUserBooking?.date && selectedUserBooking?.time) {
+          const [day, month, year] = selectedUserBooking.date.split("-"); // e.g., 29-06-2024
+          const [hours, minutes] = selectedUserBooking.time.split(":"); // e.g., 20:16
+          return `${year}${month}${day}${hours}${minutes}`;
+        }
+        return null;
+      };
+
+      const currentDateTime = Number(getCurrentDateTime());
+      const formattedScheduleDateTime = getFormattedScheduleDateTime();
+
+      if (formattedScheduleDateTime) {
+        const scheduleDateTimeMinusValidation =
+          Number(formattedScheduleDateTime) - cancelValidationValueInMinutes;
+
+        if (currentDateTime > scheduleDateTimeMinusValidation) {
+          setDisableCancelBookingButton(true);
+        } else {
+          setDisableCancelBookingButton(false);
+        }
+      } else {
+        // Handle the case where the booking date or time is not available
+        console.error("Booking date or time is not available");
+        setDisableCancelBookingButton(true); // or handle as needed
+      }
+    };
 
     const date = new Date(selectedUserBooking?.createdAt);
 
     const formattedDate = date.toLocaleDateString("en-US", options);
     setBookingCreatedDate(formattedDate);
-  }, [selectedUserBooking]);
+    openInvoiceDialog();
+    checkBetweenTimeAndDate();
+  }, [selectedUserBooking, handleInvoiceDialog, options]);
 
   return (
     <div>
@@ -279,7 +283,9 @@ const UserBooking = ({ user, allBookings }) => {
                           className={`flex items-center space-x-2`}
                         >
                           <div className="flex-shrink-0">
-                            <img
+                            <Image
+                              width={100}
+                              height={100}
                               className="w-16 h-16 rounded-full object-cover"
                               src={item.icon?.url}
                               alt={item.name}
@@ -367,7 +373,9 @@ const UserBooking = ({ user, allBookings }) => {
                             className="flex items-center gap-3"
                             key={item._id}
                           >
-                            <img
+                            <Image
+                              width={100}
+                              height={100}
                               src={item.icon?.url}
                               className="rounded-md w-28 h-28 object-cover"
                               alt="Booking"
@@ -775,7 +783,7 @@ const UserBooking = ({ user, allBookings }) => {
                             </Option>
                             <Option value="The service cost is higher than I expected or can't afford.">
                               The service cost is higher than I expected or
-                              can't afford.
+                              can&apos;t afford.
                             </Option>
                             <Option value="I have a personal emergency that prevents me from proceeding.">
                               I have a personal emergency that prevents me from
@@ -884,7 +892,9 @@ const UserBooking = ({ user, allBookings }) => {
                                 className={`flex items-center space-x-2`}
                               >
                                 <div className="flex-shrink-0">
-                                  <img
+                                  <Image
+                                    width={100}
+                                    height={100}
                                     className="w-16 h-16 rounded-full object-cover"
                                     src={item.icon?.url}
                                     alt={item.name}
@@ -983,7 +993,7 @@ const UserBooking = ({ user, allBookings }) => {
                             </Option>
                             <Option value="The service cost is higher than I expected or can't afford.">
                               The service cost is higher than I expected or
-                              can't afford.
+                              can&apos;t afford.
                             </Option>
                             <Option value="I have a personal emergency that prevents me from proceeding.">
                               I have a personal emergency that prevents me from
@@ -1076,7 +1086,9 @@ const UserBooking = ({ user, allBookings }) => {
                           className={`flex items-center space-x-2`}
                         >
                           <div className="flex-shrink-0">
-                            <img
+                            <Image
+                              width={100}
+                              height={100}
                               className="w-16 h-16 rounded-full object-cover"
                               src={item.icon?.url}
                               alt={item.name}
@@ -1147,7 +1159,9 @@ const UserBooking = ({ user, allBookings }) => {
                     {selectedUserCanceledBooking?.cartItems?.map((item) => {
                       return (
                         <div className="flex items-center gap-3" key={item._id}>
-                          <img
+                          <Image
+                            width={100}
+                            height={100}
                             src={item.icon?.url}
                             className="rounded-md w-28 h-28 object-cover"
                             alt="Booking"
@@ -1380,9 +1394,12 @@ const UserBooking = ({ user, allBookings }) => {
                           <span className="flex items-center gap-2">
                             {selectedUserCanceledBooking.otp
                               .split("")
-                              .map((code) => {
+                              .map((code, index) => {
                                 return (
-                                  <span className="w-10 h-10 flex items-center justify-center text-lg rounded-md bg-gray-700 text-white">
+                                  <span
+                                    key={index}
+                                    className="w-10 h-10 flex items-center justify-center text-lg rounded-md bg-gray-700 text-white"
+                                  >
                                     {code}
                                   </span>
                                 );
@@ -1488,7 +1505,9 @@ const UserBooking = ({ user, allBookings }) => {
                           className={`flex items-center space-x-2`}
                         >
                           <div className="flex-shrink-0">
-                            <img
+                            <Image
+                              width={100}
+                              height={100}
                               className="w-16 h-16 rounded-full object-cover"
                               src={item.icon?.url}
                               alt={item.name}

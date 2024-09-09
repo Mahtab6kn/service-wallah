@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
@@ -43,7 +44,9 @@ const Service = ({ iconSrc, title, services, link, reviews }) => {
     <div className="flex flex-col gap-4 justify-between bg-white p-6 w-full rounded-lg shadow-lg">
       <div className="flex flex-col gap-4">
         <div className="flex items-center">
-          <img
+          <Image
+            width={100}
+            height={100}
             src={iconSrc}
             alt="Icon"
             className="h-20 w-20 mr-3 rounded-md drop-shadow-lg object-cover"
@@ -91,7 +94,9 @@ const Service = ({ iconSrc, title, services, link, reviews }) => {
                 key={index}
                 className="flex items-center gap-4 bg-gray-100 p-3 rounded-md "
               >
-                <img
+                <Image
+                  width={100}
+                  height={100}
                   src={service.icon?.url}
                   alt={service.name}
                   className="w-20 h-20 rounded-lg mr-4 object-cover"

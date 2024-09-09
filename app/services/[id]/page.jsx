@@ -26,6 +26,7 @@ import { VscDebugContinue } from "react-icons/vsc";
 import { IoBagRemove } from "react-icons/io5";
 import { IoIosStar, IoIosStarHalf, IoIosStarOutline } from "react-icons/io";
 import axios from "axios";
+import Image from "next/image";
 
 const NextArrow = ({ onClick }) => {
   return (
@@ -82,7 +83,9 @@ const ReviewCard = ({ name, review, rating, image }) => (
     <div className="bg-white p-4 h-full shadow rounded-lg flex items-start space-x-4">
       <div className="relative w-12 h-12">
         {image?.url ? (
-          <img
+          <Image
+            width={100}
+            height={100}
             src={image?.url}
             alt={name}
             className="rounded-full w-12 h-12 object-cover"
@@ -124,15 +127,6 @@ const Service = () => {
   const { id } = useParams();
 
   const [service, setService] = useState({});
-  const getService = async () => {
-    try {
-      const res = await fetch(`/api/services/${id}`);
-      const data = await res.json();
-      setService(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const [cartItems, setCartItems] = useState([]);
   const [open, setOpen] = useState(false);
@@ -169,10 +163,19 @@ const Service = () => {
   };
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    const getService = async () => {
+      try {
+        const res = await fetch(`/api/services/${id}`);
+        const data = await res.json();
+        setService(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
     getService();
     setCartItems(JSON.parse(localStorage.getItem("cart")) || []);
     setLoading(false);
-  }, []);
+  }, [id]);
 
   const [review, setReview] = useState({
     name: "",
@@ -313,7 +316,9 @@ const Service = () => {
             {cartItems.map((item) => {
               return (
                 <div key={item._id} className="flex items-center gap-2">
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     src={item.icon?.url} // Replace with actual path
                     alt="Service Icon"
                     className="w-28 h-28 object-cover rounded shadow"
@@ -364,7 +369,9 @@ const Service = () => {
           <div className="flex flex-col lg:flex-row gap-6 w-full">
             <div className="w-full lg:w-2/3 p-4 flex flex-col justify-center gap-6 rounded-lg">
               <div className="flex items-center gap-2">
-                <img
+                <Image
+                  width={100}
+                  height={100}
                   src={service.icon?.url} // Replace with actual path
                   alt="Service Icon"
                   className="w-24 h-24 object-cover rounded-lg"
@@ -407,7 +414,9 @@ const Service = () => {
               </div>
               <div className="flex items-start gap-6 ">
                 <div className="flex flex-col w-full items-center gap-2 bg-white h-fit  shadow-lg rounded-lg p-4 cursor-pointer hover:scale-105 transition-all">
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     src="/icons/cargo.png" // Replace with actual path
                     alt="Bookings Icon"
                     className="w-20 object-cover"
@@ -417,7 +426,9 @@ const Service = () => {
                   </span>
                 </div>
                 <div className="flex flex-col w-full items-center gap-2 bg-white h-fit  shadow-lg rounded-lg p-4 cursor-pointer hover:scale-105 transition-all">
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     src="/icons/star.png" // Replace with actual path
                     alt="Star Icon"
                     className="w-20 object-cover"
@@ -483,7 +494,9 @@ const Service = () => {
             >
               {service.images?.map((image) => {
                 return (
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     key={image.name}
                     src={image.url}
                     alt=""
@@ -504,7 +517,9 @@ const Service = () => {
                 {service.subServices?.map((subService, index) => (
                   <Card className="mb-3 max-w-72" key={index}>
                     <CardHeader floated={false}>
-                      <img
+                      <Image
+                        width={100}
+                        height={100}
                         src={subService.icon?.url}
                         alt="Service Icon"
                         className="object-cover w-64 h-48 shadow-lg"
@@ -575,7 +590,9 @@ const Service = () => {
                   <div key={index} className="px-3">
                     <Card className="mb-3">
                       <CardHeader floated={false}>
-                        <img
+                        <Image
+                          width={100}
+                          height={100}
                           src={subService.icon.url}
                           alt="Service Icon"
                           className="object-cover w-64 h-48 shadow-lg"

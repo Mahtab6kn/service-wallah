@@ -67,6 +67,7 @@ import Fuse from "fuse.js";
 import Map from "./Map";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const services = [
   {
@@ -341,7 +342,9 @@ function NavList() {
                         className="bg-white rounded-lg py-4 px-4"
                       >
                         <div className="flex flex-col items-center gap-2">
-                          <img
+                          <Image
+                            width={100}
+                            height={100}
                             src={service.icon.url}
                             alt={service.name}
                             className="w-10 h-10 md:w-16 md:h-16 rounded-md"
@@ -374,7 +377,9 @@ function NavList() {
                         className="bg-white rounded-lg py-4 px-4 h-fit"
                       >
                         <div className="flex flex-col items-center gap-2">
-                          <img
+                          <Image
+                            width={100}
+                            height={100}
                             src={service.item.icon.url}
                             alt={service.item.name}
                             className="w-10 h-10 md:w-16 md:h-16 rounded-md"
@@ -660,7 +665,9 @@ export default function Nav() {
           href={"/"}
           className="mr-4 cursor-pointer font-extrabold py-1.5 lg:ml-2"
         >
-          <img
+          <Image
+            width={100}
+            height={100}
             src="/logo/secoundary-logo-black.png"
             alt="logo"
             className="cursor-pointer w-40 object-cover"
@@ -684,7 +691,9 @@ export default function Nav() {
             <Menu allowHover={true} placement="bottom-start">
               <MenuHandler>
                 {user?.image?.url ? (
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     src={user.image.url}
                     alt={user.name}
                     className="w-12 h-12 rounded-full object-cover cursor-pointer"
@@ -1264,7 +1273,9 @@ export default function Nav() {
               <Menu allowHover={true} placement="bottom-start">
                 <MenuHandler>
                   {user?.image?.url ? (
-                    <img
+                    <Image
+                      width={100}
+                      height={100}
                       src={user.image.url}
                       alt={user.name}
                       className="w-12 h-12 rounded-full object-cover cursor-pointer"

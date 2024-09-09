@@ -24,6 +24,8 @@ import { FaUserAltSlash } from "react-icons/fa";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import { deleteObject, ref } from "firebase/storage";
 import { storage } from "@/firebase";
+import { toast } from "sonner";
+import Image from "next/image";
 
 const Users = () => {
   const [openDialogId, setOpenDialogId] = useState(null);
@@ -37,6 +39,7 @@ const Users = () => {
   };
 
   const [allUsers, setAllUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -44,23 +47,50 @@ const Users = () => {
     const formattedDate = date.toLocaleDateString("en-US", options);
     return formattedDate;
   }
+
   const gettingUsers = async () => {
     try {
       const response = await fetch("/api/admin/users");
       const data = await response.json();
-      console.log(data);
       setAllUsers(data);
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
-    gettingUsers();
+    const fetchingInitialData = async () => {
+      try {
+        const id = localStorage.getItem("token");
+        if (!id) {
+          window.location.href = "/";
+          return;
+        }
+        const res = await fetch(`/api/users/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const user = await res.json();
+        if (user.role !== "admin") {
+          window.location.href = "/";
+        }
+
+        const response = await fetch("/api/admin/users");
+        const data = await response.json();
+        setAllUsers(data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchingInitialData();
   }, []);
+
   const userDeactivating = async (user) => {
     try {
-      const updatedUser = { ...user, active: user.active ? false : true };
-      console.log(updatedUser);
+      const updatedUser = { ...user, active: !user.active };
       const response = await fetch(`/api/admin/users`, {
         method: "POST",
         headers: {
@@ -68,14 +98,23 @@ const Users = () => {
         },
         body: JSON.stringify(updatedUser),
       });
+
       if (response.ok) {
-        // setOpen(false);
-        gettingUsers();
+        toast.success(
+          `User ${
+            updatedUser.active ? "activated" : "deactivated"
+          } successfully`
+        );
+
+        setAllUsers((prev) =>
+          prev.map((u) => (u._id === user._id ? updatedUser : u))
+        );
       }
     } catch (err) {
       console.log(err);
     }
   };
+
   const userDeleting = async (user) => {
     if (user.image.url !== undefined) {
       await deleteObject(ref(storage, user.image.name));
@@ -148,32 +187,7 @@ const Users = () => {
     const filteredUsers = result.map((item) => item.item);
     setAllUsers(filteredUsers);
   };
-  const chechingAuthorization = async () => {
-    const id = localStorage.getItem("token");
-    if (!id) {
-      window.location.href = "/";
-      return;
-    }
-    const response = await fetch(`/api/users/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    if (data.role !== "admin") {
-      window.location.href = "/";
-    }
-  };
-  const [loading, setLoading] = useState(true);
-  const loadingFunction = async () => {
-    await chechingAuthorization();
-    await gettingUsers();
-    setLoading(false);
-  };
-  useEffect(() => {
-    loadingFunction();
-  }, []);
+
   return (
     <>
       {loading ? (
@@ -224,9 +238,11 @@ const Users = () => {
               >
                 <div className="flex gap-2 items-center">
                   {user?.image?.url ? (
-                    <img
+                    <Image
                       src={user.image.url}
                       alt={user.name}
+                      width={100}
+                      height={100}
                       className="w-16 h-16 object-cover rounded-full"
                     />
                   ) : (
@@ -288,9 +304,11 @@ const Users = () => {
                           {/* Dialog content */}
                           <div className="flex gap-4">
                             {user?.image?.url ? (
-                              <img
+                              <Image
                                 src={user.image.url}
                                 alt={user.name}
+                                width={100}
+                                height={100}
                                 className="w-32 h-full rounded-md object-cover drop-shadow-lg"
                               />
                             ) : (

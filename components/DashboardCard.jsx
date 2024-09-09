@@ -1,10 +1,11 @@
+import Image from "next/image";
 import React from "react";
 
 const Card = ({ label, value, bgColor, textColor, image }) => (
   <div
     className={`${bgColor} ${textColor} p-6 rounded-lg shadow-lg flex gap-4 items-center`}
   >
-    <img src={image} alt="" />
+    <Image width={100} height={100} src={image} alt="" />
     <div>
       <div className="text-2xl font-bold">{value}</div>
       <div>{label}</div>

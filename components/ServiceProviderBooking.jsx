@@ -26,6 +26,7 @@ import Invoice from "@/components/Invoice";
 import { IoMdOpen } from "react-icons/io";
 import { toast } from "sonner";
 import UpdateServiceStatus from "./bookings/UpdateServiceStatus";
+import Image from "next/image";
 
 const ServiceProviderBooking = ({ user, serviceProviderBookings }) => {
   const mapContainerStyle = {
@@ -59,29 +60,30 @@ const ServiceProviderBooking = ({ user, serviceProviderBookings }) => {
     setOpenCompletedBookingDialog(!openCompletedBookingDialog);
   const [selectedCompletedBooking, setSelectedCompletedBooking] = useState({});
 
-  const gettingServiceProviderBookings = async () => {
-    try {
-      const newBookings = serviceProviderBookings.filter(
-        (booking) => !booking.completed && !booking.canceledByCustomer
-      );
-      const completedBookings = serviceProviderBookings.filter((booking) => booking.completed);
-      const canceledBookings = serviceProviderBookings.filter(
-        (booking) => booking.canceledByCustomer
-      );
-      // setServiceProviderBookings(data);
-      setServiceProviderNewBookings(newBookings);
-      setServiceProviderCompletedBookings(completedBookings);
-      setServiceProviderCanceledBookings(canceledBookings);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   useEffect(() => {
+    const gettingServiceProviderBookings = async () => {
+      try {
+        const newBookings = serviceProviderBookings.filter(
+          (booking) => !booking.completed && !booking.canceledByCustomer
+        );
+        const completedBookings = serviceProviderBookings.filter(
+          (booking) => booking.completed
+        );
+        const canceledBookings = serviceProviderBookings.filter(
+          (booking) => booking.canceledByCustomer
+        );
+        setServiceProviderNewBookings(newBookings);
+        setServiceProviderCompletedBookings(completedBookings);
+        setServiceProviderCanceledBookings(canceledBookings);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     if (user?.bookings?.length > 0) {
       gettingServiceProviderBookings();
     }
-  }, [user]);
+  }, [user, selectedNewBooking, serviceProviderBookings]);
 
   const [otp, setOtp] = useState(["", "", "", ""]);
 
@@ -302,10 +304,6 @@ const ServiceProviderBooking = ({ user, serviceProviderBookings }) => {
     minute: "2-digit",
   };
 
-  useEffect(() => {
-    gettingServiceProviderBookings();
-  }, [selectedNewBooking]);
-
   return (
     <div>
       {serviceProviderBookings.length <= 0 ? (
@@ -359,7 +357,9 @@ const ServiceProviderBooking = ({ user, serviceProviderBookings }) => {
                             className={`flex items-center space-x-2 pb-4 `}
                           >
                             <div className="flex-shrink-0">
-                              <img
+                              <Image
+                                width={100}
+                                height={100}
                                 className="w-16 h-16 rounded-full object-cover"
                                 src={item.icon?.url}
                                 alt={item.name}
@@ -435,7 +435,9 @@ const ServiceProviderBooking = ({ user, serviceProviderBookings }) => {
                             className="flex items-center gap-3"
                             key={item._id}
                           >
-                            <img
+                            <Image
+                              width={100}
+                              height={100}
                               src={item.icon?.url}
                               className="rounded-md w-28 h-28 object-cover"
                               alt="Booking"
@@ -648,7 +650,9 @@ const ServiceProviderBooking = ({ user, serviceProviderBookings }) => {
                       <div className="bg-white flex justify-center items-center rounded-lg shadow-md w-full min-h-44 p-4">
                         <div className="flex gap-4 flex-col md:flex-row items-center justify-center">
                           <div className="flex justify-center">
-                            <img
+                            <Image
+                              width={100}
+                              height={100}
                               src={uploadedImage || "https://placehold.co/400"}
                               alt="Uploaded"
                               className="w-32 h-32 rounded-lg object-cover"
@@ -756,7 +760,9 @@ const ServiceProviderBooking = ({ user, serviceProviderBookings }) => {
                             className={`flex items-center space-x-2 pb-4 `}
                           >
                             <div className="flex-shrink-0">
-                              <img
+                              <Image
+                                width={100}
+                                height={100}
                                 className="w-16 h-16 rounded-full object-cover"
                                 src={item.icon?.url}
                                 alt={item.name}
@@ -831,7 +837,9 @@ const ServiceProviderBooking = ({ user, serviceProviderBookings }) => {
                             className="flex items-center gap-3"
                             key={item._id}
                           >
-                            <img
+                            <Image
+                              width={100}
+                              height={100}
                               src={item.icon?.url}
                               className="rounded-md w-28 h-28 object-cover"
                               alt="Booking"
@@ -1025,7 +1033,9 @@ const ServiceProviderBooking = ({ user, serviceProviderBookings }) => {
                             className={`flex items-center space-x-2 pb-4 `}
                           >
                             <div className="flex-shrink-0">
-                              <img
+                              <Image
+                                width={100}
+                                height={100}
                                 className="w-16 h-16 rounded-full object-cover"
                                 src={item.icon?.url}
                                 alt={item.name}
@@ -1096,7 +1106,9 @@ const ServiceProviderBooking = ({ user, serviceProviderBookings }) => {
                             className="flex items-center gap-3"
                             key={item._id}
                           >
-                            <img
+                            <Image
+                              width={100}
+                              height={100}
                               src={item.icon?.url}
                               className="rounded-md w-28 h-28 object-cover"
                               alt="Booking"
@@ -1270,7 +1282,9 @@ const ServiceProviderBooking = ({ user, serviceProviderBookings }) => {
                       <div className="bg-white flex justify-center items-center rounded-lg shadow-md w-full min-h-44 p-4">
                         <div className="flex gap-4 flex-col md:flex-row items-center justify-center">
                           <div className="flex justify-center">
-                            <img
+                            <Image
+                              width={100}
+                              height={100}
                               src={
                                 selectedCompletedBooking?.verificationImage
                                   ?.url || "https://placehold.co/400"

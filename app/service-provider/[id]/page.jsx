@@ -41,52 +41,6 @@ import ServiceProviderLocation from "@/components/ServiceProviderLocation";
 import { HiPencilSquare } from "react-icons/hi2";
 import axios from "axios";
 
-const reviews = [
-  {
-    id: 1,
-    name: "Musharraf Jamal",
-    review: "Service provider were soo delicate to his work.",
-    rating: 4,
-    img: "/image/hero1.webp",
-  },
-  {
-    id: 2,
-    name: "Angila",
-    review: "Good in work but behavior is not friendly at all.",
-    rating: 3,
-    img: "/image/hero1.webp",
-  },
-  // ... other reviews
-];
-
-const ReviewCard = ({ name, review, rating, img }) => (
-  <div className="w-full md:w-1/2 p-2">
-    <div className="bg-white p-4 h-52 shadow rounded-lg flex items-start space-x-4">
-      <div className="relative w-12 h-12">
-        <Image
-          src={img}
-          alt={name}
-          layout="fill"
-          sizes="20"
-          objectFit="cover"
-          className="rounded-full"
-        />
-      </div>
-      <div className="flex-1">
-        <div className="flex justify-between items-center">
-          <div>
-            <h3 className="font-bold">{name}</h3>
-            <div className="flex items-center">
-              <Rating value={rating} />
-            </div>
-          </div>
-        </div>
-        <p className="text-gray-600">{review}</p>
-      </div>
-    </div>
-  </div>
-);
-
 const ServiceProvider = () => {
   const { id } = useParams();
   const [user, setUser] = useState({});
@@ -259,36 +213,38 @@ const ServiceProvider = () => {
     fetchingServices();
   }, [fetchingServices]);
 
-  const chechingAuthorization = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      window.location.href = "/";
-      return;
-    }
-    const response = await fetch(`/api/users/${token}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await response.json();
-    if (data.role !== "service-provider") {
-      window.location.href = "/";
-    }
-  }, []);
-
   useEffect(() => {
     let isMounted = true;
+
+    const checkingAuthorization = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.href = "/";
+        return;
+      }
+      const response = await fetch(`/api/users/${token}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+      if (data.role !== "service-provider") {
+        window.location.href = "/";
+      }
+    };
+
     const loadData = async () => {
-      await chechingAuthorization();
+      await checkingAuthorization();
       getAllService();
       gettingUser();
       if (isMounted) setLoading(false);
     };
+
     loadData();
+
     return () => {
       isMounted = false;
     };
-  }, []);
-
+  }, [getAllService, gettingUser]);
 
   if (loading) {
     return (
@@ -437,7 +393,9 @@ const ServiceProvider = () => {
                   </div>
                   <figure className="relative h-72 w-3/5 rounded-md">
                     {updateUser?.image?.url || user?.image?.url ? (
-                      <img
+                      <Image
+                        width={100}
+                        height={100}
                         className="h-full w-full rounded-xl object-cover object-center"
                         src={updateUser?.image?.url || user?.image?.url}
                         alt="Profile image"
@@ -572,7 +530,9 @@ const ServiceProvider = () => {
                                 }}
                               />
                             </ListItemPrefix>
-                            <img
+                            <Image
+                              width={100}
+                              height={100}
                               src={service.icon.url}
                               alt=""
                               className="w-10 object-cover mr-2"
@@ -616,7 +576,9 @@ const ServiceProvider = () => {
                   ripple={false}
                   className="py-2 text-gray-700 text-xl"
                 >
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     src={service?.icon?.url}
                     alt=""
                     className="w-10 object-cover mr-2"

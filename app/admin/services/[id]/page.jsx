@@ -33,6 +33,7 @@ import {
 } from "firebase/storage";
 import { storage } from "@/firebase";
 import SubServiceCard from "@/components/SubServiceCard";
+import Image from "next/image";
 
 const ServicePage = () => {
   const { id } = useParams();
@@ -43,29 +44,43 @@ const ServicePage = () => {
   const [updateService, setUpdateService] = useState({
     bookings: [],
   });
+  const [subServices, setSubServices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const getService = async () => {
-    try {
-      const res = await fetch(`/api/services/${id}`);
-      const data = await res.json();
-      console.log(data);
-      setService(data);
-      setUpdateService(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
   useEffect(() => {
-    getService();
-  }, []);
-  const totalEarningFunction = () => {
-    let total = 0;
-    for (let i = 0; i < service.bookings.length; i++) {
-      total += service.bookings[i].price;
-    }
-    return total;
-  };
-  const totalEarning = totalEarningFunction();
+    const fetchingInitialData = async () => {
+      try {
+        const userId = localStorage.getItem("token");
+        if (!userId) {
+          window.location.href = "/";
+          return;
+        }
+        const response = await fetch(`/api/users/${userId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const user = await response.json();
+        if (user.role !== "admin") {
+          window.location.href = "/";
+        }
+
+        const res = await fetch(`/api/services/${id}`);
+        const data = await res.json();
+        setService(data);
+        setUpdateService(data);
+        setSubServices(data.subServices);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchingInitialData();
+  }, [id]);
+
   function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
     const date = new Date(dateString);
@@ -143,17 +158,7 @@ const ServicePage = () => {
       console.error(err);
     }
   };
-  const [subServices, setSubServices] = useState([]);
-  const gettingSubServices = async () => {
-    try {
-      const res = await fetch(`/api/services/${id}`);
-      const data = await res.json();
-      console.log(data);
-      setSubServices(data.subServices);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+
   const handleDeleteService = async () => {
     try {
       const confirmation = confirm(
@@ -304,32 +309,7 @@ const ServicePage = () => {
       body: JSON.stringify(postData),
     });
   };
-  const chechingAuthorization = async () => {
-    const id = localStorage.getItem("token");
-    if (!id) {
-      window.location.href = "/";
-      return;
-    }
-    const response = await fetch(`/api/users/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    if (data.role !== "admin") {
-      window.location.href = "/";
-    }
-  };
-  const [loading, setLoading] = useState(true);
-  const loadingFunction = async () => {
-    await chechingAuthorization();
-    await gettingSubServices();
-    setLoading(false);
-  };
-  useEffect(() => {
-    loadingFunction();
-  }, []);
+
   return (
     <>
       {loading ? (
@@ -491,7 +471,9 @@ const ServicePage = () => {
                         Service Icon
                       </h2>
                       <div className="flex justify-between items-center p-4 shadow-lg h-fit bg-white text-white rounded-md">
-                        <img
+                        <Image
+                          width={100}
+                          height={100}
                           src={updateService.icon?.url}
                           alt=""
                           className="w-24 h-24 object-cover rounded drop-shadow-lg"
@@ -542,7 +524,9 @@ const ServicePage = () => {
                                 className="flex justify-between items-center p-4 shadow-lg h-fit bg-white text-white rounded-md"
                                 key={index}
                               >
-                                <img
+                                <Image
+                                  width={100}
+                                  height={100}
                                   src={image.url}
                                   alt=""
                                   className="w-24 h-24 object-cover rounded shadow-md"
@@ -586,7 +570,9 @@ const ServicePage = () => {
 
             <div className="flex gap-4 justify-between">
               <div className="flex gap-4 items-center">
-                <img
+                <Image
+                  width={100}
+                  height={100}
                   src={service.icon?.url}
                   alt=""
                   className="w-48 h-48 rounded-md object-cover drop-shadow-lg"
@@ -595,7 +581,9 @@ const ServicePage = () => {
                   <div>
                     <span
                       className={`border ${
-                        service.status === "active" ? "bg-teal-100" : "bg-red-100"
+                        service.status === "active"
+                          ? "bg-teal-100"
+                          : "bg-red-100"
                       }  text-xs ${
                         service.status === "active"
                           ? "text-teal-700"
@@ -666,7 +654,9 @@ const ServicePage = () => {
                 >
                   {updateService.images?.map((image) => {
                     return (
-                      <img
+                      <Image
+                        width={100}
+                        height={100}
                         key={image.name}
                         src={image.url}
                         alt=""

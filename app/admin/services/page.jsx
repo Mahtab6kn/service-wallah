@@ -14,6 +14,7 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/firebase";
 import Link from "next/link";
+import Image from "next/image";
 
 const Services = () => {
   const [open, setOpen] = useState(false);
@@ -109,8 +110,15 @@ const Services = () => {
       console.error(err);
     }
   };
+  const [loading, setLoading] = useState(true);
   const [allServices, setAllServices] = useState([]);
-  const gettingServices = async () => {
+
+  const fetchingInitialData = async () => {
+    const id = localStorage.getItem("token");
+    if (!id) {
+      window.location.href = "/";
+      return;
+    }
     try {
       const fetchedData = await fetch("/api/services", {
         method: "GET",
@@ -119,37 +127,26 @@ const Services = () => {
         },
       });
       const response = await fetchedData.json();
-      console.log(response);
       setAllServices(response);
+
+      const res = await fetch(`/api/users/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      if (data.role !== "admin") {
+        window.location.href = "/";
+      }
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
-  };
-  const chechingAuthorization = async () => {
-    const id = localStorage.getItem("token");
-    if (!id) {
-      window.location.href = "/";
-      return;
-    }
-    const response = await fetch(`/api/users/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    if (data.role !== "admin") {
-      window.location.href = "/";
-    }
-  };
-  const [loading, setLoading] = useState(true);
-  const loadingFunction = async () => {
-    await chechingAuthorization();
-    await gettingServices();
-    setLoading(false);
   };
   useEffect(() => {
-    loadingFunction();
+    fetchingInitialData();
   }, []);
 
   return (
@@ -274,14 +271,19 @@ const Services = () => {
             </Dialog>
           </div>
           <div className="px-10 md:px-20 py-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {allServices.map((serv,index) => {
+            {allServices.map((serv, index) => {
               return (
-                <div key={index} className="p-4 shadow border bg-white border-gray-300 rounded-lg flex flex-col justify-between gap-4">
+                <div
+                  key={index}
+                  className="p-4 shadow border bg-white border-gray-300 rounded-lg flex flex-col justify-between gap-4"
+                >
                   <div className="flex flex-col gap-4">
                     <div className="flex gap-2 items-center">
-                      <img
+                      <Image
                         src={serv.icon.url}
                         alt="ac"
+                        width={100}
+                        height={100}
                         className="w-24 h-24 drop-shadow-lg object-cover rounded"
                       />
                       <div className="flex flex-col gap-2 justify-center">
@@ -318,12 +320,17 @@ const Services = () => {
                         🚫Uh oh, There are no Sub services yet.
                       </div>
                     ) : (
-                      serv.subServices.map((sub,index) => {
+                      serv.subServices.map((sub, index) => {
                         return (
-                          <div key={index} className="flex gap-2 items-center hover:bg-gray-300 rounded cursor-pointer transition-all duration-500 p-2">
-                            <img
+                          <div
+                            key={index}
+                            className="flex gap-2 items-center hover:bg-gray-300 rounded cursor-pointer transition-all duration-500 p-2"
+                          >
+                            <Image
                               src={sub.icon?.url}
                               alt=""
+                              width={100}
+                              height={100}
                               className="w-14 h-14 object-cover rounded shadow-md"
                             />
                             <h4 className="whitespace-nowrap">{sub.name}</h4>
