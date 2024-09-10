@@ -155,7 +155,7 @@ function Shipping() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     if (cart.length === 0) router.back();
   }, [router]); // Separate effect to handle routing
-  
+
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartItems(cart);
@@ -163,14 +163,13 @@ function Shipping() {
     const dates = getFourDays();
     setDates(dates);
     getAddress();
-  
+
     // Set the initial date in formData
     setFormData((prevFormData) => ({
       ...prevFormData,
       date: dates[0],
     }));
   }, []); // No router dependency here
-  
 
   function generateOTP() {
     // Generate a random number between 1000 and 9999
@@ -227,12 +226,14 @@ function Shipping() {
     return availableServiceProviders;
   };
 
-  const [ServiceProviderFound, setServiceProviderFound] = useState("waiting");
-  const [serviceProviderNotFoundError, setServiceProviderNotFoundError] =
-    useState("Try a different location!");
+  const [redirectingLoading, setRedirectingLoading] = useState(false);
+  const [disableRedirectingButton, setDisableRedirectingButton] =
+    useState(false);
+  const [redirectingButtonClicked, setRedirectingButtonCLicked] = useState(0);
 
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
+
     const today = new Date();
 
     const day = String(today.getDate()).padStart(2, "0");
@@ -246,6 +247,15 @@ function Shipping() {
         return;
       }
     }
+
+    if (redirectingButtonClicked > 2) {
+      setDisableRedirectingButton(true);
+      toast.error("Too many attempts. Please try again later.");
+      return;
+    }
+    setRedirectingLoading(true);
+    setRedirectingButtonCLicked((prev) => prev + 1);
+
     const location = JSON.parse(localStorage.getItem("location"));
 
     const { lat, lng } = location;
@@ -262,30 +272,31 @@ function Shipping() {
         }
       });
     });
-    if (nearestServiceProviders.length <= 0) {
-      setServiceProviderFound("not found");
-      setServiceProviderNotFoundError("Try a different location!");
-      return;
+    let availableServiceProviders = [];
+    if (nearestServiceProviders.length >= 0) {
+      availableServiceProviders = await getServiceProvidersForCartItems(
+        cartItems,
+        nearestServiceProviders
+      );
     }
-    const availableServiceProviders = await getServiceProvidersForCartItems(
-      cartItems,
-      nearestServiceProviders
-    );
-    if (availableServiceProviders.length <= 0) {
-      setServiceProviderFound("not found");
-      setServiceProviderNotFoundError("Choose a different service");
-      return;
-    }
-    setServiceProviderFound("found");
     const otp = generateOTP();
-    const postData = {
+    let postData = {
       ...formData,
-      paymentMethod: "POD",
       location,
       cartItems,
       availableServiceProviders: availableServiceProviders,
       otp,
     };
+    if (availableServiceProviders.length <= 0) {
+      postData = {
+        ...formData,
+        location,
+        cartItems,
+        availableServiceProviders: availableServiceProviders,
+        noServiceProviderAvailable: true,
+        otp,
+      };
+    }
     try {
       const response = await axios.post("/api/bookings/add", postData);
       const updatedUser = {
@@ -325,9 +336,9 @@ function Shipping() {
           amount,
           userId,
           userPhoneNumber: response.data.phoneNumber,
+          invoice: false
         }
       );
-      console.log(initiatePayment);
       if (initiatePayment.data.success) {
         const phonePeRedirectUrl =
           initiatePayment.data.data.instrumentResponse.redirectInfo.url;
@@ -338,8 +349,16 @@ function Shipping() {
     } catch (error) {
       console.log(`Error updating service:`, error);
       toast.error("An error occurred while placing order.");
+    } finally {
+      setRedirectingLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (formData.address === "Error fetching address") {
+      window.location.reload();
+    }
+  }, [formData]);
 
   return (
     <div>
@@ -499,150 +518,17 @@ function Shipping() {
               </p>
             </div>
             <Button
-              className="mt-4"
+              className="mt-4 flex justify-center items-center gap-1"
               size="lg"
               color="teal"
               fullWidth
+              loading={redirectingLoading}
+              disabled={disableRedirectingButton || redirectingLoading}
               variant="gradient"
               type="submit"
             >
               Continue to payments
             </Button>
-            {/* <Dialog
-              size="md"
-              open={paymentDailog}
-              handler={handlePaymentDailog}
-              dismiss={{ enabled: false }}
-              className="p-6 bg-gray-100"
-            >
-              <div className="flex justify-between items-center mb-6">
-                <Typography variant="h5" className="text-gray-700">
-                  Payment Options
-                </Typography>
-                <IconButton variant="text" onClick={handlePaymentDailog}>
-                  <RxCross1 size={20} />
-                </IconButton>
-              </div>
-              <div className="flex gap-4 items-center flex-col md:flex-row">
-                <div className="flex w-full min-h-24 items-center gap-2 justify-center cursor-pointer bg-white hover:scale-105 transition-all shadow-lg border px-4 py-6 rounded-lg">
-                  <div className="w-12">
-                    <Player autoplay loop src="/lottie/online.json"></Player>
-                  </div>
-                  <div className="font-semibold font-julius text-md text-gray-600 flex items-center gap-2">
-                    Pay Before service
-                  </div>
-                </div>
-                <div
-                  onClick={handleSumbitOrderViaPod}
-                  className="flex w-full min-h-24 items-center gap-2 justify-center cursor-pointer bg-white hover:scale-105 transition-all shadow-lg border p-4 rounded-lg"
-                >
-                  <div className="w-12">
-                    <Player autoplay loop src="/lottie/pod.json"></Player>
-                  </div>
-                  <div className="font-semibold font-julius text-md text-gray-600 flex items-center gap-2">
-                    Pay after service
-                  </div>
-                </div>
-                <Dialog
-                  open={completedDailog}
-                  handler={handleCompletedDailog}
-                  dismiss={{ enabled: false }}
-                  className="bg-gray-100"
-                  size="xs"
-                >
-                  {ServiceProviderFound === "waiting" ? (
-                    <div className="p-3 w-full h-full">
-                      <div className="flex justify-center flex-col items-center">
-                        <Typography
-                          variant="h5"
-                          className="text-orange-700 text-center"
-                        >
-                          Please Wait
-                        </Typography>
-                        <Typography
-                          variant="small"
-                          className="text-gray-700 text-center"
-                        >
-                          While we search for the nearest service provider
-                        </Typography>
-                      </div>
-                      <Player
-                        autoplay
-                        loop
-                        keepLastFrame={true}
-                        src="/lottie/waiting.json"
-                      ></Player>
-                    </div>
-                  ) : ServiceProviderFound === "not found" ? (
-                    <div className="relative">
-                      <div className="flex justify-center items-center absolute bottom-14 w-full">
-                        <Typography
-                          variant="paragraph"
-                          className="text-gray-500 text-center"
-                        >
-                          No Service provider found{" "}
-                          {serviceProviderNotFoundError ===
-                          "Try a different location!"
-                            ? "in your location"
-                            : "related to your service"}
-                        </Typography>
-                      </div>
-                      <Player
-                        autoplay
-                        loop
-                        keepLastFrame={true}
-                        src="/lottie/not-found.json"
-                      ></Player>
-                      <div className="p-3">
-                        <Link
-                          href={`${
-                            serviceProviderNotFoundError ===
-                            "Try a different location!"
-                              ? "/location"
-                              : "services"
-                          }`}
-                        >
-                          <Button
-                            fullWidth
-                            color="deep-orange"
-                            variant="gradient"
-                            className="flex gap-1 transition-all hover:gap-2 items-center justify-center rounded"
-                          >
-                            {serviceProviderNotFoundError}
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="p-3">
-                      <div className="flex justify-center items-center">
-                        <Typography
-                          variant="h5"
-                          className="text-teal-500 text-center"
-                        >
-                          Service Booked Successfully
-                        </Typography>
-                      </div>
-                      <Player
-                        autoplay
-                        keepLastFrame={true}
-                        src="/lottie/found.json"
-                      ></Player>
-                      <Link href={"/booking"}>
-                        <Button
-                          fullWidth
-                          color="teal"
-                          variant="gradient"
-                          className="flex gap-1 transition-all hover:gap-2 items-center justify-center"
-                        >
-                          Go to Bookings
-                        </Button>
-                      </Link>
-                    </div>
-                  )}
-                </Dialog>
-              </div>
-            </Dialog> */}
           </form>
         </div>
       </div>

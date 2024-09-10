@@ -10,6 +10,7 @@ import { toast } from "sonner";
 const PaymentStatusPage = () => {
   const searchParams = useSearchParams();
   const bookingId = searchParams.get("bookingId");
+  const invoice = searchParams.get("invoice");
   const { MTID } = useParams();
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,11 +23,10 @@ const PaymentStatusPage = () => {
       }
       try {
         const response = await fetch(
-          `/api/payments/check-status/${MTID}?bookingId=${bookingId}`,
+          `/api/payments/check-status/${MTID}?bookingId=${bookingId}&invoice=${invoice}`,
           { cache: "no-store" }
         );
         const data = await response.json();
-        console.log(data);
         if (data.success) {
           setPaymentStatus(true);
         } else {

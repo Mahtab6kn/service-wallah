@@ -250,71 +250,84 @@ const Invoice = ({ selectedBooking, setSelectedBooking }) => {
             </div>
           </Dialog>
         </div>
-        <div className="border p-4 bg-white rounded-lg m-0 md:m-6">
-          <div className="flex justify-between items-start flex-col lg:flex-row mb-2 gap-2">
-            <div className="flex flex-col">
-              <div className="flex gap-2 items-center">
-                Title:
-                <div className="text-gray-700 font-medium">
-                  {selectedBooking.invoices?.title}
+        {selectedBooking.invoices?.title && (
+          <div className="border p-4 bg-white rounded-lg m-0 md:m-6">
+            <div className="flex justify-between items-start flex-col lg:flex-row mb-2 gap-2">
+              <div className="flex flex-col">
+                <div className="flex gap-2 items-center">
+                  Title:
+                  <div className="text-gray-700 font-medium">
+                    {selectedBooking.invoices?.title}
+                  </div>
+                </div>
+                <div className="flex gap-2 items-center">
+                  Date & Time:
+                  <div className="text-gray-700 font-medium">
+                    {selectedBooking.invoices?.date},{" "}
+                    {selectedBooking.invoices?.time}
+                  </div>
+                </div>
+                <div className="flex gap-2 items-center">
+                  Total:
+                  <div className="text-gray-700 font-medium">
+                    ₹{selectedBooking.invoices?.total}
+                  </div>
                 </div>
               </div>
-              <div className="flex gap-2 items-center">
-                Date & Time:
-                <div className="text-gray-700 font-medium">
-                  {selectedBooking.invoices?.date},{" "}
-                  {selectedBooking.invoices?.time}
-                </div>
-              </div>
-              <div className="flex gap-2 items-center">
-                Total:
-                <div className="text-gray-700 font-medium">
-                  ₹{selectedBooking.invoices?.total}
-                </div>
+              <div className="flex flex-col justify-center gap-2">
+                {selectedBooking.invoices.status === "Invoice Accepted" ? (
+                  <div className="bg-teal-100 text-teal-800 rounded-full px-3 py-1 text-sm capitalize">
+                    {selectedBooking.invoices.status}
+                  </div>
+                ) : (
+                  <div className="bg-red-100 text-red-800 rounded-full px-3 py-1 text-sm capitalize">
+                    {selectedBooking.invoices.status}
+                  </div>
+                )}
+                {selectedBooking.invoices.paid ? (
+                  <div className="bg-teal-100 flex justify-center text-teal-800 rounded-full px-3 py-1 text-sm capitalize">
+                    Paid
+                  </div>
+                ) : (
+                  <div className="bg-red-100 flex justify-center text-red-800 rounded-full px-3 py-1 text-sm capitalize">
+                    Not paid
+                  </div>
+                )}
               </div>
             </div>
-            {selectedBooking.invoices.status === "Invoice Accepted" ? (
-              <div className="bg-teal-100 text-teal-800 rounded-full px-3 py-1 text-sm capitalize">
-                {selectedBooking.invoices.status}
-              </div>
-            ) : (
-              <div className="bg-red-100 text-red-800 rounded-full px-3 py-1 text-sm capitalize">
-                {selectedBooking.invoices.status}
-              </div>
-            )}
-          </div>
-          <table className="w-full flex flex-row flex-no-wrap sm:bg-white rounded-lg border overflow-auto">
-            <thead className="text-white">
-              <tr className="bg-teal-400 flex flex-col flex-no wrap sm:table-row rounded-l-lg sm:rounded-none mb-2 sm:mb-0">
-                <th className="p-3 text-left">Description</th>
-                <th className="p-3 text-left">Quantity</th>
-                <th className="p-3 text-left">Unit Price</th>
-                <th className="p-3 text-left">Amount</th>
-              </tr>
-            </thead>
-            <tbody className="flex-1 sm:flex-none">
-              {selectedBooking.invoices?.items?.map((item, index) => (
-                <tr
-                  className="flex flex-col flex-no wrap sm:table-row mb-2 sm:mb-0"
-                  key={index}
-                >
-                  <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
-                    {item.description}
-                  </td>
-                  <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
-                    {item.quantity}
-                  </td>
-                  <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
-                    ₹{item.unitPrice}
-                  </td>
-                  <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
-                    ₹{item.amount}
-                  </td>
+            <table className="w-full flex flex-row flex-no-wrap sm:bg-white rounded-lg border overflow-auto">
+              <thead className="text-white">
+                <tr className="bg-teal-400 flex flex-col flex-no wrap sm:table-row rounded-l-lg sm:rounded-none mb-2 sm:mb-0">
+                  <th className="p-3 text-left">Description</th>
+                  <th className="p-3 text-left">Quantity</th>
+                  <th className="p-3 text-left">Unit Price</th>
+                  <th className="p-3 text-left">Amount</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="flex-1 sm:flex-none">
+                {selectedBooking.invoices?.items?.map((item, index) => (
+                  <tr
+                    className="flex flex-col flex-no wrap sm:table-row mb-2 sm:mb-0"
+                    key={index}
+                  >
+                    <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                      {item.description}
+                    </td>
+                    <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                      {item.quantity}
+                    </td>
+                    <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                      ₹{item.unitPrice}
+                    </td>
+                    <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                      ₹{item.amount}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Dialog>
     </div>
   );

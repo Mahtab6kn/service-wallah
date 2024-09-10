@@ -129,8 +129,8 @@ const SubServiceCard = ({ sub, index, serviceId }) => {
     <Card className="w-full max-w-72 shadow-lg" key={index}>
       <CardHeader floated={false} color="blue-gray">
         <Image
-          width={100}
-          height={100}
+          width={1000}
+          height={1000}
           src={subService.icon.url}
           alt="Service Icon"
           className="object-cover"

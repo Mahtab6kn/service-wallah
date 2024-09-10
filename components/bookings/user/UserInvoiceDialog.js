@@ -8,6 +8,8 @@ const UserInvoiceDialog = ({
   invoiceDialogOpen,
   handleInvoiceDialog,
   setSelectedUserBooking,
+  redirectingLoading,
+  handleInvoicePayment
 }) => {
   const handleRejectInvoice = async () => {
     const postData = {
@@ -131,9 +133,20 @@ const UserInvoiceDialog = ({
             Invoice rejected
           </p>
         ) : selectedUserBooking.invoices?.status === "Invoice Accepted" ? (
-          <p className="text-teal-500 text-sm text-center mt-4">
-            Invoice accepted, Service will start soon!
-          </p>
+          <div className="text-teal-500 text-sm mt-4 flex items-center justify-between">
+            <div>Invoice accepted, Service will start soon! </div>
+            {selectedUserBooking.invoices.paid && (
+              <Button
+                variant="gradient"
+                color="teal"
+                className="rounded"
+                loading={redirectingLoading}
+                onClick={handleInvoicePayment}
+              >
+                Pay ₹{selectedUserBooking.invoices.total}
+              </Button>
+            )}
+          </div>
         ) : (
           <div className="flex gap-2 items-center mt-4 justify-end">
             <Button

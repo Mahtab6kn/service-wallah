@@ -9,6 +9,7 @@ export async function GET(req, { params }) {
 
   const { searchParams } = new URL(req.url);
   const bookingId = searchParams.get("bookingId");
+  const invoice = searchParams.get("invoice");
 
   if (!MTID)
     return NextResponse.json("Transaction is not found!", { status: 400 });
@@ -44,18 +45,39 @@ export async function GET(req, { params }) {
     const response = await axios.request(options);
     await connectMongoDB();
 
-    // Fix this code and the data should be updated!
-
     if (response.data.success) {
       const booking = await Booking.findById(bookingId);
       if (!booking) {
         return NextResponse.json("Invalid booking id", { status: 500 });
       }
-      booking.paid = true;
-      booking.transactionId = MTID;
-      booking.status = "Request has been sent to service provider!";
-      await booking.save();
+
+      if (invoice) {
+        await Booking.findByIdAndUpdate(
+          bookingId,
+          {
+            $set: {
+              "invoices.paid": true,
+              "invoices.paymentMethod": "Online",
+            },
+          },
+          { new: true }
+        );
+      } else {
+        await Booking.findByIdAndUpdate(
+          bookingId,
+          {
+            $set: {
+              paid: true,
+              transactionId: MTID,
+              paymentMethod: "Online",
+              status: "Request has been sent to service provider!",
+            },
+          },
+          { new: true }
+        );
+      }
     }
+
     return NextResponse.json(response.data, { status: 200 });
   } catch (error) {
     console.error("Error during checking payment status:", error);

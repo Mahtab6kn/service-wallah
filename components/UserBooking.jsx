@@ -16,7 +16,7 @@ import { RxCross2 } from "react-icons/rx";
 import { Typography } from "@material-tailwind/react";
 import { FaEye, FaPhone } from "react-icons/fa6";
 import { IoMdMailOpen, IoMdOpen } from "react-icons/io";
-import { FaBookmark } from "react-icons/fa";
+import { FaBookmark, FaClipboard, FaWhatsapp } from "react-icons/fa";
 import { Rating } from "@material-tailwind/react";
 import { PiGenderIntersexFill } from "react-icons/pi";
 import axios from "axios";
@@ -24,6 +24,9 @@ import Link from "next/link";
 import { GoAlertFill } from "react-icons/go";
 import UserInvoiceDialog from "./bookings/user/UserInvoiceDialog";
 import UserCompletedBooking from "./bookings/user/UserCompletedBooking";
+import { toast } from "sonner";
+import { IoMail } from "react-icons/io5";
+import { useRouter } from "next/navigation";
 
 const UserBooking = ({ user, allBookings }) => {
   //Service Provider detail showing to user dialog
@@ -129,7 +132,7 @@ const UserBooking = ({ user, allBookings }) => {
   );
 
   const [bookingCreatedDate, setBookingCreatedDate] = useState("");
-  
+
   const options = useMemo(
     () => ({
       year: "numeric",
@@ -236,6 +239,36 @@ const UserBooking = ({ user, allBookings }) => {
     checkBetweenTimeAndDate();
   }, [selectedUserBooking, handleInvoiceDialog, options]);
 
+  const router = useRouter();
+  const [redirectingLoading, setRedirectingLoading] = useState(false);
+  const handleInvoicePayment = async () => {
+    try {
+      setRedirectingLoading(true);
+      const userId = localStorage.getItem("token");
+      const initiatePayment = await axios.post(
+        `/api/payments/initiate-payment`,
+        {
+          bookingId: selectedUserBooking._id,
+          amount: selectedUserBooking.invoices.total,
+          userId,
+          userPhoneNumber: selectedUserBooking.phoneNumber,
+          invoice: true,
+        }
+      );
+      if (initiatePayment.data.success) {
+        const phonePeRedirectUrl =
+          initiatePayment.data.data.instrumentResponse.redirectInfo.url;
+        router.push(phonePeRedirectUrl);
+      } else {
+        toast.error(initiatePayment.data);
+      }
+    } catch (err) {
+      console.error("Invoice payment error", err);
+      toast.error("Error on initializing payment!");
+    } finally {
+      setRedirectingLoading(false);
+    }
+  };
   return (
     <div>
       {userBookings.length === 0 &&
@@ -352,6 +385,8 @@ const UserBooking = ({ user, allBookings }) => {
                     handleInvoiceDialog={handleInvoiceDialog}
                     invoiceDialogOpen={invoiceDialogOpen}
                     setSelectedUserBooking={setSelectedUserBooking}
+                    redirectingLoading={redirectingLoading}
+                    handleInvoicePayment={handleInvoicePayment}
                   />
                   <header className="flex items-center justify-between gap-2">
                     <h1 className="text-center text-xl lg:text-2xl text-gray-700">
@@ -702,12 +737,39 @@ const UserBooking = ({ user, allBookings }) => {
                       </tbody>
                     </table>
                   </section>
-                  <section className="flex justify-between items-center flex-col lg:flex-row gap-4">
+                  <div className="flex gap-1 items-center">
+                    Contact for any query:{" "}
+                    <div className="flex gap-2">
+                      <Link
+                        target="_blank"
+                        href={`https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_WHATSAPP_NUMBER}/?text=Hello, i have created a service on ${process.env.NEXT_PUBLIC_COMPANY_NAME}!
+                          
+                          This is my booking id: ${selectedUserBooking._id}.
+                          
+                          
+                          I am facing the issue: .....`}
+                        className="flex items-center gap-2 text-xs px-3 py-1.5 bg-[#25D366] text-white rounded-md shadow-md hover:bg-[#20b358] transition-colors duration-200 cursor-pointer"
+                      >
+                        <FaWhatsapp className="text-lg" />
+                        <span className="font-semibold">WhatsApp</span>
+                      </Link>
+
+                      <Link
+                        target="_blank"
+                        href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL_ID}`}
+                        className="flex items-center gap-2 text-xs px-3 py-1.5 bg-gray-700 text-white rounded-md shadow-md hover:bg-gray-600 transition-colors duration-200 cursor-pointer"
+                      >
+                        <IoMail className="text-lg" />
+                        <span className="font-semibold">Mail Us</span>
+                      </Link>
+                    </div>
+                  </div>
+                  <section className="w-full mt-4 flex justify-between items-center flex-col lg:flex-row gap-4">
                     <p className="font-medium text-red-600 text-sm">
                       Note: Order can be cancelled up to{" "}
                       <strong>2 hours</strong> before the scheduled time.
                     </p>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-end gap-2 w-fit whitespace-nowrap">
                       <Button
                         className="rounded"
                         variant="outlined"
@@ -837,14 +899,27 @@ const UserBooking = ({ user, allBookings }) => {
                         </div>
                       </Dialog>
                       {selectedUserBooking.invoices.title && (
-                        <Button
-                          variant="gradient"
-                          color="blue"
-                          className="rounded"
-                          onClick={handleInvoiceDialog}
-                        >
-                          View invoice
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="gradient"
+                            color="blue"
+                            className="rounded"
+                            onClick={handleInvoiceDialog}
+                          >
+                            View invoice
+                          </Button>
+                          {!selectedUserBooking.invoices.paid && (
+                            <Button
+                              variant="gradient"
+                              color="teal"
+                              className="rounded"
+                              loading={redirectingLoading}
+                              onClick={handleInvoicePayment}
+                            >
+                              Pay ₹{selectedUserBooking.invoices.total}
+                            </Button>
+                          )}
+                        </div>
                       )}
                     </div>
                   </section>
@@ -852,9 +927,32 @@ const UserBooking = ({ user, allBookings }) => {
               ) : (
                 <div className="p-6 bg-gray-300 rounded-2xl">
                   <header className="flex items-center justify-between gap-2 mb-2">
-                    <h1 className="text-center text-2xl text-gray-700">
-                      Booking Details
-                    </h1>
+                    <div
+                      title="Copy booking id"
+                      className="flex items-center gap-2 cursor-pointer transition-colors duration-200"
+                      onClick={() =>
+                        navigator.clipboard
+                          .writeText(selectedUserBooking._id)
+                          .then(() => {
+                            toast.success("Booking ID copied!");
+                          })
+                          .catch((err) => {
+                            console.error("Failed to copy the text: ", err);
+                          })
+                      }
+                    >
+                      <FaClipboard className="text-teal-500 text-2xl" />{" "}
+                      {/* Clipboard icon */}
+                      <div className="flex gap-2">
+                        <span className="text-gray-700 font-semibold">
+                          Booking ID
+                        </span>
+                        <div className="text-teal-500 font-bold">
+                          {selectedUserBooking._id}
+                        </div>
+                      </div>
+                    </div>
+
                     <IconButton
                       variant="text"
                       onClick={handleOpenUserBookingDialog}
@@ -874,14 +972,9 @@ const UserBooking = ({ user, allBookings }) => {
                       </div>
                     </div>
                     <div className="flex flex-col gap-4 w-full bg-white p-4 rounded-lg">
-                      <div className="flex gap-2 flex-col lg-flex-row items-center">
-                        <div className="flex items-center gap-1">
-                          <GrStatusInfo />
-                          Booking Status:
-                        </div>
-                        <div className="text-gray-700 font-semibold text-center">
-                          {selectedUserBooking?.status}
-                        </div>
+                      <div className="flex gap-2 flex-col lg:flex-row items-center text-gray-700 font-semibold text-sm">
+                        <GrStatusInfo />
+                        <div>{selectedUserBooking?.status}</div>
                       </div>
                       <div className="flex gap-4 flex-col">
                         {selectedUserBooking.cartItems.map(
@@ -923,6 +1016,33 @@ const UserBooking = ({ user, allBookings }) => {
                             </div>
                           )
                         )}
+                      </div>
+                      <div className="flex gap-1 items-center">
+                        Contact for any query:{" "}
+                        <div className="flex gap-2">
+                          <Link
+                            target="_blank"
+                            href={`https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_WHATSAPP_NUMBER}/?text=Hello, i have created a service on ${process.env.NEXT_PUBLIC_COMPANY_NAME}!
+                          
+                          This is my booking id: ${selectedUserBooking._id}.
+                          
+                          
+                          I am facing the issue: .....`}
+                            className="flex items-center gap-2 text-xs px-3 py-1.5 bg-[#25D366] text-white rounded-md shadow-md hover:bg-[#20b358] transition-colors duration-200 cursor-pointer"
+                          >
+                            <FaWhatsapp className="text-lg" />
+                            <span className="font-semibold">WhatsApp</span>
+                          </Link>
+
+                          <Link
+                            target="_blank"
+                            href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL_ID}`}
+                            className="flex items-center gap-2 text-xs px-3 py-1.5 bg-gray-700 text-white rounded-md shadow-md hover:bg-gray-600 transition-colors duration-200 cursor-pointer"
+                          >
+                            <IoMail className="text-lg" />
+                            <span className="font-semibold">Mail Us</span>
+                          </Link>
+                        </div>
                       </div>
                       <Button
                         className="rounded"

@@ -54,7 +54,7 @@ const bookingSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    paymentMethod: { type: String, required: true },
+    paymentMethod: { type: String },
     verificationImage: {
       type: Object,
       default: {
@@ -73,7 +73,7 @@ const bookingSchema = new Schema(
         time: String,
         paymentMethod: { type: String },
         paid: { type: Boolean },
-        status: { type: String },
+        status: { type: String, default: "Not Accepted Yet!", required: true },
         items: [
           {
             description: String,
@@ -84,7 +84,6 @@ const bookingSchema = new Schema(
         ],
         total: String,
       },
-      default: {},
     },
     assignedServiceProviders: {
       type: Object,

@@ -399,37 +399,6 @@ const ServicePage = () => {
                         InActive
                       </Option>
                     </Select>
-                    {/* <Select
-                      className="bg-white"
-                      label="Rank"
-                      value={updateService.rank}
-                      onChange={(e) =>
-                        setUpdateService({ ...updateService, rank: e })
-                      }
-                    >
-                      <Option value="1">1</Option>
-                      <Option value="2">2</Option>
-                      <Option value="3">3</Option>
-                      <Option value="4">4</Option>
-                      <Option value="5">5</Option>
-                      <Option value="6">6</Option>
-                      <Option value="7">7</Option>
-                      <Option value="8">8</Option>
-                      <Option value="9">9</Option>
-                      <Option value="10">10</Option>
-                    </Select> */}
-                    {/* <Input
-                      color="indigo"
-                      className="bg-white"
-                      label="Tags - seperate with coma(,)"
-                      value={updateService.tags}
-                      onChange={(e) =>
-                        setUpdateService({
-                          ...updateService,
-                          tags: e.target.value,
-                        })
-                      }
-                    /> */}
                   </div>
 
                   <DialogFooter>
@@ -472,8 +441,8 @@ const ServicePage = () => {
                       </h2>
                       <div className="flex justify-between items-center p-4 shadow-lg h-fit bg-white text-white rounded-md">
                         <Image
-                          width={100}
-                          height={100}
+                          width={1000}
+                          height={1000}
                           src={updateService.icon?.url}
                           alt=""
                           className="w-24 h-24 object-cover rounded drop-shadow-lg"
@@ -571,8 +540,8 @@ const ServicePage = () => {
             <div className="flex gap-4 justify-between">
               <div className="flex gap-4 items-center">
                 <Image
-                  width={100}
-                  height={100}
+                  width={1000}
+                  height={1000}
                   src={service.icon?.url}
                   alt=""
                   className="w-48 h-48 rounded-md object-cover drop-shadow-lg"
@@ -655,8 +624,8 @@ const ServicePage = () => {
                   {updateService.images?.map((image) => {
                     return (
                       <Image
-                        width={100}
-                        height={100}
+                        width={1000}
+                        height={1000}
                         key={image.name}
                         src={image.url}
                         alt=""
