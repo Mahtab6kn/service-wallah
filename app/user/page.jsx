@@ -116,24 +116,14 @@ const User = () => {
       setOpen(false);
     }
   };
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchingInitialData = async () => {
       try {
-        const id = localStorage.getItem("token");
-        if (!id) {
-          window.location.href = "/";
-          return;
-        }
-        const response = await axios.get(`/api/users/${id}`);
-        const data = response.data;
-
-        if (data.role !== "user") {
-          window.location.href = "/";
-        }
-        setUser(data);
-        setUpdateUser(data);
+        const user = await axios.get("/api/users/check-authorization");
+        setUser(user.data.data);
+        setUpdateUser(user.data.data);
       } catch (err) {
         console.log(err);
       } finally {

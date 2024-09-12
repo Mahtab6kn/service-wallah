@@ -30,10 +30,10 @@ const Admin = () => {
 
   const checkingAuthorization = async () => {
     const id = localStorage.getItem("token");
-    if (!id) {
-      window.location.href = "/";
-      return;
-    }
+    // if (!id) {
+    //   window.location.href = "/";
+    //   return;
+    // }
     const response = await fetch(`/api/users/${id}`, {
       method: "GET",
       headers: {
@@ -41,16 +41,16 @@ const Admin = () => {
       },
     });
     const data = await response.json();
-    if (data.role !== "admin") {
-      window.location.href = "/";
-    }
+    // if (data.role !== "admin") {
+    //   window.location.href = "/";
+    // }
   };
 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadingFunction = async () => {
-      await checkingAuthorization();
+      // await checkingAuthorization(); 
       await getDashboardData();
       setLoading(false);
     };
