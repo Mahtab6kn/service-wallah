@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
+import bcrypt from "bcrypt";
 
 const userSchema = new Schema(
   {
@@ -40,7 +41,7 @@ const userSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin", "service-provider"]
+      enum: ["user", "admin", "service-provider"],
     },
     serviceHistory: {
       type: [], // Assuming these are references to other documents
@@ -77,6 +78,23 @@ const userSchema = new Schema(
     timestamps: true,
   }
 );
+
+userSchema.pre("save", function (next) {
+  const user = this;
+
+  if (!user.isModified("password")) return next();
+
+  bcrypt.genSalt(12, function (err, salt) {
+    if (err) return next(err);
+
+    bcrypt.hash(user.password, salt, function (err, hash) {
+      if (err) return next(err);
+
+      user.password = hash;
+      next();
+    });
+  });
+});
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
