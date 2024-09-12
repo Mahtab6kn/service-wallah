@@ -135,7 +135,7 @@ const UserInvoiceDialog = ({
         ) : selectedUserBooking.invoices?.status === "Invoice Accepted" ? (
           <div className="text-teal-500 text-sm mt-4 flex items-center justify-between">
             <div>Invoice accepted, Service will start soon! </div>
-            {selectedUserBooking.invoices.paid && (
+            {!selectedUserBooking.invoices.paid && (
               <Button
                 variant="gradient"
                 color="teal"
