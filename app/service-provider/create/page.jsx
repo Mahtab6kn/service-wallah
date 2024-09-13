@@ -1,6 +1,5 @@
 "use client";
 import Footer from "@/components/Footer";
-import Nav from "@/components/Nav";
 import { storage } from "@/firebase";
 import {
   Button,
@@ -203,7 +202,6 @@ const [otpError, setOtpError] = useState("")
           <li></li>
         </ul>
       </div>
-      <Nav />
       <Dialog
         open={open4}
         handler={handleOpen4}

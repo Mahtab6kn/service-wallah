@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import Nav from "@/components/Nav";
 import { useState, useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import Link from "next/link";
@@ -25,6 +24,7 @@ import { storage } from "@/firebase";
 import axios from "axios";
 import Footer from "@/components/Footer";
 import Image from "next/image";
+import { toast } from "sonner";
 
 const User = () => {
   const [user, setUser] = useState({
@@ -122,8 +122,11 @@ const User = () => {
     const fetchingInitialData = async () => {
       try {
         const user = await axios.get("/api/users/check-authorization");
-        setUser(user.data.data);
-        setUpdateUser(user.data.data);
+        if (!user.data.success) { 
+          toast.error(user.data.message);
+        }
+        setUser(user.data.user);
+        setUpdateUser(user.data.user);
       } catch (err) {
         console.log(err);
       } finally {
@@ -143,7 +146,6 @@ const User = () => {
         </div>
       ) : (
         <div className="userpage-bg min-h-screen">
-          <Nav />
           <div className="flex min-h-full flex-col justify-center items-center">
             <div className="w-10/12 mb-4">
               <button

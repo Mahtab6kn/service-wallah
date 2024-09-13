@@ -63,7 +63,7 @@ export async function POST(request) {
 
     // Set the token as an HTTP-only cookie, accessible on client and server side
     const response = NextResponse.json(
-      { message: "Login successful", user: { phoneNumber: user.phoneNumber } },
+      { message: "Login successful", user },
       { status: 200 }
     );
     // Set cookie options (HttpOnly, Secure in production)

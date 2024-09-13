@@ -1,12 +1,11 @@
 "use client";
 import Footer from "@/components/Footer";
-import Nav from "@/components/Nav";
 import { Button, ButtonGroup } from "@material-tailwind/react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { RiErrorWarningFill } from "react-icons/ri";
 import { VscDebugContinue } from "react-icons/vsc";
@@ -81,7 +80,6 @@ const Cart = () => {
       <Head>
         <title>Shopping Cart</title>
       </Head>
-      <Nav />
       <div className="flex flex-col lg:flex-row px-4 lg:px-10 h-full justify-between gap-6 lg:gap-10 my-6 lg:my-10 ">
         <div className="w-full lg:w-2/3 min-h-auto max-h-[78vh] overflow-auto bg-white pb-6 shadow-lg rounded-lg no-scrollbar">
           <div className="flex items-center justify-between gap-9 sticky px-6 py-4 top-0 bg-white z-10">

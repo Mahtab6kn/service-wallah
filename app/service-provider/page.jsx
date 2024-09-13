@@ -1,15 +1,12 @@
 "use client";
 import React, {
-  useRef,
   useState,
   useEffect,
   useMemo,
   useCallback,
 } from "react";
-import Nav from "@/components/Nav";
 import { FaArrowLeft, FaHistory } from "react-icons/fa";
 import { useParams, useRouter } from "next/navigation";
-import { Rating } from "@material-tailwind/react";
 import Image from "next/image";
 import {
   Button,
@@ -259,7 +256,6 @@ const ServiceProvider = () => {
 
   return (
     <div>
-      <Nav />
       <div className="flex min-h-full flex-col justify-center items-center">
         <div className="w-10/12 mb-4">
           <button

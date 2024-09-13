@@ -1,12 +1,9 @@
 "use client";
 import Footer from "@/components/Footer";
-import Nav from "@/components/Nav";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import React, { useEffect, useState } from "react";
 import {
   Button,
-  Dialog,
-  IconButton,
   Input,
   List,
   ListItem,
@@ -17,9 +14,6 @@ import {
 } from "@material-tailwind/react";
 import Link from "next/link";
 import { MdOutlineMyLocation } from "react-icons/md";
-import { RxCross1 } from "react-icons/rx";
-import { SiPhonepe } from "react-icons/si";
-import { Player } from "@lottiefiles/react-lottie-player";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { getDistance } from "@/utils/distance";
@@ -362,7 +356,6 @@ function Shipping() {
 
   return (
     <div>
-      <Nav />
       <div className="flex flex-col md:flex-row justify-center gap-20 p-8">
         <div className="w-full md:w-1/3">
           <h2 className="font-julius lg:text-4xl md:text-4xl sm:text-3xl text-3xl mb-4 text-gray-700">

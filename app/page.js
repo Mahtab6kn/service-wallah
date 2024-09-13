@@ -1,5 +1,4 @@
 "use client";
-import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import ServiceSection from "../components/ServiceSection";
 import { BsPersonFillAdd } from "react-icons/bs";
@@ -18,6 +17,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import axios from "axios";
 import Image from "next/image";
+import Nav from "@/components/nav/Nav";
 
 export default function Home() {
   const [topServices, setTopServices] = useState([]);
@@ -82,7 +82,6 @@ export default function Home() {
           loading ? "hidden" : "block"
         } transition-all duration-700`}
       >
-        <Nav />
         <div className="areahome">
           <ul className="circleshome">
             <li className="shape1"></li>

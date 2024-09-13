@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Services from "@/components/Services";
 
@@ -46,7 +45,6 @@ const AllServices = () => {
           loading ? "hidden" : "block"
         } transition-all duration-700`}
       >
-        <Nav />
         <div className="w-full flex flex-col justify-center items-center mt-8 px-4">
           <h1 className="font-julius lg:text-5xl md:text-4xl sm:text-3xl text-3xl text-center text-gray-700">
             FOR ALL YOUR NEEDS WE PROVIDES

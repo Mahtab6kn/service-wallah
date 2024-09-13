@@ -8,7 +8,6 @@ import {
 } from "@react-google-maps/api";
 import { Button, Input } from "@material-tailwind/react";
 import { FaLocationCrosshairs } from "react-icons/fa6";
-import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
 const libraries = ["places"];
@@ -142,7 +141,6 @@ export default function Location() {
 
   return (
     <>
-      <Nav />
       <div
         className={`${
           !isLoaded ? "hidden" : "bloack"

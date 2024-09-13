@@ -1,5 +1,4 @@
 "use client";
-import Nav from "@/components/Nav";
 import React, { useEffect, useState } from "react";
 import DashboardCard from "@/components/DashboardCard";
 import HorizontalBarChart from "@/components/HorizontalBarChart";
@@ -69,7 +68,6 @@ const Admin = () => {
         </div>
       ) : (
         <div>
-          <Nav />
           <div className="flex lg:flex-row flex-col h-full items-start gap-10 px-8 my-4">
             <div className="grid grid-cols-1 gap-6 self-start w-full">
               <DashboardCard data={data} />

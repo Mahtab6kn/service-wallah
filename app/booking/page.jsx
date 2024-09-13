@@ -1,6 +1,5 @@
 "use client";
 import Footer from "@/components/Footer";
-import Nav from "@/components/Nav";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import UserBooking from "@/components/UserBooking";
@@ -58,9 +57,6 @@ const Booking = () => {
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
-      <div className="w-full">
-        <Nav />
-      </div>
       {loading ? (
         <div className="flex justify-center items-center h-full">
           <div className="text-lg font-semibold animate-spin my-56">

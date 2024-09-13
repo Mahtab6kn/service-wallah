@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import Nav from "@/components/Nav";
 import Footer from "@/components/Footer.js";
 import { WiStars } from "react-icons/wi";
 import ServiceSection from "@/components/ServiceSection";
@@ -9,7 +8,6 @@ import ServiceSection from "@/components/ServiceSection";
 const About = () => {
   return (
     <div>
-      <Nav />
       <div className="min-h-screen container mx-auto px-4 py-8 flex flex-col items-center justify-center bg-gray-100">
         <div className="max-w-full w-full bg-white shadow-md rounded-lg p-8 flex flex-col md:flex-row">
           <div className="md:w-1/2 md:pr-8">
