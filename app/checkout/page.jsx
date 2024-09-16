@@ -1,5 +1,4 @@
 "use client";
-import Footer from "@/components/Footer";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import React, { useEffect, useState } from "react";
 import {
@@ -19,6 +18,7 @@ import axios from "axios";
 import { getDistance } from "@/utils/distance";
 import { toast } from "sonner";
 import Image from "next/image";
+import { useSelector } from "react-redux";
 
 function Shipping() {
   const [formData, setFormData] = useState({
@@ -125,25 +125,7 @@ function Shipping() {
       }));
     }
   };
-  const [user, setUser] = useState({});
-  const gettingUser = async () => {
-    try {
-      const id = localStorage.getItem("token");
-      const response = await axios.get(`/api/users/${id}`);
-      const data = await response.data;
-      setUser(data);
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        fullname: data.name || "Name",
-        profileImage: data.image || { url: "", name: "" },
-        phoneNumber: data.phoneNumber || "Phone Number",
-        email: data.email || "Email",
-      }));
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const user = useSelector((state) => state.user.user);
   const router = useRouter();
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -153,17 +135,19 @@ function Shipping() {
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartItems(cart);
-    gettingUser();
+
     const dates = getFourDays();
     setDates(dates);
     getAddress();
-
-    // Set the initial date in formData
     setFormData((prevFormData) => ({
       ...prevFormData,
+      fullname: user.name || "Name",
+      profileImage: user.image || { url: "", name: "" },
+      phoneNumber: user.phoneNumber || "Phone Number",
+      email: user.email || "Email",
       date: dates[0],
     }));
-  }, []); // No router dependency here
+  }, [user]); // No router dependency here
 
   function generateOTP() {
     // Generate a random number between 1000 and 9999
@@ -308,7 +292,6 @@ function Shipping() {
       });
 
       await axios.post("/api/users/update", updatedUser);
-      gettingUser();
 
       // To update the booking of the service!
       await axios.post(`/api/services/update-bookings`, {
@@ -322,15 +305,14 @@ function Shipping() {
           0
         ) + 18
       ).toFixed(2);
-      const userId = localStorage.getItem("token");
       const initiatePayment = await axios.post(
         `/api/payments/initiate-payment`,
         {
           bookingId: response.data._id,
           amount,
-          userId,
+          userId: user._id,
           userPhoneNumber: response.data.phoneNumber,
-          invoice: false
+          invoice: false,
         }
       );
       if (initiatePayment.data.success) {
@@ -525,7 +507,6 @@ function Shipping() {
           </form>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

@@ -22,13 +22,16 @@ import { PiGenderIntersexFill } from "react-icons/pi";
 import axios from "axios";
 import Link from "next/link";
 import { GoAlertFill } from "react-icons/go";
-import UserInvoiceDialog from "./bookings/user/UserInvoiceDialog";
-import UserCompletedBooking from "./bookings/user/UserCompletedBooking";
+import UserInvoiceDialog from "./UserInvoiceDialog";
+import UserCompletedBooking from "./UserCompletedBooking";
 import { toast } from "sonner";
 import { IoMail } from "react-icons/io5";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 
-const UserBooking = ({ user, allBookings }) => {
+const UserBooking = ({ allBookings }) => {
+  const user = useSelector((state) => state.user.user);
+
   //Service Provider detail showing to user dialog
   const [openServiceProviderDetailDialog, setOpenServiceProviderDetailDialog] =
     useState(false);
@@ -92,10 +95,13 @@ const UserBooking = ({ user, allBookings }) => {
     useState(false);
   const handleCancellationReasonDialog = () =>
     setCancellationReasonDialog(!cancellationReasonDialog);
+  
   const [cancellationReasonNotListed, setCancellationReasonNotListed] =
     useState(false);
+
   const [cancellationReason, setCancellationReason] = useState("");
   const [openCancellationAlert, setOpenCancellationAlert] = useState(false);
+
   const handleCancelBooking = async () => {
     try {
       if (cancellationReason === "") {

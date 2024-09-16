@@ -8,19 +8,18 @@ import Image from "next/image";
 import NavList from "./NavList";
 import Profile from "./user-profile/Profile";
 import UserNavigation from "./user-profile/UserNavigation";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser, setUserLoading } from "@/redux/slice/userSlice";
 
 export default function Nav() {
   const [openNav, setOpenNav] = useState(false);
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
   const handleOpenLoginDialog = () => setOpenLoginDialog(!openLoginDialog);
 
-  const [user, setUser] = useState({
-    image: {
-      url: "",
-      name: "",
-    },
-  });
-  const [userLoading, setUserLoading] = useState(true);
+  const user = useSelector((state) => state.user.user);
+  const userLoading = useSelector((state) => state.user.userLoading);
+
+  const dispatch = useDispatch();
   const gettingUser = async () => {
     try {
       const response = await fetch(`/api/users/check-authorization`, {
@@ -36,12 +35,12 @@ export default function Nav() {
       if (!data.success) {
         return toast.error(data.message);
       }
-      setUser(data.user);
+      dispatch(setUser(data.user));
     } catch (err) {
       console.log(err);
       toast.error("Error fetching user");
     } finally {
-      setUserLoading(false);
+      dispatch(setUserLoading(false));
     }
   };
 
@@ -71,11 +70,9 @@ export default function Nav() {
         <div className="hidden gap-2 lg:flex lg:items-center lg:justify-end w-full">
           <NavList />
           <Profile
-            userLoading={userLoading}
-            user={user}
             openLoginDialog={openLoginDialog}
             handleOpenLoginDialog={handleOpenLoginDialog}
-            setUser={setUser}
+            setOpenLoginDialog={setOpenLoginDialog}
           />
         </div>
         <div className="flex items-center justify-end gap-1">

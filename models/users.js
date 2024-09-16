@@ -63,9 +63,10 @@ const userSchema = new Schema(
       default: [],
     },
     bookings: {
-      type: [], // Assuming these are references to other documents
-      default: [],
+      type: [{ type: Schema.Types.ObjectId, ref: "Booking" }],
+      default: [], // Default value as an empty array
     },
+
     payments: {
       type: [], // Assuming these are references to other documents
       default: [],

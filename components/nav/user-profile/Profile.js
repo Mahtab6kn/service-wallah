@@ -3,14 +3,8 @@ import {
   Typography,
   Button,
   IconButton,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
   Dialog,
-  Avatar,
 } from "@material-tailwind/react";
-import { CgUserlane } from "react-icons/cg";
 import {
   CardBody,
   Input,
@@ -20,26 +14,11 @@ import {
   Tab,
   TabPanel,
 } from "@material-tailwind/react";
-import {
-  FaCalendarCheck,
-  FaHistory,
-  FaInfoCircle,
-  FaUser,
-} from "react-icons/fa";
-import { FaUsersGear } from "react-icons/fa6";
+import { FaInfoCircle } from "react-icons/fa";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { AiFillQuestionCircle } from "react-icons/ai";
-import { BiLogIn } from "react-icons/bi";
-import Link from "next/link";
 import { useState } from "react";
 import {
-  MdDashboardCustomize,
-  MdManageAccounts,
-  MdOutlineManageHistory,
-  MdOutlinePayment,
-} from "react-icons/md";
-import {
-  IoLogOut,
   IoPersonCircleOutline,
   IoSendSharp,
   IoShieldCheckmark,
@@ -48,14 +27,13 @@ import { RxCross1 } from "react-icons/rx";
 import axios from "axios";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { toast } from "sonner";
-import Image from "next/image";
 import UserNavigation from "./UserNavigation";
+import { setUser } from "@/redux/slice/userSlice";
+import { useDispatch } from "react-redux";
 
 const Profile = ({
-  userLoading,
-  user,
-  setUser,
   openLoginDialog,
+  setOpenLoginDialog,
   handleOpenLoginDialog,
 }) => {
   const [registerData, setRegisterData] = useState({
@@ -68,6 +46,7 @@ const Profile = ({
     phoneNumber: "",
     password: "",
   });
+  const dispatch = useDispatch();
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -89,8 +68,8 @@ const Profile = ({
       );
       const data = await response.json();
       if (response.status == 200) {
-        setUser(data.user);
-        handleOpenLoginDialog(false);
+        dispatch(setUser(data.user));
+        setOpenLoginDialog(false);
         setLoginData({
           phoneNumber: "",
           password: "",
@@ -108,7 +87,6 @@ const Profile = ({
   // Registration
   const [open4, setOpen4] = useState(false);
   const handleOpen4 = () => setOpen4(!open4);
-  const [registerError, setRegisterError] = useState("");
   const [otp, setOtp] = useState("");
 
   const handleChange = (e) => {
@@ -121,7 +99,7 @@ const Profile = ({
   }
   const [generatedOTP, setGeneratedOtp] = useState();
   const [type, setType] = useState("card");
-  const SendingOtp = async () => {
+  const verifyingRegisterOtp = async () => {
     if (
       !registerData.name ||
       !registerData.phoneNumber ||
@@ -154,17 +132,15 @@ const Profile = ({
       !registerData.phoneNumber ||
       !registerData.password
     ) {
-      setRegisterError("Invalid data");
+      toast.error("Invalid data");
       return;
     }
     try {
-      // console.log(registerData.name, registerData.phoneNumber, registerData.password);
-      // console.log(otp, generatedOTP)
       if (otp === undefined || otp !== generatedOTP) {
-        setRegisterError("Invalid OTP");
+        toast.error("Invalid OTP");
         return;
       }
-      const response = await axios.post(`/api/users/register`, registerData);
+      await axios.post(`/api/users/register`, registerData);
       const loginResponse = await fetch(
         "/api/users/login",
         {
@@ -180,23 +156,23 @@ const Profile = ({
         { cache: "no-store" }
       );
       const data = await loginResponse.json();
-      if (data.status !== 400) {
-        localStorage.setItem("token", data._id);
-        gettingUser();
-        if (loginResponse.ok) {
-          setRegisterError("");
-          setOpen4(false);
-          setOpenLoginDialog(false);
-          setRegisterData({
-            name: "",
-            phoneNumber: "",
-            email: "",
-            password: "",
-          });
-        }
+
+      if (loginResponse.status == 200) {
+        dispatch(setUser(data.user));
+        setOpen4(false);
+        setOpenLoginDialog(false);
+        setOtp("");
+        setRegisterData({
+          name: "",
+          phoneNumber: "",
+          email: "",
+          password: "",
+        });
+      } else {
+        toast.error(data.message);
       }
     } catch (err) {
-      setRegisterError(`Something went wrong while Registering`);
+      toast.error(`Something went wrong while Registering`);
     }
   }
 
@@ -255,11 +231,7 @@ const Profile = ({
   };
   return (
     <>
-      <UserNavigation
-        userLoading={userLoading}
-        user={user}
-        handleOpenLoginDialog={handleOpenLoginDialog}
-      />
+      <UserNavigation handleOpenLoginDialog={handleOpenLoginDialog} />
 
       <Dialog
         open={openLoginDialog}
@@ -571,28 +543,11 @@ const Profile = ({
                         Password should be more than 10 characters long
                         including letters and numbers
                       </span>
-                      {registerError && (
-                        <span className="text-red-500 flex gap-1 items-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            className="-mt-px h-4 w-4"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          {registerError}
-                        </span>
-                      )}
                     </Typography>
                   </div>
 
                   <Button
-                    onClick={SendingOtp}
+                    onClick={verifyingRegisterOtp}
                     variant="gradient"
                     fullWidth
                     size="lg"
@@ -631,12 +586,6 @@ const Profile = ({
               minLength={4}
               onChange={handleChange}
             />
-            {registerError && (
-              <p className="text-red-500 flex gap-1 text-xs items-center">
-                <FaInfoCircle />
-                <span>{registerError}</span>
-              </p>
-            )}
             <p className="text-gray-600 flex gap-1 text-xs items-center">
               <FaInfoCircle />{" "}
               <span>

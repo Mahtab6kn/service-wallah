@@ -4,28 +4,28 @@ import { RxCross2 } from "react-icons/rx";
 import { toast } from "sonner";
 
 const UserInvoiceDialog = ({
-  selectedUserBooking,
+  booking,
   invoiceDialogOpen,
   handleInvoiceDialog,
-  setSelectedUserBooking,
+  setBooking,
   redirectingLoading,
   handleInvoicePayment
 }) => {
   const handleRejectInvoice = async () => {
     const postData = {
-      ...selectedUserBooking,
-      invoices: { ...selectedUserBooking.invoices, status: "Invoice Rejected" },
+      ...booking,
+      invoices: { ...booking.invoices, status: "Invoice Rejected" },
     };
     try {
       const res = await axios.put(
-        `/api/bookings/${selectedUserBooking._id}`,
+        `/api/bookings/${booking._id}`,
         postData
       );
       if (res.status === 201) {
         toast.success("Invoice rejected successfully!");
         handleInvoiceDialog();
       }
-      setSelectedUserBooking(res.data);
+      setBooking(res.data);
     } catch (err) {
       console.log(err);
       toast.error("Failed to reject the invoice!");
@@ -33,22 +33,22 @@ const UserInvoiceDialog = ({
   };
   const handleAcceptInvoice = async () => {
     const postData = {
-      ...selectedUserBooking,
+      ...booking,
       status: "Service Invoice Accepted, service will start soon !",
       invoices: {
-        ...selectedUserBooking.invoices,
+        ...booking.invoices,
         status: "Invoice Accepted",
       },
     };
     try {
       const res = await axios.put(
-        `/api/bookings/${selectedUserBooking._id}`,
+        `/api/bookings/${booking._id}`,
         postData
       );
       if (res.status === 201) {
         toast.success("Invoice accepted successfully!");
       }
-      setSelectedUserBooking(res.data);
+      setBooking(res.data);
     } catch (err) {
       console.log(err);
       toast.error("Failed to accept the invoice!");
@@ -79,20 +79,20 @@ const UserInvoiceDialog = ({
             <div className="flex gap-2 items-center">
               Title:
               <div className="text-gray-700 font-medium">
-                {selectedUserBooking.invoices?.title}
+                {booking?.invoices?.title}
               </div>
             </div>
             <div className="flex gap-2 items-center">
               Date & Time:
               <div className="text-gray-700 font-medium">
-                {selectedUserBooking.invoices?.date},{" "}
-                {selectedUserBooking.invoices?.time}
+                {booking?.invoices?.date},{" "}
+                {booking?.invoices?.time}
               </div>
             </div>
             <div className="flex gap-2 items-center">
               Total:
               <div className="text-gray-700 font-medium">
-                ₹{selectedUserBooking.invoices?.total}
+                ₹{booking?.invoices?.total}
               </div>
             </div>
           </div>
@@ -107,7 +107,7 @@ const UserInvoiceDialog = ({
             </tr>
           </thead>
           <tbody className="flex-1 sm:flex-none">
-            {selectedUserBooking.invoices?.items?.map((item, index) => (
+            {booking.invoices?.items?.map((item, index) => (
               <tr
                 className="flex flex-col flex-no wrap sm:table-row mb-2 sm:mb-0"
                 key={index}
@@ -128,14 +128,14 @@ const UserInvoiceDialog = ({
             ))}
           </tbody>
         </table>
-        {selectedUserBooking.invoices?.status === "Invoice Rejected" ? (
+        {booking.invoices?.status === "Invoice Rejected" ? (
           <p className="text-red-500 text-sm text-center mt-4">
             Invoice rejected
           </p>
-        ) : selectedUserBooking.invoices?.status === "Invoice Accepted" ? (
+        ) : booking.invoices?.status === "Invoice Accepted" ? (
           <div className="text-teal-500 text-sm mt-4 flex items-center justify-between">
             <div>Invoice accepted, Service will start soon! </div>
-            {!selectedUserBooking.invoices.paid && (
+            {!booking.invoices.paid && (
               <Button
                 variant="gradient"
                 color="teal"
@@ -143,7 +143,7 @@ const UserInvoiceDialog = ({
                 loading={redirectingLoading}
                 onClick={handleInvoicePayment}
               >
-                Pay ₹{selectedUserBooking.invoices.total}
+                Pay ₹{booking.invoices.total}
               </Button>
             )}
           </div>

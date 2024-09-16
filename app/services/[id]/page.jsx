@@ -1,8 +1,6 @@
 "use client";
-import Nav from "@/components/Nav";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import Footer from "@/components/Footer";
 import { FaArrowDown } from "react-icons/fa";
 import { Drawer, Rating, Textarea } from "@material-tailwind/react";
 import {
@@ -282,7 +280,6 @@ const Service = () => {
           loading ? "hidden" : "bloack"
         } transition-all duration-700`}
       >
-        <Nav />
         <Drawer
           open={open}
           onClose={closeDrawer}
@@ -737,8 +734,6 @@ const Service = () => {
             </div>
           </div>
         </div>
-
-        <Footer />
       </div>
     </>
   );

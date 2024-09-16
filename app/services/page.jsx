@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Footer from "@/components/Footer";
 import Services from "@/components/Services";
 
 const AllServices = () => {
@@ -65,7 +64,6 @@ const AllServices = () => {
             />
           ))}
         </div>
-        <Footer />
       </div>
     </>
   );

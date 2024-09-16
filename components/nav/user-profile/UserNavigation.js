@@ -6,7 +6,6 @@ import {
   MenuItem,
   Avatar,
 } from "@material-tailwind/react";
-import { CgUserlane } from "react-icons/cg";
 import { FaCalendarCheck, FaHistory, FaUser } from "react-icons/fa";
 import { FaUsersGear } from "react-icons/fa6";
 import Link from "next/link";
@@ -17,8 +16,26 @@ import {
   MdOutlinePayment,
 } from "react-icons/md";
 import { IoLogOut } from "react-icons/io5";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "@/redux/slice/userSlice";
 
-const UserNavigation = ({ userLoading, user, handleOpenLoginDialog }) => {
+const UserNavigation = ({ handleOpenLoginDialog }) => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.user.user);
+  const userLoading = useSelector((state) => state.user.userLoading);
+
+  const handleLogout = async () => {
+    await fetch("/api/users/logout", {
+      method: "GET",
+    });
+    toast.success("Logged out successfully!");
+    router.push("/");
+    dispatch(setUser(null));
+  };
   return (
     <>
       {userLoading ? (
@@ -57,17 +74,14 @@ const UserNavigation = ({ userLoading, user, handleOpenLoginDialog }) => {
                   Profile <FaUser size={12} />
                 </MenuItem>
               </Link>
-              <Link href={`/booking`} className="outline-none">
+              <Link href={`/user/bookings?page=1`} className="outline-none">
                 <MenuItem className="justify-center flex items-center gap-1">
                   Booking <FaCalendarCheck />
                 </MenuItem>
               </Link>
               <MenuItem
                 className="text-red-400 justify-center flex items-center gap-1"
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  window.location.reload();
-                }}
+                onClick={handleLogout}
               >
                 Logout <IoLogOut />
               </MenuItem>
@@ -100,10 +114,7 @@ const UserNavigation = ({ userLoading, user, handleOpenLoginDialog }) => {
               </Link>
               <MenuItem
                 className="text-red-400 justify-center flex items-center gap-1"
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  window.location.reload();
-                }}
+                onClick={handleLogout}
               >
                 Logout <IoLogOut />
               </MenuItem>
@@ -137,10 +148,7 @@ const UserNavigation = ({ userLoading, user, handleOpenLoginDialog }) => {
               </Link>
               <MenuItem
                 className="text-red-400 justify-center flex items-center gap-1"
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  window.location.reload();
-                }}
+                onClick={handleLogout}
               >
                 Logout <IoLogOut />
               </MenuItem>

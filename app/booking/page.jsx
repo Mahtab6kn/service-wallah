@@ -1,5 +1,4 @@
 "use client";
-import Footer from "@/components/Footer";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import UserBooking from "@/components/UserBooking";
@@ -71,7 +70,6 @@ const Booking = () => {
           serviceProviderBookings={serviceProviderBookings}
         />
       )}
-      <Footer />
     </div>
   );
 };
