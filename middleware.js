@@ -15,7 +15,7 @@ const protectedRoutes = {
 
 export async function middleware(request) {
   const token = request.cookies.get("token")?.value;
-
+  
   // If no token, redirect to the login page
   if (!token) {
     return NextResponse.redirect(new URL("/", request.url));
@@ -26,10 +26,8 @@ export async function middleware(request) {
     const { payload } = await jwtVerify(token, secret);
     const { role } = payload;
 
-    // console.log(payload)
-
     const currentPath = request.nextUrl.pathname;
-
+    
     // Check access based on role
     if (role === "admin") {
       if (!protectedRoutes.admin.some((path) => currentPath.startsWith(path))) {

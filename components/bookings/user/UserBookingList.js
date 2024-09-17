@@ -12,14 +12,14 @@ const options = {
 
 const UserBookingList = ({ bookings }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 ">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {bookings?.map((service, index) => {
         return (
           <div
             key={index}
             className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col justify-between"
           >
-            <div className="bg-gray-300 text-gray-900 py-1 flex justify-center items-center uppercase">
+            <div className="bg-gray-300 text-gray-900 py-1 flex justify-center items-center uppercase truncate">
               {service.status}
             </div>
             <div className="p-4 flex gap-4 flex-col">

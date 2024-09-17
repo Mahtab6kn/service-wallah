@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/redux/slice/userSlice";
+import Image from "next/image";
 
 const UserNavigation = ({ handleOpenLoginDialog }) => {
   const router = useRouter();
@@ -36,6 +37,7 @@ const UserNavigation = ({ handleOpenLoginDialog }) => {
     router.push("/");
     dispatch(setUser(null));
   };
+
   return (
     <>
       {userLoading ? (
@@ -89,7 +91,7 @@ const UserNavigation = ({ handleOpenLoginDialog }) => {
           ) : user.role === "service-provider" ? (
             <MenuList>
               <Link
-                href={`/service-provider/${user._id}`}
+                href={`/service-provider`}
                 className="outline-none"
               >
                 <MenuItem className="justify-center flex items-center gap-1">
@@ -97,19 +99,11 @@ const UserNavigation = ({ handleOpenLoginDialog }) => {
                 </MenuItem>
               </Link>
               <Link
-                href={`/service-provider/${user._id}/booking`}
+                href={`/service-provider/booking?page=1`}
                 className="outline-none"
               >
                 <MenuItem className="justify-center flex items-center gap-1">
                   Booking <FaCalendarCheck />
-                </MenuItem>
-              </Link>
-              <Link
-                href={`/service-provider/${user._id}/history`}
-                className="outline-none"
-              >
-                <MenuItem className="justify-center flex items-center gap-1">
-                  History <FaHistory />
                 </MenuItem>
               </Link>
               <MenuItem
