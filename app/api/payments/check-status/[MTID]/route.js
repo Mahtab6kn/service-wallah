@@ -50,14 +50,13 @@ export async function GET(req, { params }) {
       if (!booking) {
         return NextResponse.json("Invalid booking id", { status: 500 });
       }
-      
-      console.log(invoice);
-      if (invoice) {
-        console.log("If");
+
+      if (invoice === "true") {
         await Booking.findByIdAndUpdate(
           bookingId,
           {
             $set: {
+              status: "Invoice Paid!",
               "invoices.paid": true,
               "invoices.paymentMethod": "Online",
             },
@@ -65,8 +64,7 @@ export async function GET(req, { params }) {
           { new: true }
         );
       } else {
-        console.log("else");
-        const updatedbooking = await Booking.findByIdAndUpdate(
+        await Booking.findByIdAndUpdate(
           bookingId,
           {
             $set: {
@@ -78,7 +76,6 @@ export async function GET(req, { params }) {
           },
           { new: true }
         );
-        console.log(updatedbooking);
       }
     }
 

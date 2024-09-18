@@ -23,7 +23,7 @@ import Link from "next/link";
 import Invoice from "@/components/Invoice";
 import { IoMdOpen } from "react-icons/io";
 import { toast } from "sonner";
-import UpdateServiceStatus from "../UpdateServiceStatus";
+import UpdateServiceStatus from "./UpdateServiceStatus";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 

@@ -187,14 +187,22 @@ const OnGoingBooking = ({
                 </div>
                 <div className="mb-4 flex flex-col   border-b border-blue-gray-50 pb-4">
                   <div className="flex items-center gap-3">
-                    <div>
+                    {booking?.assignedServiceProviders?.image?.url ? (
+                      <Image
+                        src={booking?.assignedServiceProviders?.image?.url}
+                        className="rounded-full h-12 w-12 object-cover"
+                        alt="Booking"
+                        width={96}
+                        height={96}
+                      />
+                    ) : (
                       <div className="w-12 h-12 text-xl text-black rounded-full flex justify-center items-center font-junge bg-gray-400">
                         {booking?.assignedServiceProviders?.name &&
                           Array.from(
                             booking?.assignedServiceProviders?.name
                           )[0].toUpperCase()}
                       </div>
-                    </div>
+                    )}
                     <div>
                       <Typography
                         variant="h5"
@@ -384,7 +392,7 @@ const OnGoingBooking = ({
               >
                 View invoice
               </Button>
-              {!booking.invoices.paid && (
+              {booking.invoices?.status === "Invoice Accepted" && !booking.invoices.paid && (
                 <Button
                   variant="gradient"
                   color="teal"

@@ -8,7 +8,6 @@ import {
 } from "@react-google-maps/api";
 import { Button, Input } from "@material-tailwind/react";
 import { FaLocationCrosshairs } from "react-icons/fa6";
-import Footer from "@/components/Footer";
 
 const libraries = ["places"];
 const mapContainerStyle = {
@@ -193,7 +192,6 @@ export default function Location() {
           </div> */}
         </div>
       </div>
-      <Footer />
     </>
   );
 }

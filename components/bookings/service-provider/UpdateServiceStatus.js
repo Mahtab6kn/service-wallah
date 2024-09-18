@@ -50,7 +50,6 @@ const UpdateServiceStatus = ({ selectedNewBooking, setSelectedNewBooking }) => {
       ...selectedNewBooking,
       serviceCompletedOtp: otp,
     };
-    console.log({ updatedBooking });
     setSelectedNewBooking(updatedBooking);
 
     await axios.put(`/api/bookings/${selectedNewBooking._id}`, updatedBooking);
@@ -83,6 +82,10 @@ const UpdateServiceStatus = ({ selectedNewBooking, setSelectedNewBooking }) => {
       const updatedStatusBooking = {
         ...selectedNewBooking,
         status: "Service is Completed",
+        invoices: {
+          ...selectedNewBooking.invoices,
+          status: "Service is Completed!",
+        },
         completed: true,
         invoices: { ...selectedNewBooking.invoices, paid: true },
       };
@@ -95,7 +98,6 @@ const UpdateServiceStatus = ({ selectedNewBooking, setSelectedNewBooking }) => {
         toast.error("Failed to update the status!");
         return;
       }
-      window.location.reload();
     } catch (err) {
       console.log(err);
     }

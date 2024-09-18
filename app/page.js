@@ -1,5 +1,4 @@
 "use client";
-import Footer from "../components/Footer";
 import ServiceSection from "../components/ServiceSection";
 import { BsPersonFillAdd } from "react-icons/bs";
 import { RxDoubleArrowRight } from "react-icons/rx";
@@ -17,7 +16,6 @@ import "slick-carousel/slick/slick-theme.css";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import axios from "axios";
 import Image from "next/image";
-import Nav from "@/components/nav/Nav";
 
 export default function Home() {
   const [topServices, setTopServices] = useState([]);
@@ -388,7 +386,6 @@ export default function Home() {
           </h2>
           <Testimonials />
         </div>
-        <Footer />
       </main>
     </>
   );

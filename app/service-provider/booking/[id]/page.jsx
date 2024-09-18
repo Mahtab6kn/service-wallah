@@ -9,6 +9,7 @@ import { VscLoading } from "react-icons/vsc";
 import BookingLoader from "@/components/bookings/user/BookingLoader";
 import OnGoingBooking from "@/components/bookings/user/OnGoingBooking";
 import UserInvoiceDialog from "@/components/bookings/user/UserInvoiceDialog";
+import BookingDetail from "@/components/bookings/service-provider/BookingDetail";
 
 const page = () => {
   const { id } = useParams();
@@ -67,7 +68,10 @@ const page = () => {
     }
   };
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
-  const handleInvoiceDialog = () => setInvoiceDialogOpen((prev) => !prev);
+  const handleInvoiceDialog = useCallback(
+    () => setInvoiceDialogOpen((prev) => !prev),
+    []
+  );
 
   useEffect(() => {
     const openInvoiceDialog = () => {
@@ -75,11 +79,11 @@ const page = () => {
       const invoiceTitle = booking?.invoices?.title;
 
       if (invoiceTitle && invoiceStatus == "Not Accepted Yet!") {
-        setInvoiceDialogOpen(true);
+        handleInvoiceDialog();
       }
     };
     openInvoiceDialog();
-  }, [booking]);
+  }, [booking, handleInvoiceDialog]);
 
   //   Booking Cancellation
 
@@ -138,17 +142,6 @@ const page = () => {
 
   return (
     <div>
-      {booking?.invoices?._id && (
-        <UserInvoiceDialog
-          booking={booking}
-          handleInvoiceDialog={handleInvoiceDialog}
-          invoiceDialogOpen={invoiceDialogOpen}
-          setBooking={setBooking}
-          redirectingLoading={redirectingLoading}
-          handleInvoicePayment={handleInvoicePayment}
-        />
-      )}
-
       {loading ? (
         <div className="flex justify-center items-center h-full">
           <div className="text-lg font-semibold animate-spin my-56">
@@ -156,34 +149,11 @@ const page = () => {
           </div>
         </div>
       ) : booking.canceledByCustomer ? (
-        <OnGoingBooking
-          booking={booking}
-          disableCancelBookingButton={disableCancelBookingButton}
-          handleCancellationReasonDialog={handleCancellationReasonDialog}
-          cancellationReasonDialog={cancellationReasonDialog}
-          handleInvoiceDialog={handleInvoiceDialog}
-          redirectingLoading={redirectingLoading}
-          handleInvoicePayment={handleInvoicePayment}
-          cancelled={true}
-        />
+        <BookingDetail booking={booking} setBooking={setBooking} />
       ) : booking?.acceptedByServiceProvider ? (
-        <OnGoingBooking
-          booking={booking}
-          disableCancelBookingButton={disableCancelBookingButton}
-          handleCancellationReasonDialog={handleCancellationReasonDialog}
-          cancellationReasonDialog={cancellationReasonDialog}
-          handleInvoiceDialog={handleInvoiceDialog}
-          redirectingLoading={redirectingLoading}
-          handleInvoicePayment={handleInvoicePayment}
-          cancelled={false}
-        />
+        <BookingDetail booking={booking} setBooking={setBooking} />
       ) : (
-        <BookingLoader
-          booking={booking}
-          disableCancelBookingButton={disableCancelBookingButton}
-          cancellationReasonDialog={cancellationReasonDialog}
-          handleCancellationReasonDialog={handleCancellationReasonDialog}
-        />
+        <BookingDetail booking={booking} setBooking={setBooking} />
       )}
     </div>
   );

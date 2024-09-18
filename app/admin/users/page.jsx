@@ -4,10 +4,6 @@ import { FaUsers } from "react-icons/fa6";
 import { MdOpenInNew } from "react-icons/md";
 import Fuse from "fuse.js";
 import {
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
   Button,
   Input,
   Dialog,

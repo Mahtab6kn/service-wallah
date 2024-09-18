@@ -1,5 +1,4 @@
 "use client";
-import Footer from "@/components/Footer";
 import { Button, ButtonGroup } from "@material-tailwind/react";
 import Head from "next/head";
 import Image from "next/image";
@@ -9,32 +8,18 @@ import { useEffect, useState } from "react";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { RiErrorWarningFill } from "react-icons/ri";
 import { VscDebugContinue } from "react-icons/vsc";
+import { useSelector } from "react-redux";
 
 const Cart = () => {
   const router = useRouter();
   const [products, setProducts] = useState([]);
-  const [user, setUser] = useState({});
+  const user = useSelector((state) => state.user.user);
+
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cart"));
     if (cart) {
       setProducts(cart);
     }
-
-    const gettingUser = async () => {
-      try {
-        const id = localStorage.getItem("token");
-        const response = await fetch(`/api/service-providers/${id}`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        const data = await response.json();
-        setUser(data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    gettingUser(); // Call inside useEffect
   }, []); // Empty dependency array, no external dependencies
 
   const [validationMessage, setValidationMessage] = useState("");
@@ -244,7 +229,6 @@ const Cart = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

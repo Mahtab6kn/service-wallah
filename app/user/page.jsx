@@ -22,7 +22,6 @@ import {
 } from "firebase/storage";
 import { storage } from "@/firebase";
 import axios from "axios";
-import Footer from "@/components/Footer";
 import Image from "next/image";
 import { toast } from "sonner";
 
@@ -349,7 +348,6 @@ const User = () => {
               </div>
             </div>
           </div>
-          <Footer />
         </div>
       )}
     </>

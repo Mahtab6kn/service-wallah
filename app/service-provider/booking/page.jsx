@@ -60,7 +60,7 @@ const Booking = () => {
             Your Bookings!
           </h2>
           <div className="h-px bg-gray-300 w-full my-4"></div>
-          <ServiceProviderBookingList booking={bookings} />;
+          <ServiceProviderBookingList booking={bookings} />
           <PaginationBtn totalPages={totalPages} />
         </div>
       ) : (

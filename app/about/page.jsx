@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import Footer from "@/components/Footer.js";
 import { WiStars } from "react-icons/wi";
 import ServiceSection from "@/components/ServiceSection";
 
@@ -151,7 +150,6 @@ const About = () => {
           </div>
         </div>
       </section>
-      <Footer />
     </div>
   );
 };
