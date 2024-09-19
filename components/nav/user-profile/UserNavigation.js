@@ -90,10 +90,7 @@ const UserNavigation = ({ handleOpenLoginDialog }) => {
             </MenuList>
           ) : user.role === "service-provider" ? (
             <MenuList>
-              <Link
-                href={`/service-provider`}
-                className="outline-none"
-              >
+              <Link href={`/service-provider`} className="outline-none">
                 <MenuItem className="justify-center flex items-center gap-1">
                   Profile <FaUser size={12} />
                 </MenuItem>
@@ -125,7 +122,7 @@ const UserNavigation = ({ handleOpenLoginDialog }) => {
                   Manage Services <MdOutlineManageHistory />
                 </MenuItem>
               </Link>
-              <Link href={`/admin/users`} className="outline-none">
+              <Link href={`/admin/users?page=1`} className="outline-none">
                 <MenuItem className="justify-center flex items-center gap-1">
                   Manage Users <MdManageAccounts />
                 </MenuItem>

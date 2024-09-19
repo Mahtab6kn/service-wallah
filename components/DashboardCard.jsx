@@ -20,7 +20,7 @@ const DashboardCard = ({ data }) => {
       value: data.totalServices,
       bgColor: "bg-yellow-100",
       textColor: "text-yellow-700",
-      image: "admin-logos/total-services.svg",
+      image: "/admin-logos/total-services.svg",
     },
     {
       id: 2,
@@ -28,7 +28,7 @@ const DashboardCard = ({ data }) => {
       value: data.inactiveServices,
       bgColor: "bg-deep-orange-100",
       textColor: "text-deep-orange-700",
-      image: "admin-logos/inactive-services.svg",
+      image: "/admin-logos/inactive-services.svg",
     },
     {
       id: 3,
@@ -36,7 +36,7 @@ const DashboardCard = ({ data }) => {
       value: data.activeServices,
       bgColor: "bg-cyan-100",
       textColor: "text-cyan-700",
-      image: "admin-logos/active-services.svg",
+      image: "/admin-logos/active-services.svg",
     },
     {
       id: 4,
@@ -44,7 +44,7 @@ const DashboardCard = ({ data }) => {
       value: data.totalSubServices,
       bgColor: "bg-green-100",
       textColor: "text-green-700",
-      image: "admin-logos/total-sub-services.svg",
+      image: "/admin-logos/total-sub-services.svg",
     },
     {
       id: 5,
@@ -52,7 +52,7 @@ const DashboardCard = ({ data }) => {
       value: data.totalUsers,
       bgColor: "bg-indigo-100",
       textColor: "text-indigo-700",
-      image: "admin-logos/total-users.svg",
+      image: "/admin-logos/total-users.svg",
     },
     {
       id: 6,
@@ -60,7 +60,7 @@ const DashboardCard = ({ data }) => {
       value: data.activeUsers,
       bgColor: "bg-light-blue-100",
       textColor: "text-light-blue-700",
-      image: "admin-logos/active-users.svg",
+      image: "/admin-logos/active-users.svg",
     },
     {
       id: 7,
@@ -68,7 +68,7 @@ const DashboardCard = ({ data }) => {
       value: data.totalServiceProviders,
       bgColor: "bg-purple-100",
       textColor: "text-purple-700",
-      image: "admin-logos/total-service-provider.svg",
+      image: "/admin-logos/total-service-provider.svg",
     },
     {
       id: 8,
@@ -76,7 +76,7 @@ const DashboardCard = ({ data }) => {
       value: data.activeServiceProviders,
       bgColor: "bg-teal-100",
       textColor: "text-teal-700",
-      image: "admin-logos/active-service-provider.svg",
+      image: "/admin-logos/active-service-provider.svg",
     },
   ];
   return (

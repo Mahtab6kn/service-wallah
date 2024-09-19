@@ -15,46 +15,27 @@ const Admin = () => {
     totalServiceProviders: 0,
     activeServiceproviders: 0,
   });
-
-  const getDashboardData = async () => {
-    const response = await fetch("/api/admin/dashboard", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    setData(data);
-  };
-
-  const checkingAuthorization = async () => {
-    const id = localStorage.getItem("token");
-    // if (!id) {
-    //   window.location.href = "/";
-    //   return;
-    // }
-    const response = await fetch(`/api/users/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    // if (data.role !== "admin") {
-    //   window.location.href = "/";
-    // }
-  };
-
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadingFunction = async () => {
-      // await checkingAuthorization(); 
-      await getDashboardData();
+  const getDashboardData = async () => {
+    try {
+      const response = await fetch("/api/admin/dashboard", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      setData(data);
+    } catch {
+      console.error("Failed to get dashboard data");
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
-    loadingFunction();
+  useEffect(() => {
+    getDashboardData();
   }, []); // Empty dependency array ensures this runs only once
 
   return (

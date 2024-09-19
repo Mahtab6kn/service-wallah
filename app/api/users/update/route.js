@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
   const data = await request.json();
   await connectMongoDB();
-  const user = await User.findByIdAndUpdate(data._id, data);
+  const user = await User.findByIdAndUpdate(data._id, data, { new: true });
   return NextResponse.json(user, { status: 201 });
 }
 

@@ -110,8 +110,9 @@ const User = () => {
       },
       body: JSON.stringify({ ...updateUser, id: user._id }),
     });
-    gettingUser();
+    const updatedUser = await response.json();
     if (response.ok) {
+      setUser(updatedUser)
       setOpen(false);
     }
   };

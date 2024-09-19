@@ -74,6 +74,10 @@ const userSchema = new Schema(
     messages: {
       type: [], // Assuming these are references to other documents
     },
+    lastVisit: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

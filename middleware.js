@@ -15,8 +15,8 @@ const protectedRoutes = {
 
 export async function middleware(request) {
   const token = request.cookies.get("token")?.value;
-  
-  // If no token, redirect to the login page
+
+  // If no token, redirect to the home route
   if (!token) {
     return NextResponse.redirect(new URL("/", request.url));
   }
@@ -25,16 +25,19 @@ export async function middleware(request) {
     // Verify the JWT token using jose
     const { payload } = await jwtVerify(token, secret);
     const { role } = payload;
-
     const currentPath = request.nextUrl.pathname;
-    
+
     // Check access based on role
     if (role === "admin") {
       if (!protectedRoutes.admin.some((path) => currentPath.startsWith(path))) {
         return NextResponse.redirect(new URL("/admin", request.url));
       }
     } else if (role === "service-provider") {
-      if (!protectedRoutes.serviceProvider.some((path) => currentPath.startsWith(path))) {
+      if (
+        !protectedRoutes.serviceProvider.some((path) =>
+          currentPath.startsWith(path)
+        )
+      ) {
         return NextResponse.redirect(new URL("/service-provider", request.url));
       }
     } else if (role === "user") {
@@ -50,7 +53,7 @@ export async function middleware(request) {
     return NextResponse.next();
   } catch (error) {
     console.error("Error in JWT verification", error);
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 }
 
