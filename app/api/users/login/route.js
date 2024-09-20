@@ -61,6 +61,10 @@ export async function POST(request) {
       { expiresIn: "30d" } // Set token expiration time
     );
 
+    user.loginHistory.push({ eventType: "login" });
+    user.lastVisit = new Date(); // Update lastVisit
+    await user.save();
+
     // Set the token as an HTTP-only cookie, accessible on client and server side
     const response = NextResponse.json(
       { message: "Login successful", user },

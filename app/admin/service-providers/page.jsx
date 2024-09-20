@@ -136,6 +136,7 @@ const ServiceProviders = () => {
           </div>
           <UserList
             allUsers={allUsers}
+            serviceProvider={true}
             userDeleting={userDeleting}
             userDeactivating={userDeactivating}
           />

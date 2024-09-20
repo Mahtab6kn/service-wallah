@@ -78,6 +78,15 @@ const userSchema = new Schema(
       type: Date,
       default: null,
     },
+    loginHistory: {
+      type: [
+        {
+          eventType: { type: String, enum: ["login", "logout"] }, // Event can be either login or logout
+          timestamp: { type: Date, default: Date.now }, // Timestamp of the event
+        },
+      ],
+      default: [], // Default to an empty array
+    },
   },
   {
     timestamps: true,

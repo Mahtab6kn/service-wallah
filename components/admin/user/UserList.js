@@ -11,6 +11,8 @@ import { RxCross2 } from "react-icons/rx";
 import { FaUserAltSlash } from "react-icons/fa";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import Image from "next/image";
+import Link from "next/link";
+import { TiMediaFastForward } from "react-icons/ti";
 
 const options = {
   year: "numeric",
@@ -26,7 +28,12 @@ function formatDate(dateString) {
   const formattedDate = date.toLocaleDateString("en-US", options);
   return formattedDate;
 }
-const UserList = ({ allUsers, userDeleting, userDeactivating }) => {
+const UserList = ({
+  allUsers,
+  userDeleting,
+  userDeactivating,
+  serviceProvider = false,
+}) => {
   const [openDialogId, setOpenDialogId] = useState(null);
 
   const handleOpen = (userId) => {
@@ -37,7 +44,7 @@ const UserList = ({ allUsers, userDeleting, userDeactivating }) => {
     setOpenDialogId(null);
   };
   return (
-    <div className="grid gap-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-10 mt-8">
+    <div className="grid gap-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 px-10 mt-8">
       {allUsers.map((user) => (
         <div
           className="border p-4 bg-white shadow flex flex-col gap-4 rounded-lg"
@@ -81,7 +88,22 @@ const UserList = ({ allUsers, userDeleting, userDeactivating }) => {
             </div>
           </div>
           <div>
-            <div className="flex justify-end">
+            <div className="flex justify-center gap-4">
+              {serviceProvider && (
+                <Link
+                  href={`/admin/service-providers/login-history/${user._id}`}
+                  className="w-full"
+                >
+                  <Button
+                    size="sm"
+                    variant="gradient"
+                    color="teal"
+                    className="flex items-center gap-1 w-full justify-center rounded"
+                  >
+                    Login history <TiMediaFastForward />
+                  </Button>
+                </Link>
+              )}
               <Button
                 size="sm"
                 variant="gradient"
