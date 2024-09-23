@@ -80,10 +80,23 @@ const UserList = ({
                 {user.name}
               </div>
               <div className="text-red-700 text-xs">
-                Last visit:{" "}
-                {new Date(
-                  user.lastVisit ? user.lastVisit : user.createdAt
-                ).toLocaleDateString("en-US", options)}
+                {user.lastVisit ? (
+                  <>
+                    Last visit:{" "}
+                    {new Date(user.lastVisit).toLocaleDateString(
+                      "en-US",
+                      options
+                    )}
+                  </>
+                ) : (
+                  <>
+                    Account created on:{" "}
+                    {new Date(user.createdAt).toLocaleDateString(
+                      "en-US",
+                      options
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </div>

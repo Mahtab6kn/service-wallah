@@ -114,7 +114,7 @@ const Profile = ({
       toast.error(data.message);
       return;
     }
-    const authkey = "15d7c1359e59f369";
+    const authkey = process.env.NEXT_PUBLIC_AUTH_KEY;
     const name = "service wallah account";
     const mobile = registerData.phoneNumber;
     const country_code = "+91";
@@ -189,7 +189,7 @@ const Profile = ({
 
   const handleThrowingOtp = async () => {
     if (forgetPasswordNumber.length != 10) return;
-    const authkey = "15d7c1359e59f369";
+    const authkey = process.env.NEXT_PUBLIC_AUTH_KEY;
     const name = "service wallah account";
     const mobile = forgetPasswordNumber;
     const country_code = "+91";

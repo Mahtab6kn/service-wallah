@@ -1,5 +1,4 @@
 "use client";
-import Nav from "@/components/nav/Nav";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
@@ -34,6 +33,7 @@ import {
 import { storage } from "@/firebase";
 import SubServiceCard from "@/components/SubServiceCard";
 import Image from "next/image";
+
 const ServicePage = () => {
   const { id } = useParams();
   const router = useRouter();
@@ -320,7 +320,6 @@ const ServicePage = () => {
         </div>
       ) : (
         <div>
-          <Nav />
           <div className="px-4 md:px-20 my-6 flex flex-col gap-6">
             <div className="flex flex-col gap-4 md:flex-row justify-between">
               <button
