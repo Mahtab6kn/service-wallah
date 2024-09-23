@@ -75,7 +75,7 @@ const CancelBookingDialog = ({
             I found another provider that better fits my needs.
           </Option>
           <Option value="The service cost is higher than I expected or can't afford.">
-            The service cost is higher than I expected or can't afford.
+            The service cost is higher than I expected or can not afford.
           </Option>
           <Option value="I have a personal emergency that prevents me from proceeding.">
             I have a personal emergency that prevents me from proceeding.

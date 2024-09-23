@@ -1,5 +1,5 @@
 "use client";
-import Nav from "@/components/Nav";
+import Nav from "@/components/nav/Nav";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
@@ -34,7 +34,6 @@ import {
 import { storage } from "@/firebase";
 import SubServiceCard from "@/components/SubServiceCard";
 import Image from "next/image";
-
 const ServicePage = () => {
   const { id } = useParams();
   const router = useRouter();

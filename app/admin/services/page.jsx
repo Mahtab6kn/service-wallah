@@ -1,5 +1,5 @@
 "use client";
-import Nav from "@/components/Nav";
+import Nav from "@/components/nav/Nav";
 import React, { useEffect, useState } from "react";
 import { IoMdInformationCircle } from "react-icons/io";
 import { MdLibraryAdd } from "react-icons/md";
