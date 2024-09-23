@@ -41,7 +41,7 @@ const PaymentStatusPage = () => {
       }
     };
     checkStatus();
-  }, [MTID, bookingId]);
+  }, [MTID, bookingId, invoice]);
 
   if (loading) {
     return (

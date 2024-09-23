@@ -7,7 +7,7 @@ import {
   Avatar,
 } from "@material-tailwind/react";
 import { FaCalendarCheck, FaHistory, FaUser } from "react-icons/fa";
-import { FaUsersGear } from "react-icons/fa6";
+import { FaBoxesStacked, FaUsersGear } from "react-icons/fa6";
 import Link from "next/link";
 import {
   MdDashboardCustomize,
@@ -120,6 +120,11 @@ const UserNavigation = ({ handleOpenLoginDialog }) => {
               <Link href={`/admin/services`} className="outline-none">
                 <MenuItem className="justify-center flex items-center gap-1">
                   Manage Services <MdOutlineManageHistory />
+                </MenuItem>
+              </Link>
+              <Link href={`/admin/bookings?page=1`} className="outline-none">
+                <MenuItem className="justify-center flex items-center gap-1">
+                  Manage Bookings <FaBoxesStacked />
                 </MenuItem>
               </Link>
               <Link href={`/admin/users?page=1`} className="outline-none">

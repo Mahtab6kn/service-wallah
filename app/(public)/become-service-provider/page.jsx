@@ -14,6 +14,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
+import { toast } from "sonner";
 
 const CreateServiceProvider = () => {
   const [inputData, setInputData] = useState({
@@ -43,57 +44,75 @@ const CreateServiceProvider = () => {
     image: "",
   });
   const validateInputs = () => {
-    const errors = {};
+    let isValid = true; // Track the validity of inputs
 
     // Validate name
     if (!inputData.name) {
-      errors.name = "Name is required";
+      toast.error("Name is required");
+      isValid = false;
     }
+
+    // Validate image
     if (!inputData.image) {
-      errors.image = "Image is required";
+      toast.error("Image is required");
+      isValid = false;
     }
+
     // Validate phone number
     if (!inputData.phoneNumber) {
-      errors.phoneNumber = "Phone number is required";
-    } else if (inputData.phoneNumber.length != 10) {
-      errors.phoneNumber = "Invalid Phone number";
+      toast.error("Phone number is required");
+      isValid = false;
+    } else if (inputData.phoneNumber.length !== 10) {
+      toast.error("Invalid Phone number");
+      isValid = false;
     }
 
     // Validate email
     if (!inputData.email) {
-      errors.email = "Email is required";
+      toast.error("Email is required");
+      isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(inputData.email)) {
-      errors.email = "Invalid email address";
+      toast.error("Invalid email address");
+      isValid = false;
     }
 
     // Validate gender
     if (!inputData.gender) {
-      errors.gender = "Gender is required";
+      toast.error("Gender is required");
+      isValid = false;
     }
 
     // Validate aadhar
     if (!inputData.aadhar) {
-      errors.aadhar = "Aadhar number is required";
-    } else if (inputData.aadhar.length != 12) {
-      errors.aadhar = "Invalid Aadhar number";
+      toast.error("Aadhar number is required");
+      isValid = false;
+    } else if (inputData.aadhar.length !== 12) {
+      toast.error("Invalid Aadhar number");
+      isValid = false;
     }
 
     // Validate city
     if (!inputData.city) {
-      errors.city = "City is required";
+      toast.error("City is required");
+      isValid = false;
     }
 
     // Validate password
     if (!inputData.password) {
-      errors.password = "Password is required";
+      toast.error("Password is required");
+      isValid = false;
     } else if (
       !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{10,}$/.test(inputData.password)
     ) {
-      errors.password = "Invalid Password";
+      toast.error(
+        "Invalid Password: Minimum 10 characters, at least 1 letter and 1 number"
+      );
+      isValid = false;
     }
 
-    return errors;
+    return isValid; // Return whether all inputs are valid
   };
+
   const [open, setOpen] = useState(false);
   const [popError, setPopError] = useState("");
 
@@ -113,26 +132,39 @@ const CreateServiceProvider = () => {
   }
   const [generatedOTP, setGeneratedOtp] = useState();
   const SendingOtp = async () => {
-    // Validate inputs
-    const validationErrors = validateInputs();
+    const isValid = validateInputs(); // Check validation
 
-    // If there are errors, don't proceed
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+    // Stop execution if validation failed
+    if (!isValid) return;
+
+    // Checking if phone number or email exists
+
+    const data = await axios.post(`/api/users/checking`, {
+      phoneNumber: inputData.phoneNumber,
+      email: inputData.email,
+    });
+    const user = await data.data;
+
+    if (!user.success) {
+      toast.error(user.message);
       return;
     }
-    const authkey = "15d7c1359e59f369";
+
+    // Continue if inputs are valid
+    const authkey = process.env.NEXT_PUBLIC_AUTH_KEY;
     const name = "service wallah account";
     const mobile = inputData.phoneNumber;
     const country_code = "+91";
     const SID = "13608";
     const otp = generateOTP();
     setGeneratedOtp(otp);
+
     const url = `https://api.authkey.io/request?authkey=${authkey}&mobile=${mobile}&country_code=${country_code}&sid=${SID}&company=${name}&otp=${otp}`;
     await axios.get(url);
     setOpen4(true);
   };
-const [otpError, setOtpError] = useState("")
+
+  const [otpError, setOtpError] = useState("");
   const handleRegisterServiceProvider = async (e) => {
     e.preventDefault();
     if (otp === undefined || otp !== generatedOTP) {
@@ -247,6 +279,7 @@ const [otpError, setOtpError] = useState("")
               type="submit"
               color="blue"
               fullWidth
+              className="flex justify-center"
               loading={uploadingLoading}
             >
               Verify OTP
@@ -337,9 +370,6 @@ const [otpError, setOtpError] = useState("")
                 setInputData({ ...inputData, name: e.target.value })
               }
             />
-            {errors.name && (
-              <span className="text-red-500 animate-shake">{errors.name}</span>
-            )}
             <Input
               label="Aadhaar Number"
               color="indigo"
@@ -350,11 +380,6 @@ const [otpError, setOtpError] = useState("")
                 setInputData({ ...inputData, aadhar: e.target.value })
               }
             />
-            {errors.aadhar && (
-              <span className="text-red-500 animate-shake">
-                {errors.aadhar}
-              </span>
-            )}
             <Input
               label="Phone Number"
               color="indigo"
@@ -365,11 +390,6 @@ const [otpError, setOtpError] = useState("")
                 setInputData({ ...inputData, phoneNumber: e.target.value })
               }
             />
-            {errors.phoneNumber && (
-              <span className="text-red-500 animate-shake">
-                {errors.phoneNumber}
-              </span>
-            )}
             <Input
               label="Email"
               color="indigo"
@@ -379,9 +399,6 @@ const [otpError, setOtpError] = useState("")
                 setInputData({ ...inputData, email: e.target.value })
               }
             />
-            {errors.email && (
-              <span className="text-red-500 animate-shake">{errors.email}</span>
-            )}
             <Select
               label="Gender"
               color="indigo"
@@ -391,11 +408,6 @@ const [otpError, setOtpError] = useState("")
               <Option value="male">Male</Option>
               <Option value="female">Female</Option>
             </Select>
-            {errors.gender && (
-              <span className="text-red-500 animate-shake">
-                {errors.gender}
-              </span>
-            )}
             <Input
               label="City"
               color="indigo"
@@ -404,9 +416,6 @@ const [otpError, setOtpError] = useState("")
                 setInputData({ ...inputData, city: e.target.value })
               }
             />
-            {errors.city && (
-              <span className="text-red-500 animate-shake">{errors.city}</span>
-            )}
 
             <div className="flex items-center gap-2">
               <Input
@@ -445,11 +454,6 @@ const [otpError, setOtpError] = useState("")
                 </svg>
               </Tooltip>
             </div>
-            {errors.password && (
-              <span className="text-red-500 animate-shake">
-                {errors.password}
-              </span>
-            )}
             <div className="flex gap-2 cursor-pointer">
               <label htmlFor="icon" className="text-nowrap">
                 Profile Image
@@ -463,16 +467,13 @@ const [otpError, setOtpError] = useState("")
                 id="icon"
               />
             </div>
-            {errors.image && (
-              <span className="text-red-500 animate-shake">{errors.image}</span>
-            )}
             <Button
               // loading={uploadingLoading}
               fullWidth
               variant="gradient"
               color="blue"
               onClick={SendingOtp}
-              className="1hover:scale-105 transition-all duration-700 flex items-center justify-center py-4 rounded-md shadow-2xl cursor-pointer text-white"
+              className="hover:scale-105 transition-all duration-700 flex items-center justify-center py-4 rounded-md shadow-2xl cursor-pointer text-white"
             >
               Verify Mobile Number
             </Button>

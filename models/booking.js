@@ -2,6 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const bookingSchema = new Schema(
   {
+    bookingId: { type: Number, unique: true },
     cartItems: {
       type: [],
       required: true,
@@ -100,6 +101,18 @@ const bookingSchema = new Schema(
     timestamps: true,
   }
 );
+
+bookingSchema.pre("save", async function (next) {
+  if (this.isNew) {
+    const counter = await Counter.findOneAndUpdate(
+      { name: "bookingId" },
+      { $inc: { value: 1 } },
+      { new: true, upsert: true }
+    );
+    this.bookingId = counter.value;
+  }
+  next();
+});
 
 const Booking =
   mongoose.models.Booking || mongoose.model("Booking", bookingSchema);

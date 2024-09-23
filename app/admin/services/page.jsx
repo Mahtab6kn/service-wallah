@@ -1,5 +1,4 @@
 "use client";
-import Nav from "@/components/Nav";
 import React, { useEffect, useState } from "react";
 import { IoMdInformationCircle } from "react-icons/io";
 import { MdLibraryAdd } from "react-icons/md";
@@ -160,7 +159,6 @@ const Services = () => {
         </div>
       ) : (
         <div>
-          <Nav />
           <div className="px-10 md:px-20 flex flex-col gap-2 sm:flex-row justify-between items-center pt-6">
             <h1 className="font-bold text-3xl text-gray-700">All Services</h1>
             <button

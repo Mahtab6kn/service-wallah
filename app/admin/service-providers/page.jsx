@@ -40,7 +40,7 @@ const ServiceProviders = () => {
   };
   useEffect(() => {
     fetchUsers();
-  }, [page, filterByStatus, searchQuery]);
+  }, [page, filterByStatus, searchQuery, fetchUsers]);
 
   const userDeactivating = async (user) => {
     try {
