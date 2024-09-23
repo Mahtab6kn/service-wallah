@@ -22,7 +22,7 @@ export default function BookingsPage() {
   const fetchBookings = async () => {
     try {
       const response = await axios.get(
-        `/api/admin/bookings?page=${page}&limit=1&search=${searchQuery}&status=${status}`
+        `/api/admin/bookings?page=${page}&limit=25&search=${searchQuery}&status=${status}`
       );
       const data = await response.data;
 
@@ -52,7 +52,7 @@ export default function BookingsPage() {
         <title>All Bookings</title>
       </Head>
       <div className="container mx-auto p-4 flex flex-col gap-4 mb-6">
-        <TableHeading setSearchQuery={setSearchQuery} setStatus={setStatus} />
+        <TableHeading setSearchQuery={setSearchQuery} setStatus={setStatus} fetchBookings={fetchBookings} />
         <BookingsTable bookings={bookings} />
         <PaginationBtn totalPages={meta.totalPages} />
       </div>

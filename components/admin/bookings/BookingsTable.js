@@ -1,12 +1,13 @@
 import { Avatar, IconButton } from "@material-tailwind/react";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import formatDate from "@/utils/formatDate";
+import Link from "next/link";
 
 export default function BookingsTable({ bookings }) {
   return (
     <div className="overflow-x-auto p-4 shadow-lg bg-white rounded-lg">
       <div className="min-w-full text-left text-sm">
-        <div className="bg-blue-50 flex rounded-lg">
+        <div className="bg-blue-50 hidden md:flex rounded-lg">
           <div className="p-4 font-semibold text-blue-700 w-1/6 text-center">
             Booking ID
           </div>
@@ -24,34 +25,47 @@ export default function BookingsTable({ bookings }) {
             Action
           </div>
         </div>
-        {bookings.map((booking) => (
-          <div key={booking._id} className="flex">
-            <div className="p-4 w-1/6 flex items-center justify-center truncate text-xs">
-              <span className="truncate">
-                {booking.bookingId}
-              </span>
+
+        {bookings.map((booking, index) => (
+          <div
+            key={booking._id}
+            className={`flex flex-col md:flex-row bg-white ${
+              index === bookings.length - 1 ? "" : "border-b border-gray-300"
+            }`}
+          >
+            {/* Booking ID */}
+            <div className="p-4 w-full md:w-1/6 flex items-center justify-between md:justify-center">
+              <span className="font-semibold md:hidden">Booking ID: </span>
+              <span className="truncate text-xs">{booking.bookingId}</span>
             </div>
 
-            <div className="p-4 w-2/6 truncate flex items-center gap-2">
-              {booking.profileImage.url ? (
-                <Avatar src={booking.profileImage?.url} size="sm" />
+            {/* Booked By */}
+            <div className="p-4 w-full md:w-2/6 flex items-center gap-2">
+              <span className="font-semibold md:hidden">Booked By: </span>
+              {booking.profileImage?.url ? (
+                <Avatar src={booking.profileImage.url} size="sm" />
               ) : (
-                <div className="w-12 h-12 text-xl text-black rounded-full flex justify-center items-center font-junge bg-gray-400">
-                  {booking?.assignedServiceProviders?.name &&
-                    Array.from(
-                      booking?.assignedServiceProviders?.name
-                    )[0].toUpperCase()}
+                <div className="w-10 h-10 text-xl text-black rounded-full flex justify-center items-center font-junge bg-gray-400">
+                  {booking?.fullname[0]?.toUpperCase()}
                 </div>
               )}
-              <div className="">
-                <p className="font-medium">{booking.fullname}</p>
+              <div>
+                <p className="font-medium text-sm">{booking.fullname}</p>
                 <p className="text-gray-500 text-xs">{booking.phoneNumber}</p>
               </div>
             </div>
-            <div className="p-4 w-1/6 truncate flex items-center justify-center">
-              {formatDate(booking.createdAt)}
+
+            {/* Created Date */}
+            <div className="p-4 w-full md:w-1/6 flex items-center justify-between md:justify-center">
+              <span className="font-semibold md:hidden">Created Date: </span>
+              <span className="truncate text-xs">
+                {formatDate(booking.createdAt)}
+              </span>
             </div>
-            <div className="p-4 w-1/6 truncate flex items-center justify-center">
+
+            {/* Status */}
+            <div className="p-4 w-full md:w-1/6 flex items-center justify-between md:justify-center">
+              <span className="font-semibold md:hidden">Status: </span>
               <span
                 className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
                   booking.completed
@@ -62,8 +76,10 @@ export default function BookingsTable({ bookings }) {
                 {booking.completed ? "Completed" : "Not Completed"}
               </span>
             </div>
-            <div className="p-4 w-1/6 truncate flex items-center justify-center">
-              ₹
+
+            {/* Total Amount */}
+            <div className="p-4 w-full md:w-1/6 flex items-center justify-between md:justify-center">
+              <span className="font-semibold md:hidden">Total Amount: </span>₹
               {booking?.cartItems
                 ? new Intl.NumberFormat("en-IN", {
                     style: "currency",
@@ -81,10 +97,15 @@ export default function BookingsTable({ bookings }) {
                     .trim()
                 : "0.00"}
             </div>
-            <div className="p-4 w-1/6 truncate flex items-center justify-center">
-              <IconButton variant="text" color="blue-gray">
-                <ArrowTopRightOnSquareIcon className="h-5 w-5" />
-              </IconButton>
+
+            {/* Action */}
+            <div className="p-4 w-full md:w-1/6 flex items-center justify-between md:justify-center">
+              <span className="font-semibold md:hidden">Action: </span>
+              <Link href={`/admin/bookings/${booking._id}`}>
+                <IconButton variant="text" color="blue-gray">
+                  <ArrowTopRightOnSquareIcon className="h-5 w-5" />
+                </IconButton>
+              </Link>
             </div>
           </div>
         ))}
