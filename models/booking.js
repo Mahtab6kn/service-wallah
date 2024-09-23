@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import Counter from "./counter";
 
 const bookingSchema = new Schema(
   {
