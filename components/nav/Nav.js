@@ -20,37 +20,37 @@ export default function Nav() {
   const userLoading = useSelector((state) => state.user.userLoading);
 
   const dispatch = useDispatch();
-  const gettingUser = async () => {
-    try {
-      const response = await fetch(`/api/users/check-authorization`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      if (data.message === "Unauthorized") {
-        return;
-      }
-      if (!data.success) {
-        return toast.error(data.message);
-      }
-      dispatch(setUser(data.user));
-    } catch (err) {
-      console.log(err);
-      toast.error("Error fetching user");
-    } finally {
-      dispatch(setUserLoading(false));
-    }
-  };
 
   useEffect(() => {
+    const gettingUser = async () => {
+      try {
+        const response = await fetch(`/api/users/check-authorization`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+        if (data.message === "Unauthorized") {
+          return;
+        }
+        if (!data.success) {
+          return toast.error(data.message);
+        }
+        dispatch(setUser(data.user));
+      } catch (err) {
+        console.log(err);
+        toast.error("Error fetching user");
+      } finally {
+        dispatch(setUserLoading(false));
+      }
+    };
     gettingUser();
     window.addEventListener(
       "resize",
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="mx-auto max-w-full px-4 py-2 rounded-none shadow-none bprder-none bg-transparent z-50">

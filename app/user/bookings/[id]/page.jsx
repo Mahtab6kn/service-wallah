@@ -10,29 +10,29 @@ import BookingLoader from "@/components/bookings/user/BookingLoader";
 import OnGoingBooking from "@/components/bookings/user/OnGoingBooking";
 import UserInvoiceDialog from "@/components/bookings/user/UserInvoiceDialog";
 
-const page = () => {
+const Page = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(null);
 
   const user = useSelector((state) => state.user.user);
-  const fetchBooking = async () => {
-    try {
-      const response = await fetch(`/api/bookings/${id}`);
-      if (!response.ok) {
-        toast.error(`Error fetching booking!`);
-      }
-      const data = await response.json();
-      setBooking(data);
-    } catch (error) {
-      toast.error(`Error fetching booking!`);
-      console.log("Error fetching booking:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
+    const fetchBooking = async () => {
+      try {
+        const response = await fetch(`/api/bookings/${id}`);
+        if (!response.ok) {
+          toast.error(`Error fetching booking!`);
+        }
+        const data = await response.json();
+        setBooking(data);
+      } catch (error) {
+        toast.error(`Error fetching booking!`);
+        console.log("Error fetching booking:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchBooking();
   }, [id]);
 
@@ -189,4 +189,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

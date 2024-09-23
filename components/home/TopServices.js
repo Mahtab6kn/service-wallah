@@ -1,6 +1,7 @@
 import React from "react";
 import Slider from "react-slick";
 import ServiceShow from "../ServiceShow";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 
 const NextArrow = ({ onClick }) => {
   return (
