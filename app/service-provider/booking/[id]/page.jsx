@@ -147,10 +147,6 @@ const Page = () => {
             <VscLoading size={50} />
           </div>
         </div>
-      ) : booking.canceledByCustomer ? (
-        <BookingDetail booking={booking} setBooking={setBooking} />
-      ) : booking?.acceptedByServiceProvider ? (
-        <BookingDetail booking={booking} setBooking={setBooking} />
       ) : (
         <BookingDetail booking={booking} setBooking={setBooking} />
       )}

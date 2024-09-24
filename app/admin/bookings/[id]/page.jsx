@@ -1,10 +1,14 @@
-"use client";
+import Loading from "@/components/Loading";
+import React, { Suspense } from "react";
 
-import { useParams } from "next/navigation";
+const BookingContainer = React.lazy(() => {
+  return import("@/components/admin/bookings/single-booking/BookingContainer");
+});
 
-const page = () => {
-  const { id } = useParams();
-  return <div>{id}</div>;
-};
-
-export default page;
+export default function Page() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <BookingContainer />
+    </Suspense>
+  );
+}

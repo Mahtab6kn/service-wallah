@@ -57,8 +57,8 @@ const UserNavigation = ({ handleOpenLoginDialog }) => {
           <MenuHandler>
             {user?.image?.url ? (
               <Image
-                width={100}
-                height={100}
+                width={200}
+                height={200}
                 src={user.image.url}
                 alt={user.name}
                 className="w-12 h-12 rounded-full object-cover cursor-pointer"
