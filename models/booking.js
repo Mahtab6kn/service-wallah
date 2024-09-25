@@ -3,7 +3,7 @@ import Counter from "./counter";
 
 const bookingSchema = new Schema(
   {
-    bookingId: { type: Number, unique: true },
+    bookingId: { type: String, unique: true },
     cartItems: {
       type: [],
       required: true,

@@ -3,6 +3,8 @@ import connectMongoDB from "@/libs/mongodb";
 import Booking from "@/models/booking";
 import { NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request) {
   try {
     // Ensure the MongoDB connection is established
