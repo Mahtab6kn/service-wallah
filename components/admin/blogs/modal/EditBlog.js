@@ -105,7 +105,7 @@ const EditBlog = ({ open, setOpen, blog, setBlogs }) => {
       };
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/blog/${blog._id}`,
+        `http://localhost:3000/api/admin/blog/${blog._id}`,
         {
           method: "PUT",
           headers: {
@@ -165,15 +165,16 @@ const EditBlog = ({ open, setOpen, blog, setBlogs }) => {
             value={formData.type}
             onChange={(value) => setFormData({ ...formData, type: value })}
           >
-            <Option value="Fashion">Fashion</Option>
-            <Option value="Fashion Trends">Fashion Trends</Option>
-            <Option value="Seasonal Fashion">Seasonal Fashion</Option>
-            <Option value="Budget Fashion">Budget Fashion</Option>
-            <Option value="Business">Business</Option>
-            <Option value="Styling Tips">Styling Tips</Option>
-            <Option value="Celebrity Style">Celebrity Style</Option>
-            <Option value="Occasion Wear">Occasion Wear</Option>
-            <Option value="Outfit Inspiration">Outfit Inspiration</Option>
+            <Option value="Home Services">Home Services</Option>
+            <Option value="Cleaning Services">Cleaning Services</Option>
+            <Option value="Plumbing Services">Plumbing Services</Option>
+            <Option value="Electrical Services">Electrical Services</Option>
+            <Option value="Health and Wellness">Health and Wellness</Option>
+            <Option value="Personal Care">Personal Care</Option>
+            <Option value="Maintenance Services">Maintenance Services</Option>
+            <Option value="Professional Services">Professional Services</Option>
+            <Option value="Business Services">Business Services</Option>
+            <Option value="Consulting Services">Consulting Services</Option>
           </Select>
           <Input
             label="Blog Title"

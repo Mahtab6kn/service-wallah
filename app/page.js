@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import axios from "axios";
 import Loading from "@/components/Loading";
 import Testimonial from "@/components/home/testimonial/Testimonial";
+import Blogs from "@/components/BlogSection";
 
 // Dynamically import components
 const Hero = dynamic(() => import("@/components/home/Hero"), { ssr: false });
@@ -58,6 +59,7 @@ export default function Home() {
         <ServiceSection />
         <CallToAction />
         <Testimonial />
+        <Blogs />
       </Suspense>
     </main>
   );

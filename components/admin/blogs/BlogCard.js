@@ -16,6 +16,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { IoMdArrowForward } from "react-icons/io";
 import { format } from "date-fns";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 
 const BlogCard = ({
   blog,
@@ -25,10 +26,11 @@ const BlogCard = ({
   setSelectedBlog,
   page,
 }) => {
-  //   const { data: session, status } = useSession();
   const formatDate = (dateString) => {
     return format(new Date(dateString), "MMMM d, yyyy");
   };
+
+  const user = useSelector((state) => state.user.user);
 
   return (
     <>
@@ -51,35 +53,35 @@ const BlogCard = ({
             <div className="text-gray-400 flex items-center">
               <span
                 className={`${
-                  session?.user?.role === "admin" && page != "user"
+                  user?.role === "admin" && page != "user"
                     ? "group-hover:hidden"
                     : ""
                 }`}
               >
                 {formatDate(blog.createdAt)}
               </span>
-              {/* {session?.user?.role === "admin" && page != "user" && ( */}
-              <span className="hidden group-hover:flex gap-2">
-                <FaRegEdit
-                  size={23}
-                  color="gray"
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setOpenEditDialog(true);
-                    setSelectedBlog(blog);
-                  }}
-                />
-                <MdOutlineDelete
-                  size={25}
-                  color="red"
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setOpenDeleteDialog(true);
-                    setDeleteBlog(blog);
-                  }}
-                />
-              </span>
-              {/* )} */}
+              {user?.role === "admin" && page != "user" && (
+                <span className="hidden group-hover:flex gap-2">
+                  <FaRegEdit
+                    size={23}
+                    color="gray"
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setOpenEditDialog(true);
+                      setSelectedBlog(blog);
+                    }}
+                  />
+                  <MdOutlineDelete
+                    size={25}
+                    color="red"
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setOpenDeleteDialog(true);
+                      setDeleteBlog(blog);
+                    }}
+                  />
+                </span>
+              )}
             </div>
           </div>
           <h1 className="font-bold mb-2">

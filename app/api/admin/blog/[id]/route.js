@@ -40,8 +40,7 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    await dbConnect();
-
+    await connectMongoDB();
     const blog = await Blog.findByIdAndDelete(id);
 
     if (!blog) {

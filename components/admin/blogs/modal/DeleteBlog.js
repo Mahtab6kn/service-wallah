@@ -22,7 +22,7 @@ const DeleteBlog = ({ open, setOpen, deleteBlog, setBlogs }) => {
         }
       }
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/blog/${deleteBlog._id}`,
+        `http://localhost:3000/api/admin/blog/${deleteBlog._id}`,
         {
           method: "DELETE",
         }
@@ -33,6 +33,7 @@ const DeleteBlog = ({ open, setOpen, deleteBlog, setBlogs }) => {
         handleOpen();
       } else {
         const errorData = await res.json();
+        console.log(errorData);
         toast.error(`Failed to delete blog: ${errorData.message}`);
       }
     } catch (error) {

@@ -46,7 +46,16 @@ const Page = () => {
 
   const fetchBlogs = async (page) => {
     try {
-      const response = await axios.get(`/api/admin/blog?page=${page}size=15`);
+      const response = await fetch(
+        `http://localhost:3000/api/blog?page=${page}&limit=9`,
+        {
+          method: "GET",
+          cache: "no-store",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const data = await response.json();
       setBlogs(data.data);
       setMeta(data.pagination);

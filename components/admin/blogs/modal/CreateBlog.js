@@ -80,16 +80,13 @@ const CreateBlog = ({ open, setOpen, setBlogs }) => {
 
       const postData = { ...formData, image: imageObject };
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/blog`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(postData),
-        }
-      );
+      const res = await fetch("/api/admin/blog", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postData),
+      });
 
       if (res.ok) {
         const responseData = await res.json();
@@ -107,9 +104,11 @@ const CreateBlog = ({ open, setOpen, setBlogs }) => {
         });
       } else {
         const errorData = await res.json();
+        console.log({ Error: errorData });
         toast.error(`Error creating blog: ${errorData.message}`);
       }
     } catch (err) {
+      console.log({ message: err });
       toast.error(err.message || "An unexpected error occurred");
     } finally {
       setPending(false);
@@ -147,15 +146,16 @@ const CreateBlog = ({ open, setOpen, setBlogs }) => {
             value={formData.type}
             onChange={(value) => setFormData({ ...formData, type: value })}
           >
-            <Option value="Fashion">Fashion</Option>
-            <Option value="Fashion Trends">Fashion Trends</Option>
-            <Option value="Seasonal Fashion">Seasonal Fashion</Option>
-            <Option value="Budget Fashion">Budget Fashion</Option>
-            <Option value="Business">Business</Option>
-            <Option value="Styling Tips">Styling Tips</Option>
-            <Option value="Celebrity Style">Celebrity Style</Option>
-            <Option value="Occasion Wear">Occasion Wear</Option>
-            <Option value="Outfit Inspiration">Outfit Inspiration</Option>
+            <Option value="Home Services">Home Services</Option>
+            <Option value="Cleaning Services">Cleaning Services</Option>
+            <Option value="Plumbing Services">Plumbing Services</Option>
+            <Option value="Electrical Services">Electrical Services</Option>
+            <Option value="Health and Wellness">Health and Wellness</Option>
+            <Option value="Personal Care">Personal Care</Option>
+            <Option value="Maintenance Services">Maintenance Services</Option>
+            <Option value="Professional Services">Professional Services</Option>
+            <Option value="Business Services">Business Services</Option>
+            <Option value="Consulting Services">Consulting Services</Option>
           </Select>
           <Input
             label="Blog Title"
