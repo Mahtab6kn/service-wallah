@@ -1,14 +1,19 @@
 "use client";
-import { useState, useEffect, Suspense, lazy } from 'react';
-import dynamic from 'next/dynamic';
+import { useState, useEffect, Suspense, lazy } from "react";
+import dynamic from "next/dynamic";
 import axios from "axios";
-import Loading from '@/components/Loading';
+import Loading from "@/components/Loading";
+import Testimonial from "@/components/home/testimonial/Testimonial";
 
 // Dynamically import components
 const Hero = dynamic(() => import("@/components/home/Hero"), { ssr: false });
-const HeroMovingIcons = dynamic(() => import("@/components/home/HeroMovingIcons"), { ssr: false });
-const CallToAction = dynamic(() => import("@/components/home/CallToAction"), { ssr: false });
-const Testimonial = dynamic(() => import("@/components/home/Testimonial"), { ssr: false });
+const HeroMovingIcons = dynamic(
+  () => import("@/components/home/HeroMovingIcons"),
+  { ssr: false }
+);
+const CallToAction = dynamic(() => import("@/components/home/CallToAction"), {
+  ssr: false,
+});
 
 // Lazy load components
 const ServiceSection = lazy(() => import("../components/ServiceSection"));
