@@ -21,11 +21,12 @@ const Page = () => {
     const fetchBooking = async () => {
       try {
         const response = await fetch(`/api/bookings/${id}`);
-        if (!response.ok) {
-          toast.error(`Error fetching booking!`);
-        }
         const data = await response.json();
-        setBooking(data);
+        if (!data.success) {
+          toast.error(data.message);
+          return;
+        }
+        setBooking(data.booking);
       } catch (error) {
         toast.error(`Error fetching booking!`);
         console.log("Error fetching booking:", error);

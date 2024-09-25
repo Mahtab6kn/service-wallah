@@ -1,4 +1,3 @@
-import Invoice from "@/components/Invoice";
 import { storage } from "@/firebase";
 import { Button } from "@material-tailwind/react";
 import { GoogleMap, LoadScriptNext, Marker } from "@react-google-maps/api";
@@ -16,6 +15,7 @@ import { MdOutlineCloudUpload } from "react-icons/md";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 import { useSelector } from "react-redux";
 import UpdateServiceStatus from "./UpdateServiceStatus";
+import Invoice from "./Invoice";
 
 const mapContainerStyle = {
   width: "100%",
@@ -200,7 +200,7 @@ const BookingDetail = ({ booking, setBooking }) => {
           Booking details
         </h3>
         <hr className="mb-2 mt-1" />
-        <div className="text-gray-500 mb-2">Booking ID: {booking._id}</div>
+        <div className="text-gray-500 mb-2">Booking ID: {booking.bookingId}</div>
         <div className="grid md:grid-cols-2 grid-cols-1 gap-4 mb-4">
           {booking?.cartItems?.map((item) => {
             return (
@@ -394,8 +394,8 @@ const BookingDetail = ({ booking, setBooking }) => {
             <div className="flex gap-4 flex-col md:flex-row items-center justify-center">
               <div className="flex justify-center">
                 <Image
-                  width={100}
-                  height={100}
+                  width={500}
+                  height={500}
                   src={uploadedImage || "https://placehold.co/400"}
                   alt="Uploaded"
                   className="w-32 h-32 rounded-lg object-cover"

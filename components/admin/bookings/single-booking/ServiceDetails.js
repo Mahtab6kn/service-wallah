@@ -1,5 +1,7 @@
+import ShowPricing from "@/components/ShowPricing";
 import Image from "next/image";
 import React from "react";
+import { GoAlertFill } from "react-icons/go";
 
 const ServiceDetails = ({ booking }) => {
   return (
@@ -7,7 +9,7 @@ const ServiceDetails = ({ booking }) => {
       {/* Header */}
       <h3 className="text-xl font-bold text-gray-800">Service Details</h3>
       {/* Cart Items */}
-      <div>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
         {booking.cartItems.map((item) => (
           <div
             key={item._id}
@@ -36,93 +38,46 @@ const ServiceDetails = ({ booking }) => {
       </div>
 
       {/* Pricing Info */}
-      <div className="mt-6">
-        {/* Subtotal */}
-        <div className="flex justify-between items-center py-2">
-          <span className="text-gray-600">Subtotal</span>
-          <span className="font-semibold">
-            ₹
-            {booking?.cartItems
-              ? new Intl.NumberFormat("en-IN", {
-                  style: "currency",
-                  currency: "INR",
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })
-                  .format(
-                    booking?.cartItems.reduce(
-                      (acc, cur) => acc + cur.price * cur.quantity,
-                      0
-                    )
-                  )
-                  .replace("₹", "")
-                  .trim()
-              : "0.00"}
-          </span>
-        </div>
-
-        {/* Convenience Fee */}
-        <div className="flex justify-between items-center py-2">
-          <span className="text-gray-600">Convenience Fee</span>
-          <span className="font-semibold">₹18.00</span>
-        </div>
-
-        {/* Total */}
-        <div className="flex justify-between items-center py-4 border-t border-gray-300 mt-4">
-          <span className="text-lg font-bold">Total</span>
-          <span className="text-lg font-bold">
-            ₹
-            {booking?.cartItems
-              ? new Intl.NumberFormat("en-IN", {
-                  style: "currency",
-                  currency: "INR",
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })
-                  .format(
-                    booking?.cartItems.reduce(
-                      (acc, cur) => acc + cur.price * cur.quantity,
-                      18
-                    )
-                  )
-                  .replace("₹", "")
-                  .trim()
-              : "0.00"}
-          </span>
-        </div>
-      </div>
+      <ShowPricing cartItems={booking.cartItems} />
 
       {/* Payment Info */}
-      <div className="mt-6 bg-gray-50 p-4 rounded-lg">
-        <div className="flex justify-between items-center mb-2">
-          <h3 className="text-lg font-semibold mb-2 text-gray-800">
-            Payment Info
-          </h3>
-          <span
-            className={`px-4 py-2 rounded-full text-sm font-medium ${
-              booking.paid
-                ? "bg-green-100 text-green-600"
-                : "bg-red-100 text-red-600"
-            }`}
-          >
-            {booking.paid ? "Paid" : "Not Paid"}
-          </span>
+      {booking.transactionId == undefined ? (
+        <div className="mt-6 bg-red-50 text-red-500 text-sm p-4 rounded-lg flex gap-2 items-center">
+          <GoAlertFill />
+          No payment has been made, Transaction not found.
         </div>
-        <div className="flex flex-col sm:flex-row justify-between gap-4">
-          <div>
-            <p className="text-sm text-gray-600">
-              <span className="font-semibold">Method:</span>{" "}
-              {booking.paymentMethod}
-            </p>
+      ) : (
+        <div className="mt-6 bg-gray-50 p-4 rounded-lg">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-lg font-semibold mb-2 text-gray-800">
+              Payment Info
+            </h3>
+            <span
+              className={`px-4 py-2 rounded-full text-sm font-medium ${
+                booking.paid
+                  ? "bg-green-100 text-green-600"
+                  : "bg-red-100 text-red-600"
+              }`}
+            >
+              {booking.paid ? "Paid" : "Not Paid"}
+            </span>
           </div>
-          <div>
-            <p className="text-sm text-gray-600">
-              <span className="font-semibold">Transaction ID:</span>{" "}
-              {booking.transactionId}
-            </p>
+          <div className="flex flex-col sm:flex-row justify-between gap-4">
+            <div>
+              <p className="text-sm text-gray-600">
+                <span className="font-semibold">Method:</span>{" "}
+                {booking.paymentMethod}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">
+                <span className="font-semibold">Transaction ID:</span>{" "}
+                {booking.transactionId}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

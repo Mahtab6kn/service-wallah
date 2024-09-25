@@ -9,7 +9,7 @@ const UserInvoiceDialog = ({
   handleInvoiceDialog,
   setBooking,
   redirectingLoading,
-  handleInvoicePayment
+  handleInvoicePayment,
 }) => {
   const handleRejectInvoice = async () => {
     const postData = {
@@ -17,10 +17,7 @@ const UserInvoiceDialog = ({
       invoices: { ...booking.invoices, status: "Invoice Rejected" },
     };
     try {
-      const res = await axios.put(
-        `/api/bookings/${booking._id}`,
-        postData
-      );
+      const res = await axios.put(`/api/bookings/${booking._id}`, postData);
       if (res.status === 201) {
         toast.success("Invoice rejected successfully!");
         handleInvoiceDialog();
@@ -41,10 +38,7 @@ const UserInvoiceDialog = ({
       },
     };
     try {
-      const res = await axios.put(
-        `/api/bookings/${booking._id}`,
-        postData
-      );
+      const res = await axios.put(`/api/bookings/${booking._id}`, postData);
       if (res.status === 201) {
         toast.success("Invoice accepted successfully!");
       }
@@ -73,7 +67,7 @@ const UserInvoiceDialog = ({
           <RxCross2 size={25} />
         </IconButton>
       </header>
-      <div className="bg-white rounded-lg">
+      <div className="bg-white rounded-lg max-h-96 overflow-auto">
         <div className="flex justify-between items-start flex-col lg:flex-row mb-2 gap-2">
           <div className="flex flex-col">
             <div className="flex gap-2 items-center">
@@ -85,8 +79,7 @@ const UserInvoiceDialog = ({
             <div className="flex gap-2 items-center">
               Date & Time:
               <div className="text-gray-700 font-medium">
-                {booking?.invoices?.date},{" "}
-                {booking?.invoices?.time}
+                {booking?.invoices?.date}, {booking?.invoices?.time}
               </div>
             </div>
             <div className="flex gap-2 items-center">
@@ -97,37 +90,36 @@ const UserInvoiceDialog = ({
             </div>
           </div>
         </div>
-        <table className="w-full flex flex-row flex-no-wrap sm:bg-white rounded-lg border overflow-auto">
-          <thead className="text-white">
-            <tr className="bg-gray-600 flex flex-col flex-no wrap sm:table-row rounded-l-lg sm:rounded-none mb-2 sm:mb-0">
-              <th className="p-3 text-left">Description</th>
-              <th className="p-3 text-left">Quantity</th>
-              <th className="p-3 text-left">Unit Price</th>
-              <th className="p-3 text-left">Amount</th>
-            </tr>
-          </thead>
-          <tbody className="flex-1 sm:flex-none">
+        <div className="w-full sm:bg-white rounded-lg border overflow-auto">
+          <div className="text-white bg-gray-600 flex flex-col sm:flex-row sm:rounded-none mb-2 sm:mb-0">
+            <div className="p-3 text-left font-semibold">Description</div>
+            <div className="p-3 text-left font-semibold">Quantity</div>
+            <div className="p-3 text-left font-semibold">Unit Price</div>
+            <div className="p-3 text-left font-semibold">Amount</div>
+          </div>
+          <div className="flex flex-col sm:flex-none">
             {booking.invoices?.items?.map((item, index) => (
-              <tr
-                className="flex flex-col flex-no wrap sm:table-row mb-2 sm:mb-0"
+              <div
+                className="flex flex-col sm:flex-row mb-2 sm:mb-0 border-gray-300 border-b last:border-b-0 sm:border-none"
                 key={index}
               >
-                <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                <div className="border-grey-light border-b sm:border-none p-3 truncate last:border-b-0">
                   {item.description}
-                </td>
-                <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                </div>
+                <div className="border-grey-light border-b sm:border-none p-3 truncate last:border-b-0">
                   {item.quantity}
-                </td>
-                <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                </div>
+                <div className="border-grey-light border-b sm:border-none p-3 truncate last:border-b-0">
                   ₹{item.unitPrice}
-                </td>
-                <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                </div>
+                <div className="border-grey-light border-b sm:border-none p-3 truncate last:border-b-0">
                   ₹{item.amount}
-                </td>
-              </tr>
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
+
         {booking.invoices?.status === "Invoice Rejected" ? (
           <p className="text-red-500 text-sm text-center mt-4">
             Invoice rejected
