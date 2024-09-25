@@ -6,7 +6,12 @@ import {
   MenuItem,
   Avatar,
 } from "@material-tailwind/react";
-import { FaCalendarCheck, FaHistory, FaUser } from "react-icons/fa";
+import {
+  FaCalendarCheck,
+  FaHistory,
+  FaMicroblog,
+  FaUser,
+} from "react-icons/fa";
 import { FaBoxesStacked, FaUsersGear } from "react-icons/fa6";
 import Link from "next/link";
 import {
@@ -140,6 +145,11 @@ const UserNavigation = ({ handleOpenLoginDialog }) => {
               <Link href={`/admin/payments`} className="outline-none">
                 <MenuItem className="justify-center flex items-center gap-1">
                   Manage Payments <MdOutlinePayment />
+                </MenuItem>
+              </Link>
+              <Link href={`/admin/blogs`} className="outline-none">
+                <MenuItem className="justify-center flex items-center gap-1">
+                  Blogs <FaMicroblog />
                 </MenuItem>
               </Link>
               <MenuItem
