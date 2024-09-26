@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import React from "react";
 
 const TestimonialCard = ({ name, img, desc, cust, rating }) => {
@@ -25,15 +26,17 @@ const TestimonialCard = ({ name, img, desc, cust, rating }) => {
   return (
     <div className="bg-light-blue-500 p-6 rounded-lg text-center">
       <div className="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4">
-        <img
+        <Image
           src={img}
-          alt="Jessica Devis"
+          height={96}
+          width={96}
+          alt="Image"
           className="w-full h-full object-cover"
         />
       </div>
       <h3 className="text-xl font-semibold text-white">{name}</h3>
       <p className="text-sm text-white">{cust}</p>
-      <p className="mt-4 text-white">"{desc}"</p>
+      <p className="mt-4 text-white">&quot;{desc}&quot;</p>
       <div className="mt-4 flex justify-center">
         <Rating stars={rating} />
       </div>

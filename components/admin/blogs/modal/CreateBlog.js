@@ -20,6 +20,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "@/firebase";
 import { toast } from "sonner";
 import Heading from "../Heading";
+import Image from "next/image";
 const TextEditorDialog = dynamic(() => import("./TextEditor"), { ssr: false });
 
 const CreateBlog = ({ open, setOpen, setBlogs }) => {
@@ -192,8 +193,10 @@ const CreateBlog = ({ open, setOpen, setBlogs }) => {
               className="cursor-pointer flex items-center space-x-4 border border-gray-400 rounded-md p-4 w-full h-full"
             >
               {formData.image ? (
-                <img
+                <Image
                   src={formData.image.preview}
+                  height={224}
+                  width={300}
                   alt="Image"
                   className="w-full h-full object-contain"
                 />

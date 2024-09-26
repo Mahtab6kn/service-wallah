@@ -6,31 +6,30 @@ import { useEffect, useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { FaMicroblog } from "react-icons/fa";
 
-export default function page() {
+export default function Page() {
   const [data, setData] = useState(null);
   const { id } = useParams();
 
-  const getBlog = async () => {
-    try {
-      let res = await fetch(`/api/blog/${id}`, {
-        method: "GET",
-        cache: "no-store",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      res = await res.json();
-
-      console.log(res);
-
-      setData(res);
-    } catch (error) {
-      toast.error(error);
-    }
-  };
-
   useEffect(() => {
+    const getBlog = async () => {
+      try {
+        let res = await fetch(`/api/blog/${id}`, {
+          method: "GET",
+          cache: "no-store",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        res = await res.json();
+
+        console.log(res);
+
+        setData(res);
+      } catch (error) {
+        toast.error(error);
+      }
+    };
     getBlog();
   }, [id]);
 
@@ -70,7 +69,7 @@ export default function page() {
           </div>
           {/* Description Section  */}
           <div className="my-6 mx-4 py-2 px-4 border-l-4 text-gray-400 border-gray-500 italic text-lg">
-            " {data.description} "
+            &quot;{data.description}&quot;
           </div>
 
           {/* Content Section */}

@@ -209,12 +209,14 @@ const EditBlog = ({ open, setOpen, blog, setBlogs }) => {
               className="cursor-pointer flex items-center space-x-4 border border-gray-400 rounded-md p-4 w-full h-full"
             >
               {formData.image ? (
-                <img
+                <Image
                   src={
                     newImage
                       ? URL.createObjectURL(newImage)
                       : formData.image.url
                   }
+                  width={300}
+                  height={224}
                   alt="Image"
                   className="w-full h-full object-contain"
                 />

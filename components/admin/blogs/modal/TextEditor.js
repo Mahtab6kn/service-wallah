@@ -13,9 +13,9 @@ import TextEditor from "../TextEditor";
 const TextEditorDialog = ({ open, setOpen, formData, setFormData }) => {
   const handleOpen = () => setOpen(!open);
 
-  const handleSubmit = () => {
-    handleOpen();
-  };
+  // const handleSubmit = () => {
+  //   handleOpen();
+  // };
 
   return (
     <Dialog
@@ -55,7 +55,7 @@ const TextEditorDialog = ({ open, setOpen, formData, setFormData }) => {
         <Button
           variant="gradient"
           color="green"
-          onClick={handleSubmit}
+          onClick={handleOpen}
           className="py-2"
         >
           <span>Submit</span>

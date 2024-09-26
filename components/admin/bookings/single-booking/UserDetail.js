@@ -1,5 +1,6 @@
 "use client";
 import { IconButton, Tooltip } from "@material-tailwind/react";
+import Image from "next/image";
 import { FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 
 const UserDetail = ({ booking }) => {

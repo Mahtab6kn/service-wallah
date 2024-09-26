@@ -45,8 +45,8 @@ export default function Blogs() {
           </h2>
           <p className="mt-4 text-gray-600">
             <strong>
-              That's the main thing people are controlled by! Thoughts - their
-              perception of themselves!
+              That&apos;s the main thing people are controlled by! Thoughts -
+              their perception of themselves!
             </strong>
           </p>
         </div>
