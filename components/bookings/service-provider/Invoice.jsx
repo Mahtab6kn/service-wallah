@@ -274,7 +274,7 @@ const Invoice = ({ selectedBooking, setSelectedBooking }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col justify-center gap-2">
+              <div className="flex md:flex-col flex-row justify-center gap-2">
                 {selectedBooking.invoices.status === "Invoice Accepted" ? (
                   <div className="bg-teal-100 text-teal-800 rounded-full px-3 py-1 text-sm capitalize">
                     {selectedBooking.invoices.status}
@@ -295,37 +295,38 @@ const Invoice = ({ selectedBooking, setSelectedBooking }) => {
                 )}
               </div>
             </div>
-            <table className="w-full flex flex-row flex-no-wrap sm:bg-white rounded-lg border overflow-auto">
-              <thead className="text-white">
-                <tr className="bg-teal-400 flex flex-col flex-no wrap sm:table-row rounded-l-lg sm:rounded-none mb-2 sm:mb-0">
-                  <th className="p-3 text-left">Description</th>
-                  <th className="p-3 text-left">Quantity</th>
-                  <th className="p-3 text-left">Unit Price</th>
-                  <th className="p-3 text-left">Amount</th>
-                </tr>
-              </thead>
-              <tbody className="flex-1 sm:flex-none">
+            <div className="w-full sm:bg-white rounded-lg border overflow-auto">
+              {/* Header */}
+              <div className="text-white bg-teal-400 flex flex-col w-full sm:flex-row sm:rounded-none mb-2">
+                <div className="p-3 text-left font-semibold flex justify-center md:w-1/4">Description</div>
+                <div className="p-3 text-left font-semibold flex justify-center md:w-1/4">Quantity</div>
+                <div className="p-3 text-left font-semibold flex justify-center md:w-1/4">Unit Price</div>
+                <div className="p-3 text-left font-semibold flex justify-center md:w-1/4">Amount</div>
+              </div>
+
+              {/* Body */}
+              <div className="flex flex-col">
                 {selectedBooking.invoices?.items?.map((item, index) => (
-                  <tr
-                    className="flex flex-col flex-no wrap sm:table-row mb-2 sm:mb-0"
+                  <div
+                    className="flex flex-col sm:flex-row mb-2 sm:mb-0 border-gray-300 border-b last:border-b-0"
                     key={index}
                   >
-                    <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                    <div className="border-grey-light border-b sm:border-none p-3 truncate last:border-b-0 flex justify-center md:w-1/4">
                       {item.description}
-                    </td>
-                    <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                    </div>
+                    <div className="border-grey-light border-b sm:border-none p-3 truncate last:border-b-0 flex justify-center md:w-1/4">
                       {item.quantity}
-                    </td>
-                    <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                    </div>
+                    <div className="border-grey-light border-b sm:border-none p-3 truncate last:border-b-0 flex justify-center md:w-1/4">
                       ₹{item.unitPrice}
-                    </td>
-                    <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">
+                    </div>
+                    <div className="border-grey-light border-b sm:border-none p-3 truncate last:border-b-0 flex justify-center md:w-1/4">
                       ₹{item.amount}
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
         )}
       </Dialog>

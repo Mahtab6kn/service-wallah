@@ -1,6 +1,7 @@
+import Image from "next/image";
 import React from "react";
 
-const BookingDetails = ({booking}) => {
+const BookingDetails = ({ booking }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow mb-6">
       <h3 className="text-xl font-bold text-gray-800 mb-4">
@@ -20,7 +21,7 @@ const BookingDetails = ({booking}) => {
 
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-500">One-Time Password (OTP)</p>
+          <p className="text-sm text-gray-500">Reaching OTP</p>
           <p className="text-lg font-semibold text-gray-700">{booking.otp}</p>
         </div>
         <span
@@ -32,6 +33,18 @@ const BookingDetails = ({booking}) => {
         >
           {booking.otpVerified ? "Verified" : "Not Verified"}
         </span>
+      </div>
+      <div className="flex items-center mt-2">
+        <div>
+          <p className="text-sm text-gray-500 mb-1">Service Verification Image</p>
+          <Image
+            width={500}
+            height={500}
+            src={booking.verificationImage.url || "https://placehold.co/400"}
+            alt={booking.otpVerified ? "Verified" : "Not Verified"}
+            className="w-32 h-32 rounded-lg object-cover"
+          />
+        </div>
       </div>
     </div>
   );

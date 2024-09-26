@@ -2,12 +2,14 @@
 import Loading from "@/components/Loading";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { FaMapMarkerAlt } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import { toast } from "sonner";
 import UserDetail from "./UserDetail";
 import ServiceDetails from "./ServiceDetails";
 import LocationDetails from "./LocationDetails";
 import BookingDetails from "./BookingDetails";
+import InvoiceDetail from "./InvoiceDetail";
+import { Button } from "@material-tailwind/react";
 
 const BookingContainer = () => {
   const { id } = useParams();
@@ -48,7 +50,7 @@ const BookingContainer = () => {
           className={`text-xs px-4 py-2 rounded-full ${
             booking.paid
               ? "bg-green-100 text-green-600"
-              : "bg-red-100 text-red-600"
+              : "bg-gray-200 text-gray-600"
           }`}
         >
           {booking.status}
@@ -57,9 +59,55 @@ const BookingContainer = () => {
 
       <BookingDetails booking={booking} />
 
-      <UserDetail booking={booking} />
+      <div className="flex flex-col lg:flex-row gap-4 justify-center items-center w-full mb-6">
+        <div className="bg-white p-6 rounded-lg shadow w-full">
+          <h3 className="text-md md:text-xl font-semibold mb-4 text-gray-800">
+            Customer Details
+          </h3>
+          <UserDetail
+            name={booking.fullname}
+            profileImage={booking.profileImage}
+            email={booking.email}
+            phoneNumber={booking.phoneNumber}
+          />
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow w-full">
+          {booking.assignedServiceProviders ? (
+            <>
+              <h3 className="text-md md:text-xl font-semibold mb-4 text-gray-800">
+                Assigned Service Provider
+              </h3>
+              <UserDetail
+                name={booking.assignedServiceProviders.name}
+                profileImage={booking.assignedServiceProviders.image}
+                email={booking.assignedServiceProviders.email}
+                phoneNumber={booking.assignedServiceProviders.phoneNumber}
+              />
+            </>
+          ) : (
+            <div className="flex flex-col gap-4 py-1">
+              <h3 className="text-md md:text-xl font-semibold mb-4 text-gray-800">
+                No service provider assigned
+              </h3>
+
+              {/* Button Section */}
+              <Button
+                size="md"
+                variant="gradient"
+                color="blue"
+                className="flex gap-3 items-center justify-center"
+              >
+                <FaPlus className="text-lg" />
+                <span>Assign Service Provider</span>
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
 
       <ServiceDetails booking={booking} />
+
+      <InvoiceDetail booking={booking} />
 
       <LocationDetails booking={booking} />
 
@@ -81,11 +129,26 @@ const BookingContainer = () => {
 
       {/* Service Provider Info */}
       <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="text-lg font-semibold mb-2">Service Provider Info</h3>
+        <h3 className="text-lg font-semibold mb-2">
+          Available Service providers
+        </h3>
         <span className="text-sm text-gray-600">
-          {booking.noServiceProviderAvailable
-            ? "No service provider available"
-            : "Assigned to a service provider"}
+          {booking.noServiceProviderAvailable ? (
+            "No service provider available"
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
+              {booking.availableServiceProviders.map((sp, index) => {
+                return (
+                  <UserDetail
+                    name={sp.name}
+                    profileImage={sp.image}
+                    email={sp.email}
+                    phoneNumber={sp.phoneNumber}
+                  />
+                );
+              })}
+            </div>
+          )}
         </span>
       </div>
     </div>
@@ -94,22 +157,14 @@ const BookingContainer = () => {
 
 export default BookingContainer;
 
-// Left to do:
+// Left to do in admin single booking page:
 
-// show service provider working image
+// Create a service provider assign dialog and assign the service provider
 
-// Show service provider information
-
-// show a button to alter the payment status
-
-// Show invoice if available
-
-// Show a button to alter invoice payment status
+// if a service provider reject a service request remove the service provider from available service providers list
 
 // if the booking has not been accepted yet, show available service provider information
 
 // If there is no service provider available give a dialog to manually assign the service provider
 
-// create a section if the booking has been cancelled with the reason
-
-
+// Create a section if the booking has been cancelled with the reason

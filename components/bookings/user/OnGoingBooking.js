@@ -2,17 +2,20 @@ import {
   Button,
   Dialog,
   IconButton,
-  Rating,
   Typography,
 } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
-import { FaBookmark, FaPhone, FaWhatsapp } from "react-icons/fa";
+import { FaPhone, FaWhatsapp } from "react-icons/fa";
 import { IoMdMailOpen, IoMdOpen } from "react-icons/io";
 import { IoMail } from "react-icons/io5";
 import { PiGenderIntersexFill } from "react-icons/pi";
 import CancelBookingDialog from "./CancelBookingDialog";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 const options = {
   year: "numeric",
@@ -36,6 +39,41 @@ const OnGoingBooking = ({
 
   const handleServiceProviderDetailDialog = () =>
     setOpenServiceProviderDetailDialog(!openServiceProviderDetailDialog);
+
+  const router = useRouter();
+  const user = useSelector((state) => state.user.user);
+
+  const amount = (
+    booking.cartItems.reduce(
+      (acc, product) => acc + product.price * product.quantity,
+      0
+    ) + 18
+  ).toFixed(2);
+
+  const handlePayment = async () => {
+    try {
+      const initiatePayment = await axios.post(
+        `/api/payments/initiate-payment`,
+        {
+          bookingId: booking._id,
+          amount,
+          userId: user._id,
+          userPhoneNumber: booking.phoneNumber,
+          invoice: false,
+        }
+      );
+      if (initiatePayment.data.success) {
+        const phonePeRedirectUrl =
+          initiatePayment.data.data.instrumentResponse.redirectInfo.url;
+        router.push(phonePeRedirectUrl);
+      } else {
+        toast.error(initiatePayment.data);
+      }
+    } catch (err) {
+      console.error("Invoice payment error");
+      toast.error("Error on initializing payment!");
+    }
+  };
   return (
     <div key={booking._id} className="p-6">
       <header className="flex items-center justify-start gap-2">
@@ -382,6 +420,26 @@ const OnGoingBooking = ({
             cancellationReasonDialog={cancellationReasonDialog}
             handleCancellationReasonDialog={handleCancellationReasonDialog}
           />
+          {booking.transactionId == undefined ? (
+            <Button
+              variant="gradient"
+              color="teal"
+              className="rounded"
+              onClick={handlePayment}
+            >
+              Pay {amount}
+            </Button>
+          ) : (
+            !booking.paid && (
+              <Link
+                href={`/status/${booking.transactionId}?bookingId=${booking._id}&invoice=false`}
+              >
+                <Button variant="gradient" color="teal" className="rounded">
+                  Check payment status
+                </Button>
+              </Link>
+            )
+          )}
           {booking.invoices?.title && (
             <div className="flex gap-2">
               <Button
@@ -392,17 +450,18 @@ const OnGoingBooking = ({
               >
                 View invoice
               </Button>
-              {booking.invoices?.status === "Invoice Accepted" && !booking.invoices.paid && (
-                <Button
-                  variant="gradient"
-                  color="teal"
-                  className="rounded"
-                  loading={redirectingLoading}
-                  onClick={handleInvoicePayment}
-                >
-                  Pay ₹{booking.invoices.total}
-                </Button>
-              )}
+              {booking.invoices?.status === "Invoice Accepted" &&
+                !booking.invoices.paid && (
+                  <Button
+                    variant="gradient"
+                    color="teal"
+                    className="rounded"
+                    loading={redirectingLoading}
+                    onClick={handleInvoicePayment}
+                  >
+                    Pay ₹{booking.invoices.total}
+                  </Button>
+                )}
             </div>
           )}
         </div>
