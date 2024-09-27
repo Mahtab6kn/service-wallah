@@ -74,6 +74,7 @@ const bookingSchema = new Schema(
         date: String,
         time: String,
         paymentMethod: { type: String },
+        transactionId: { type: String },
         paid: { type: Boolean },
         status: { type: String, default: "Not Accepted Yet!", required: true },
         items: [

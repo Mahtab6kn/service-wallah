@@ -17,6 +17,21 @@ const InvoiceDetail = ({ booking }) => {
           </div>
         )}
       </div>
+      <div className="bg-gray-50 p-4 rounded-lg mb-4">
+        <h3 className="text-lg font-semibold mb-2">Payment Info</h3>
+        <div className="flex flex-col sm:flex-row justify-between gap-4">
+          <div>
+            <span className="text-gray-600">
+              Method: {booking.invoices.paymentMethod}
+            </span>
+          </div>
+          <div>
+            <span className="text-gray-600">
+              Transaction ID: {booking.invoices.transactionId}
+            </span>
+          </div>
+        </div>
+      </div>
       <div className="border p-4 bg-gray-50 rounded-lg">
         <div className="flex justify-between items-start flex-col lg:flex-row mb-2 gap-2">
           <div className="flex flex-col">

@@ -59,6 +59,7 @@ export async function GET(req, { params }) {
               status: "Invoice Paid!",
               "invoices.paid": true,
               "invoices.paymentMethod": "Online",
+              "invoices.transactionId": MTID,
             },
           },
           { new: true }
