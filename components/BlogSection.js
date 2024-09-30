@@ -50,19 +50,13 @@ export default function Blogs() {
             </strong>
           </p>
         </div>
-        <Carousel
-          className="rounded-xl"
-          autoplay={true}
-          transition={{ duration: 2 }}
-          loop={true}
-        >
-          {/* Display blog cards */}
-          <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4 w-full">
-            {blogs?.data?.slice(0, 3).map((blog) => (
-              <BlogCard key={blog._id} blog={blog} page="user" />
-            ))}
-          </div>
-        </Carousel>
+
+        {/* Display blog cards */}
+        <div className="container grid grid-cols-1 md:grid-cols-3 gap-8 px-4 w-full mx-auto place-items-center">
+          {blogs?.data?.slice(0, 3).map((blog) => (
+            <BlogCard key={blog._id} blog={blog} page="user" />
+          ))}
+        </div>
         <div className="flex justify-center items-center w-full my-6">
           <Link
             href={"/blogs"}

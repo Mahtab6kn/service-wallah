@@ -281,7 +281,7 @@ const Profile = ({
             >
               <TabPanel value="card" className="p-0">
                 <form
-                  className="flex flex-col gap-4 justify-center h-[35vh]"
+                  className="flex flex-col gap-4 mt-5 justify-center"
                   onSubmit={handleLogin}
                 >
                   <div className="w-full ">
@@ -338,7 +338,7 @@ const Profile = ({
                   <div className="flex gap-2 justify-center">
                     <Button
                       fullWidth
-                      size="lg"
+                      size="md"
                       variant="outlined"
                       color="blue-gray"
                       onClick={handleOpenForgotPassword}
@@ -449,7 +449,7 @@ const Profile = ({
                     </Dialog>
                     <Button
                       fullWidth
-                      size="lg"
+                      size="md"
                       type="submit"
                       variant="gradient"
                       color="blue"
@@ -461,7 +461,7 @@ const Profile = ({
                 </form>
               </TabPanel>
               <TabPanel value="paypal" className="p-0">
-                <div className="mt-7 flex flex-col gap-4 ">
+                <div className="mt-5 flex flex-col gap-4 ">
                   <div className="w-full">
                     <Input
                       label="Fullname"
