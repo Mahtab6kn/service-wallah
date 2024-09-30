@@ -16,6 +16,7 @@ import { RiVerifiedBadgeFill } from "react-icons/ri";
 import { useSelector } from "react-redux";
 import UpdateServiceStatus from "./UpdateServiceStatus";
 import Invoice from "./Invoice";
+import { useRouter } from "next/navigation";
 
 const mapContainerStyle = {
   width: "100%",
@@ -24,6 +25,7 @@ const mapContainerStyle = {
 
 const BookingDetail = ({ booking, setBooking }) => {
   const user = useSelector((state) => state.user.user);
+  const router = useRouter();
   const [otp, setOtp] = useState(["", "", "", ""]);
 
   const handleChangeOtp = (element, index) => {
@@ -120,11 +122,9 @@ const BookingDetail = ({ booking, setBooking }) => {
         `/api/users/update`,
         updateServiceProviderData
       );
-      // console.log({ existingServiceProviderResponse });
-
       // Get the current booking data
       const selectedBookingResponse = await axios.get(`/api/bookings/${id}`);
-      const newBooking = selectedBookingResponse.data;
+      const newBooking = selectedBookingResponse.data.booking;
 
       // Filter out the current service provider from available service providers
       const filteredAvailableServiceProviders =
@@ -151,10 +151,10 @@ const BookingDetail = ({ booking, setBooking }) => {
           updateNoServiceProviderAvailableData
         );
         console.log({ updateBookingResponse });
-        window.location.reload();
+        router.push(`/service-provider/booking?page=1`);
         return;
       }
-      window.location.reload();
+      router.push(`/service-provider/booking?page=1`);
     } catch (err) {
       console.log("Error occurred:", err);
     }
@@ -200,7 +200,9 @@ const BookingDetail = ({ booking, setBooking }) => {
           Booking details
         </h3>
         <hr className="mb-2 mt-1" />
-        <div className="text-gray-500 mb-2">Booking ID: {booking.bookingId}</div>
+        <div className="text-gray-500 mb-2">
+          Booking ID: {booking.bookingId}
+        </div>
         <div className="grid md:grid-cols-2 grid-cols-1 gap-4 mb-4">
           {booking?.cartItems?.map((item) => {
             return (

@@ -113,11 +113,6 @@ const Services = () => {
   const [allServices, setAllServices] = useState([]);
 
   const fetchingInitialData = async () => {
-    const id = localStorage.getItem("token");
-    if (!id) {
-      window.location.href = "/";
-      return;
-    }
     try {
       const fetchedData = await fetch("/api/services", {
         method: "GET",
@@ -127,17 +122,6 @@ const Services = () => {
       });
       const response = await fetchedData.json();
       setAllServices(response);
-
-      const res = await fetch(`/api/users/${id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      if (data.role !== "admin") {
-        window.location.href = "/";
-      }
     } catch (err) {
       console.error(err);
     } finally {
