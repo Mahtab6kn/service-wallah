@@ -1,71 +1,20 @@
-"use client";
-import React, { useState } from "react";
-import emailjs from "emailjs-com";
-import { SlSocialFacebook } from "react-icons/sl";
-import { PiTwitterLogoLight } from "react-icons/pi";
 import { IoLogoInstagram } from "react-icons/io";
-import { SlSocialLinkedin } from "react-icons/sl";
-import { PiTelegramLogoLight } from "react-icons/pi";
-import { Input, Textarea } from "@material-tailwind/react";
 import Image from "next/image";
+import Link from "next/link";
+import { MdWhatsapp } from "react-icons/md";
+import { CiLinkedin } from "react-icons/ci";
+import { RiFacebookBoxLine } from "react-icons/ri";
 
 const Footer = () => {
-  const [formData, setFormData] = useState({
-    fullname: "",
-    phone: "",
-    email: "",
-    message: "",
-  });
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const templateParams = {
-      to_name: "Recipient Name", // You can set this dynamically if needed
-      fullname: formData.fullname,
-      phone: formData.phone,
-      email: formData.email,
-      message: formData.message,
-    };
-
-    emailjs
-      .send(
-        "service_amzk9zb",
-        "template_e95jwec",
-        templateParams,
-        "JjJ9NS_6nst0X7Nbb"
-      )
-      .then(
-        (response) => {
-          console.log("SUCCESS!", response.status, response.text);
-          alert("Your message has been sent successfully!");
-          setFormData({
-            fullname: "",
-            phone: "",
-            email: "",
-            message: "",
-          });
-        },
-        (err) => {
-          console.log("FAILED...", err);
-          alert("There was an error sending your message. Please try again.");
-        }
-      );
-  };
-
   return (
     <footer
-      className="bg-gray-300 shadow-inner text-black py-10 "
+      className="bg-gray-100 border-t border-gray-300 text-black pt-6 pb-4"
       style={{
         backgroundImage: "url(/image/shape-3-2.png)",
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="px-14 flex   justify-between flex-col md:flex-row ">
+      <div className="px-4 md:px-14 flex justify-between flex-col md:flex-row ">
         {/* Company Description */}
         <div className="md:w-1/3 mb-6 lg:mb-0 px-4 w-full">
           <h2 className="text-2xl items-center font-bold mb-4 flex gap-1">
@@ -142,68 +91,61 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Contact Form */}
-        <div className="md:w-1/3 w-full mb-6 lg:mb-0">
-          <h3 className="text-xl text-center font-bold mb-4">Contact us</h3>
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <Input
-              label="Fullname"
-              name="fullname"
-              minLength={4}
-              maxLength={30}
-              value={formData.fullname}
-              onChange={handleChange}
-            />
-
-            <Input
-              label="Phone Number"
-              name="phone"
-              minLength={10}
-              maxLength={10}
-              value={formData.phone}
-              onChange={handleChange}
-            />
-            <Input
-              label="Email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-            <Textarea
-              label="Message"
-              name="message"
-              value={formData.message}
-              maxLength={150}
-              onChange={handleChange}
-            />
-            <button
-              type="submit"
-              className="w-full py-2 bg-black text-white rounded-md"
-            >
-              Submit
-            </button>
-          </form>
-        </div>
-
         {/* Company Links */}
-        <div className="flex flex-col items-center lg:items-start md:W-1/3 mx-auto w-fit">
-          <h3 className="text-xl font-bold mb-4">Company</h3>
-          <ul className="space-y-2 text-center lg:text-left">
-            <li>About Us</li>
-            <li>Services</li>
-            <li>FAQs</li>
-            <li>Terms & Conditions</li>
-            <li>Contact Us</li>
+        <div className="flex flex-col md:w-1/3 mx-auto w-full px-4 md:px-0">
+          <h3 className="text-xl font-bold mb-4">Important Links</h3>
+          <ul className="flex flex-col gap-2 justify-center">
+            <Link href={`/about`} className="hover:underline">
+              About Us
+            </Link>
+            <Link href={`/services`} className="hover:underline">
+              Services
+            </Link>
+            <Link href={`/privacy-policy`} className="hover:underline">
+              Privacy Policy
+            </Link>
+            <Link href={`/refund-policy`} className="hover:underline">
+              Refund Policy
+            </Link>
+            <Link href={`/terms-and-condition`} className="hover:underline">
+              Terms and Conditions
+            </Link>
           </ul>
-          <div className="mt-4 flex space-x-4 justify-center lg:justify-start">
-            <SlSocialFacebook className="w-6 h-6" />
-            <PiTwitterLogoLight className="w-6 h-6" />
-            <IoLogoInstagram className="w-6 h-6" />
-            <PiTelegramLogoLight className="w-6 h-6" />
-            <SlSocialLinkedin className="w-6 h-6" />
-          </div>
         </div>
+
+        <div className="flex gap-2 flex-row mt-4 md:flex-col justify-center md:justify-start text-gray-700">
+          <Link
+            target="_blank"
+            href={`https://facebook.com`}
+            className="hover:scale-110 transition-all text-blue-500"
+          >
+            <RiFacebookBoxLine className="w-6 h-6" />
+          </Link>
+          <Link
+            target="_blank"
+            href={`https://facebook.com`}
+            className="hover:scale-110 transition-all text-pink-500"
+          >
+            <IoLogoInstagram className="w-6 h-6" />
+          </Link>
+          <Link
+            target="_blank"
+            href={`https://facebook.com`}
+            className="hover:scale-110 transition-all text-indigo-500"
+          >
+            <CiLinkedin className="w-6 h-6" />
+          </Link>
+          <Link
+            target="_blank"
+            href={`https://facebook.com`}
+            className="hover:scale-110 transition-all text-teal-500"
+          >
+            <MdWhatsapp className="w-6 h-6" />
+          </Link>
+        </div>
+      </div>
+      <div className="border-t border-gray-300 text-center text-sm pt-4 mt-4">
+        <p>© Service Wallah. All rights reserved.</p>
       </div>
     </footer>
   );

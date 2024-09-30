@@ -49,22 +49,6 @@ const ServicePage = () => {
   useEffect(() => {
     const fetchingInitialData = async () => {
       try {
-        const userId = localStorage.getItem("token");
-        if (!userId) {
-          window.location.href = "/";
-          return;
-        }
-        const response = await fetch(`/api/users/${userId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const user = await response.json();
-        if (user.role !== "admin") {
-          window.location.href = "/";
-        }
-
         const res = await fetch(`/api/services/${id}`);
         const data = await res.json();
         setService(data);
