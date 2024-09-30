@@ -14,6 +14,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/firebase";
 import Link from "next/link";
 import Image from "next/image";
+import { toast } from "sonner";
 
 const Services = () => {
   const [open, setOpen] = useState(false);
@@ -38,10 +39,26 @@ const Services = () => {
   const [imageUploaded, setimageUploaded] = useState(false);
   const handleCreateService = async () => {
     try {
-      if (!images.icon && images.images.length === 0) {
-        alert("Invalid icon / Gallery Image");
+      if (serviceData.name === "") {
+        toast.error("Name is required");
         return;
       }
+      if (serviceData.status === "") {
+        toast.error("Please Select the Status");
+        return;
+      }
+      if (images.icon === null) {
+        toast.error("Icon is required");
+        return;
+      }
+      if (images.images === null) {
+        toast.error("Please Upload the Images");
+        return;
+      }
+      // if (!images.icon && images.images.length === 0) {
+      //   alert("Invalid icon / Gallery Image");
+      //   return;
+      // }
       setimageUploaded(true);
       const iconRef = ref(
         storage,
