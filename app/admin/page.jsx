@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import DashboardCard from "@/components/DashboardCard";
-import HorizontalBarChart from "@/components/HorizontalBarChart";
-import PieChart from "@/components/PieChart";
+import DashboardCard from "@/components/admin/dashboard/DashboardCard";
+import HorizontalBarChart from "@/components/admin/dashboard/HorizontalBarChart";
+import PieChart from "@/components/admin/dashboard/PieChart";
 
 const Admin = () => {
   const [data, setData] = useState({

@@ -37,6 +37,10 @@ const About = () => {
               <li>Appliance Maintenance</li>
               <li>And much more!</li>
             </ul>
+            <p className="mt-8 text-gray-600">
+              Contact us today to experience the convenience and reliability of
+              Service Wallah!
+            </p>
           </div>
           <div className="md:w-1/2 mt-8 md:mt-0 flex justify-center relative">
             <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-full shadow-lg z-10">
@@ -59,28 +63,8 @@ const About = () => {
             </div>
           </div>
         </div>
-        <p className="mt-8 text-gray-600">
-          Contact us today to experience the convenience and reliability of
-          Service Wallah!
-        </p>
       </div>
-      <div className="w-full flex flex-col justify-center items-center py-4 px-4">
-        <h1 className="font-julius text-center text-gray-700 text-3xl sm:text-3xl md:text-4xl lg:text-5xl mb-2 flex">
-          <WiStars color="orange" />
-          How to book a service
-          <WiStars color="orange" />
-        </h1>
-        <Image
-          className="w-64 sm:w-80 md:w-96 lg:w-96"
-          src="/image/line2.svg"
-          alt=""
-          width={384}
-          height={96}
-        />
-      </div>
-      <div className="px-4 lg:px-20  w-full">
-        <ServiceSection />
-      </div>
+      <ServiceSection />
       <section className="pb-12 bg-gray-100">
         <div className="container mx-auto px-4 text-center">
           <div className="w-full flex flex-col justify-center items-center py-4 px-4">

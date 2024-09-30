@@ -69,7 +69,7 @@ const TopServices = ({ topServices }) => {
           Best Services
         </h2>
       </div>
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-4 md:px-0 gap-4 items-center">
         {topServices.length <= 3 ? (
           topServices.map((service) => (
             <div key={service._id} className="px-2">
