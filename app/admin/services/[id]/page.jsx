@@ -64,6 +64,8 @@ const ServicePage = () => {
 
   useEffect(() => {
     fetchingInitialData();
+
+    // eslint-disable-next-line
   }, [id]);
 
   function formatDate(dateString) {

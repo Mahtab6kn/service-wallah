@@ -14,12 +14,14 @@ const AvailableServiceProviders = ({availableServiceProviders}) => {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
             {availableServiceProviders.map((sp, index) => {
               return (
-                <UserDetail
-                  name={sp.name}
-                  profileImage={sp.image}
-                  email={sp.email}
-                  phoneNumber={sp.phoneNumber}
-                />
+                <div key={index}>
+                  <UserDetail
+                    name={sp.name}
+                    profileImage={sp.image}
+                    email={sp.email}
+                    phoneNumber={sp.phoneNumber}
+                  />
+                </div>
               );
             })}
           </div>
