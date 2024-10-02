@@ -1,8 +1,11 @@
 "use client";
 import { Carousel } from "@material-tailwind/react";
 import TestimonialCard from "./TestimonialCard";
+import { useState } from "react";
 
 export default function Testimonial() {
+  const [isAutoplay, setIsAutoplay] = useState(true);
+
   return (
     <section className="bg-white text-black py-16">
       <div className="text-center mb-12">
@@ -18,11 +21,15 @@ export default function Testimonial() {
       </div>
       <Carousel
         className="rounded-xl"
-        autoplay={true}
+        autoplay={isAutoplay}
         transition={{ duration: 1 }}
         loop={true}
       >
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 w-full">
+        <div
+          className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 w-full"
+          onMouseEnter={() => setIsAutoplay(false)}
+          onMouseLeave={() => setIsAutoplay(true)}
+        >
           <div>
             <TestimonialCard
               name="Manish Kr."
@@ -51,7 +58,11 @@ export default function Testimonial() {
             />{" "}
           </div>
         </div>
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 w-full">
+        <div
+          className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 w-full"
+          onMouseEnter={() => setIsAutoplay(false)}
+          onMouseLeave={() => setIsAutoplay(true)}
+        >
           <div>
             <TestimonialCard
               name="Manish Kr."

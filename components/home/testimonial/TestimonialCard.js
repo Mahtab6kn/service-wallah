@@ -1,4 +1,5 @@
 "use client";
+import { Card } from "@material-tailwind/react";
 import Image from "next/image";
 import React from "react";
 
@@ -24,7 +25,7 @@ const TestimonialCard = ({ name, img, desc, cust, rating }) => {
     );
   }
   return (
-    <div className="bg-light-blue-500 p-6 rounded-lg text-center">
+    <Card className="p-6 rounded-lg text-center shadow-lg border mb-5">
       <div className="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4">
         <Image
           src={img}
@@ -34,13 +35,13 @@ const TestimonialCard = ({ name, img, desc, cust, rating }) => {
           className="w-full h-full object-cover"
         />
       </div>
-      <h3 className="text-xl font-semibold text-white">{name}</h3>
-      <p className="text-sm text-white">{cust}</p>
-      <p className="mt-4 text-white">&quot;{desc}&quot;</p>
+      <h3 className="text-xl font-semibold text-blue-500">{name}</h3>
+      <p className="text-sm text-blue-gray-400">{cust}</p>
+      <p className="mt-4 text-[#030637]">&quot;{desc}&quot;</p>
       <div className="mt-4 flex justify-center">
         <Rating stars={rating} />
       </div>
-    </div>
+    </Card>
   );
 };
 

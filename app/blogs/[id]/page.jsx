@@ -35,7 +35,7 @@ export default function Page() {
 
   if (!data) {
     return (
-      <div className="w-full flex gap-1 justify-center items-center my-10 text-2xl text-pink-500">
+      <div className="w-full flex gap-1 justify-center items-center my-10 text-2xl text-teal-500">
         <AiOutlineLoading className="animate-spin" />
       </div>
     );
@@ -44,7 +44,7 @@ export default function Page() {
     <div className="p-3">
       <Heading
         icon={
-          <div className="bg-gradient-to-r from-red-400 to-pink-400 p-1 rounded-full inline-block">
+          <div className="bg-teal-500 p-1 rounded-full inline-block">
             <FaMicroblog size={20} color="white" />
           </div>
         }

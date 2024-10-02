@@ -15,9 +15,7 @@ const Heading = ({ icon, title, buttons }) => {
         </div>
       </div>
 
-      <div
-        className={`rounded-full w-full bg-gradient-to-r from-red-400 to-pink-400 h-1`}
-      ></div>
+      <div className={`rounded-full w-full bg-teal-500 h-1`}></div>
     </div>
   );
 };

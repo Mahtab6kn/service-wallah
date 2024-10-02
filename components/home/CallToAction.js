@@ -4,14 +4,14 @@ import { FaUserPlus } from "react-icons/fa";
 
 const CallToAction = () => {
   return (
-    <div className="flex flex-col items-center justify-center bg-gray-100 py-10 px-4 sm:px-6 lg:px-8 mx-auto max-w-3xl bg-cover bg-center  ">
+    <div className="flex flex-col items-center justify-center gap-6 bg-gray-100 py-10 px-4 sm:px-6 lg:px-8 mx-auto max-w-3xl bg-cover bg-center  ">
       <Link
         href={"/services"}
         className="px-6 py-3 w-full outline transition-all duration-700 flex justify-center items-center rounded-md gap-1 hover:bg-gradient-to-r hover:from-transparent hover:to-transparent hover:text-blue-600 outline-none hover:outline-blue-600 hover:outline-2 bg-gradient-to-tr from-blue-400 to-blue-600 font-semibold text-white"
       >
         Book a Service »
       </Link>
-      <div className="flex items-center lg:w-full md:w-full sm:w-full w-full mb-6">
+      <div className="flex items-center lg:w-full md:w-full sm:w-full w-full">
         <hr className="flex-grow border-gray-300" />
         <span className="px-4 text-gray-500 font-medium">or</span>
         <hr className="flex-grow border-gray-300" />

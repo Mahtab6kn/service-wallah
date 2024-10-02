@@ -29,14 +29,14 @@ const TextEditorDialog = ({ open, setOpen, formData, setFormData }) => {
     >
       <Heading
         icon={
-          <div className="bg-gradient-to-r from-red-400 to-pink-400 p-1 rounded-full inline-block">
+          <div className="bg-teal-500 p-1 rounded-full inline-block">
             <FaMicroblog size={20} color="white" />
           </div>
         }
         title={"Text Editor"}
         buttons={[
           <IconButton key={1} variant="text" onClick={handleOpen}>
-            <RxCross1 size={20} />
+            <RxCross1 size={20} color="teal" />
           </IconButton>,
         ]}
       />

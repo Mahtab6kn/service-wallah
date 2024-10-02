@@ -128,14 +128,14 @@ const CreateBlog = ({ open, setOpen, setBlogs }) => {
     >
       <Heading
         icon={
-          <div className="bg-gradient-to-r from-red-400 to-pink-400 p-1 rounded-full inline-block">
+          <div className="bg-teal-500 p-1 rounded-full inline-block">
             <FaMicroblog size={20} color="white" />
           </div>
         }
         title={"Create blog"}
         buttons={[
           <IconButton key={1} variant="text" onClick={handleOpen}>
-            <RxCross1 size={20} />
+            <RxCross1 size={20} color="teal" />
           </IconButton>,
         ]}
       />
@@ -143,7 +143,7 @@ const CreateBlog = ({ open, setOpen, setBlogs }) => {
         <DialogBody className="flex flex-col gap-5">
           <Select
             label="Select Blog Type"
-            color="pink"
+            color="teal"
             value={formData.type}
             onChange={(value) => setFormData({ ...formData, type: value })}
           >
@@ -160,7 +160,7 @@ const CreateBlog = ({ open, setOpen, setBlogs }) => {
           </Select>
           <Input
             label="Blog Title"
-            color="pink"
+            color="teal"
             value={formData.title}
             onChange={(e) =>
               setFormData({ ...formData, title: e.target.value })
@@ -174,13 +174,13 @@ const CreateBlog = ({ open, setOpen, setBlogs }) => {
               }
               label="Description"
               rows={6}
-              color="pink"
+              color="teal"
             />
 
             <Button
               fullWidth
               variant="gradient"
-              color="pink"
+              color="teal"
               onClick={() => setOpenTextEditor(true)}
             >
               Open Text Editor

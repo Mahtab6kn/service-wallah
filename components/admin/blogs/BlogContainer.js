@@ -117,7 +117,7 @@ const BlogPage = () => {
           <div className="px-2 mb-4">
             <Heading
               icon={
-                <div className="bg-gradient-to-r from-red-400 to-pink-400 p-1 rounded-full inline-block">
+                <div className="bg-teal-500 p-1 rounded-full inline-block">
                   <FaMicroblog size={20} color="white" />
                 </div>
               }
