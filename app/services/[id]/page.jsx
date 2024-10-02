@@ -25,6 +25,7 @@ import { IoBagRemove } from "react-icons/io5";
 import { IoIosStar, IoIosStarHalf, IoIosStarOutline } from "react-icons/io";
 import axios from "axios";
 import Image from "next/image";
+import { useSelector } from "react-redux";
 
 const NextArrow = ({ onClick }) => {
   return (
@@ -185,18 +186,18 @@ const Service = () => {
     review: "",
     rating: 0,
   });
+
+  const user = useSelector((state) => state.user.user);
+
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     // Assuming you have an endpoint to submit a review
     try {
-      const userId = localStorage.getItem("token");
-      const response = await axios.get(`/api/users/${userId}`);
-      const fetchedUser = await response.data;
-
+      
       const updatedReview = {
         ...review,
-        name: fetchedUser.name,
-        image: fetchedUser.image,
+        name: user.name,
+        image: user.image,
       };
       const updatedService = {
         ...service,
