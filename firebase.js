@@ -1,14 +1,14 @@
-import { initializeApp } from 'firebase/app';
-import { getStorage } from 'firebase/storage';
+import { initializeApp } from "firebase/app";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBIMNXQj6Zi8NiPjG2-c7BFtF5ilJaGU10",
-  authDomain: "service-wallah.firebaseapp.com",
-  projectId: "service-wallah",
-  storageBucket: "service-wallah.appspot.com",
-  messagingSenderId: "870893969305",
-  appId: "1:870893969305:web:b5fbbe7dca411b2bc73d08",
-  measurementId: "G-3CYG0JHWDF"
+  apiKey: "AIzaSyDB6LO5AUsir9MQLnUavkhF13y_koKjGUc",
+  authDomain: "service-wallah-1ed8c.firebaseapp.com",
+  projectId: "service-wallah-1ed8c",
+  storageBucket: "service-wallah-1ed8c.appspot.com",
+  messagingSenderId: "239037401868",
+  appId: "1:239037401868:web:243caa96bd6234fa5f1729",
+  measurementId: "G-BJR3FR8EYE",
 };
 
 const firebaseApp = initializeApp(firebaseConfig);

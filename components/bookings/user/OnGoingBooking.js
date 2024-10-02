@@ -16,6 +16,13 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import BookingDetails from "@/components/admin/bookings/single-booking/BookingDetails";
+import InvoiceDetail from "@/components/admin/bookings/single-booking/InvoiceDetail";
+import ShowPricing from "@/components/ShowPricing";
+import ServiceDetails from "@/components/admin/bookings/single-booking/ServiceDetails";
+import UserServiceProviderDetail from "@/components/admin/bookings/single-booking/UserServiceProviderDetail";
+import BookingHeader from "@/components/admin/bookings/single-booking/BookingHeader";
+import LocationDetails from "@/components/admin/bookings/single-booking/LocationDetails";
 
 const options = {
   year: "numeric",
@@ -75,19 +82,13 @@ const OnGoingBooking = ({
     }
   };
   return (
-    <div key={booking._id} className="p-6">
-      <header className="flex items-center justify-start gap-2">
-        {cancelled ? (
-          <h1 className="text-center text-xl lg:text-2xl text-red-700">
-            Cancelled Booking
-          </h1>
-        ) : (
-          <h1 className="text-center text-xl lg:text-2xl text-gray-700">
-            Booking Details
-          </h1>
-        )}
-      </header>
-      <div className="h-px bg-gray-300 w-full my-4"></div>
+    <div key={booking._id} className="p-6 max-w-5xl mx-auto">
+      <BookingHeader booking={booking} />
+      <ServiceDetails booking={booking} />
+      <BookingDetails booking={booking} />
+      <UserServiceProviderDetail booking={booking} forUser={true} />
+      <LocationDetails booking={booking} />
+      {/* <div className="h-px bg-gray-300 w-full my-4"></div>
       <section>
         <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
           {booking?.cartItems?.map((item) => {
@@ -249,9 +250,6 @@ const OnGoingBooking = ({
                       >
                         {booking?.assignedServiceProviders?.name}
                       </Typography>
-                      {/* <div className="text-gray-800 flex items-center gap-2 mx-auto  font-bold">
-                          <Rating value={4} readonly /> 4.5
-                        </div> */}
                     </div>
                   </div>
                 </div>
@@ -309,69 +307,9 @@ const OnGoingBooking = ({
             </div>
           </div>
         </div>
-      </section>
-      <section className="my-4">
-        <table className="min-w-full  ">
-          <thead>
-            <tr>
-              <th className="text-left text-2xl text-gray-700 font-normal">
-                Summary
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="py-2 px-4 border-b">Subtotal</td>
-              <td className="py-2 px-4 border-b text-right">
-                ₹
-                {booking?.cartItems
-                  ? new Intl.NumberFormat("en-IN", {
-                      style: "currency",
-                      currency: "INR",
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })
-                      .format(
-                        booking?.cartItems.reduce(
-                          (acc, cur) => acc + cur.price * cur.quantity,
-                          0
-                        )
-                      )
-                      .replace("₹", "")
-                      .trim()
-                  : "0.00"}
-              </td>
-            </tr>
-            <tr>
-              <td className="py-2 px-4 border-b">Convenience Fee</td>
-              <td className="py-2 px-4 border-b text-right">₹18.00</td>
-            </tr>
-            <tr>
-              <td className="py-2 px-4 font-bold">Total</td>
-              <td className="py-2 px-4 text-right font-bold">
-                ₹
-                {booking?.cartItems
-                  ? new Intl.NumberFormat("en-IN", {
-                      style: "currency",
-                      currency: "INR",
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })
-                      .format(
-                        booking?.cartItems.reduce(
-                          (acc, cur) => acc + cur.price * cur.quantity,
-                          18
-                        )
-                      )
-                      .replace("₹", "")
-                      .trim()
-                  : "0.00"}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-      <div className="flex gap-1 items-center">
+      </section> */}
+
+      <div className="flex gap-1 items-center mt-4">
         Contact for any query:{" "}
         <div className="flex gap-2">
           <Link
@@ -406,7 +344,6 @@ const OnGoingBooking = ({
         <div className="flex items-center justify-end gap-2 w-fit whitespace-nowrap">
           {!cancelled && (
             <Button
-              className="rounded"
               variant="outlined"
               color="red"
               disabled={disableCancelBookingButton}

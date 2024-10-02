@@ -29,10 +29,12 @@ import {
   uploadBytes,
   getDownloadURL,
   deleteObject,
+  getMetadata,
 } from "firebase/storage";
 import { storage } from "@/firebase";
 import SubServiceCard from "@/components/SubServiceCard";
 import Image from "next/image";
+import { toast } from "sonner";
 
 const ServicePage = () => {
   const { id } = useParams();
@@ -46,21 +48,21 @@ const ServicePage = () => {
   const [subServices, setSubServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchingInitialData = async () => {
-      try {
-        const res = await fetch(`/api/services/${id}`);
-        const data = await res.json();
-        setService(data);
-        setUpdateService(data);
-        setSubServices(data.subServices);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchingInitialData = async () => {
+    try {
+      const res = await fetch(`/api/services/${id}`);
+      const data = await res.json();
+      setService(data);
+      setUpdateService(data);
+      setSubServices(data.subServices);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchingInitialData();
   }, [id]);
 
@@ -92,6 +94,18 @@ const ServicePage = () => {
   const [imageUploaded, setimageUploaded] = useState(false);
   const handleCreateSubService = async () => {
     try {
+      if (serviceData.name === "") {
+        toast.error("Name is required");
+        return;
+      }
+      if (serviceData.status === "") {
+        toast.error("Name is required");
+        return;
+      }
+      if (serviceData.price === "") {
+        toast.error("Name is required");
+        return;
+      }
       if (!images) {
         alert("Invalid icon / Gallery Image");
         return;
@@ -108,9 +122,7 @@ const ServicePage = () => {
         ...serviceData,
         icon: iconObject,
       };
-      setServiceData(postData);
 
-      console.log(postData);
       const response = await fetch(
         `/api/services/${id}/sub-service/create`,
         {
@@ -123,7 +135,11 @@ const ServicePage = () => {
         { cache: "no-store" }
       );
       const data = await response.json();
+
       console.log(data);
+
+      setSubServices(data.subServices);
+
       setimageUploaded(false);
       setServiceData({
         name: "",
@@ -134,36 +150,79 @@ const ServicePage = () => {
           name: "",
         },
       });
-      gettingSubServices();
       setImages(null);
       setOpen(false);
     } catch (err) {
       console.error(err);
     }
   };
-
   const handleDeleteService = async () => {
     try {
+      // Ask for confirmation
       const confirmation = confirm(
-        "Are you sure you want to delete this service"
+        "Are you sure you want to delete this service?"
       );
       if (!confirmation) return;
-      updateService.images.map((image) => {
-        return deleteObject(ref(storage, image.name));
-      });
-      await deleteObject(ref(storage, updateService.icon.name));
+
+      // Delete all images associated with the service if they exist
+      if (updateService.images && updateService.images.length > 0) {
+        await Promise.all(
+          updateService.images.map(async (image) => {
+            const imageRef = ref(storage, image.name);
+            try {
+              // Check if the image exists before deleting
+              await getMetadata(imageRef);
+              await deleteObject(imageRef);
+              console.log(`Deleted image: ${image.name}`);
+            } catch (err) {
+              if (err.code === "storage/object-not-found") {
+                console.log(
+                  `Image ${image.name} not found, skipping deletion.`
+                );
+              } else {
+                console.error(`Error deleting image: ${image.name}`, err);
+              }
+            }
+          })
+        );
+      }
+
+      // Delete the service icon if it exists
+      if (updateService.icon) {
+        const updateServiceIconRef = ref(storage, updateService.icon.name);
+        try {
+          // Check if the icon exists before deleting
+          await getMetadata(updateServiceIconRef);
+          await deleteObject(updateServiceIconRef);
+          console.log("Deleted service icon");
+        } catch (err) {
+          if (err.code === "storage/object-not-found") {
+            console.log("Service icon not found, skipping deletion.");
+          } else {
+            console.error("Error deleting service icon", err);
+          }
+        }
+      }
+
+      // Make the API call to delete the service from the database
       const response = await fetch(`/api/services/${id}/delete`, {
         method: "DELETE",
       });
-      const data = await response.json();
-      console.log(data);
-      if (response.ok) {
-        router.back();
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete service: ${response.statusText}`);
       }
+
+      const data = await response.json();
+      console.log("Service deleted:", data);
+
+      // Navigate back after successful deletion
+      router.back();
     } catch (err) {
-      console.log(err);
+      console.error("Error during service deletion", err);
     }
   };
+
   const handleUpdateServiceDetails = async () => {
     try {
       const response = await fetch(`/api/services/${id}/update`, {
@@ -174,8 +233,10 @@ const ServicePage = () => {
         body: JSON.stringify(updateService),
       });
       const data = await response.json();
-      console.log(data);
-      window.location.reload();
+      setService(data);
+      setUpdateService(data);
+      setSubServices(data.subServices);
+      handleOpen2();
     } catch (err) {
       console.log(err);
     }
@@ -208,7 +269,6 @@ const ServicePage = () => {
     });
     await response.json();
   };
-
   const handleUploadImages = async (imgs) => {
     if (!imgs) {
       alert("Invalid icon / Gallery Image");
@@ -242,7 +302,6 @@ const ServicePage = () => {
       body: JSON.stringify(postData),
     });
   };
-
   const handleDeleteServiceImage = async (image) => {
     await deleteObject(ref(storage, image.name));
     setUpdateService({
@@ -714,6 +773,8 @@ const ServicePage = () => {
                     sub={sub}
                     index={index}
                     serviceId={id}
+                    subServices={subServices}
+                    fetchingInitialData={fetchingInitialData}
                   />
                 );
               })}

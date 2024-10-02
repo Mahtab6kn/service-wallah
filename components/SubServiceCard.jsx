@@ -20,6 +20,7 @@ import {
   uploadBytes,
   getDownloadURL,
   deleteObject,
+  getMetadata,
 } from "firebase/storage";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -27,30 +28,46 @@ import { IoMdOpen } from "react-icons/io";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import { TiArrowRepeat } from "react-icons/ti";
+import { toast } from "sonner";
 
-const SubServiceCard = ({ sub, index, serviceId }) => {
+const SubServiceCard = ({
+  sub,
+  index,
+  serviceId,
+  subServices,
+  fetchingInitialData,
+}) => {
   const [subService, setSubService] = useState(sub);
   const [open2, setOpen2] = useState(false);
   const handleOpen2 = () => setOpen2(!open2);
   const [openEditDailog, setOpenEditDailog] = useState(false);
   const handleAlterEditDailog = () => setOpenEditDailog(!openEditDailog);
 
-  const totalEarningFunction = () => {
-    let total = 0;
-    for (let i = 0; i < subService.bookings.length; i++) {
-      total += subService.bookings[i].price;
-    }
-    return total;
-  };
-  const totalEarning = totalEarningFunction();
-
   const deleteSubService = async () => {
     try {
+      if(subServices.length <= 1){
+        toast.error("Cannot delete the last sub service");
+        return;
+      }
       const confirmation = confirm(
-        "Are you sure you want to delete this sub service"
+        "Are you sure you want to delete this sub service?"
       );
       if (!confirmation) return;
-      await deleteObject(ref(storage, subService.icon.name));
+
+      const imageRef = ref(storage, subService.icon.name);
+
+      // Check if the image exists before deleting
+      try {
+        await getMetadata(imageRef); // If this fails, the object does not exist
+        await deleteObject(imageRef); // Delete the object only if it exists
+      } catch (err) {
+        if (err.code === "storage/object-not-found") {
+          console.log("Image not found, skipping deletion");
+        } else {
+          throw err; // Re-throw if it's a different error
+        }
+      }
+
       const res = await fetch(
         `/api/services/${serviceId}/sub-service/${subService._id}`,
         {
@@ -61,16 +78,19 @@ const SubServiceCard = ({ sub, index, serviceId }) => {
         }
       );
       const data = await res.json();
-      if (data.error) {
-        alert(data.error);
-      }
+
       if (res.ok) {
-        window.location.reload();
+        toast.success(data.message);
+        fetchingInitialData();
+      } else {
+        toast.error(data.message);
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error deleting sub-service:", error);
+      toast.error("Failed to delete sub-service");
     }
   };
+
   const handleReplaceIcon = async (image) => {
     try {
       if (!image) return;
@@ -133,7 +153,7 @@ const SubServiceCard = ({ sub, index, serviceId }) => {
           height={1000}
           src={subService.icon.url}
           alt="Service Icon"
-          className="object-cover"
+          className="object-cover aspect-square"
         />
         {/* <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " /> */}
       </CardHeader>
@@ -156,33 +176,8 @@ const SubServiceCard = ({ sub, index, serviceId }) => {
             {subService.name}
           </Typography>
         </div>
-        <div className="flex flex-col">
-          <div className="mb-1 flex gap-2">
-            <Typography
-              color="blue-gray"
-              className="flex items-center gap-1.5 font-normal"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="-mt-0.5 h-5 w-5 text-yellow-700"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              5.0
-            </Typography>
-            <Typography color="gray">
-              | {subService.reviews.length} Reviews
-            </Typography>
-          </div>
-          <div className="text-2xl font-bold text-teal-500">
-            ₹{subService.price}
-          </div>
+        <div className="text-2xl font-bold text-teal-500">
+          ₹{subService.price}
         </div>
       </CardBody>
       <CardFooter className="pt-0 flex flex-col gap-2">
@@ -272,34 +267,6 @@ const SubServiceCard = ({ sub, index, serviceId }) => {
               <ListItem>
                 Bookings
                 <ListItemSuffix>{subService.bookings.length}</ListItemSuffix>
-              </ListItem>
-              <ListItem>
-                Reviews
-                <ListItemSuffix>
-                  <div className="mb-1 flex gap-2">
-                    <Typography
-                      color="blue-gray"
-                      className="flex items-center gap-1.5 font-normal"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="-mt-0.5 h-5 w-5 text-yellow-700"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      5.0
-                    </Typography>
-                    <Typography color="gray">
-                      | {subService.reviews.length} Reviews
-                    </Typography>
-                  </div>
-                </ListItemSuffix>
               </ListItem>
             </div>
           </div>

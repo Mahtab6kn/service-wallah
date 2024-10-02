@@ -30,7 +30,7 @@ const formattedDate = getCurrentDateFormatted();
 export async function POST(request, { params }) {
   const { id } = params;
   const { name, status, price, icon } = await request.json();
-  
+
   // console.log(name, status, price, icon, id);
   await connectMongoDB();
   const service = await Service.findById(id);
@@ -46,5 +46,6 @@ export async function POST(request, { params }) {
     createdDate: formattedDate,
   });
   const savedService = await service.save();
+
   return NextResponse.json(savedService, { status: 201 });
 }
