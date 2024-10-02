@@ -32,28 +32,28 @@ export default function Testimonial() {
         >
           <div>
             <TestimonialCard
-              name="Manish Kr."
-              img="/image/hero1.webp"
-              cust="Verified Customer"
-              desc="The connections you make at Web Summit are unparalleled, we met users all over the world."
+              name="Mithilesh Kr."
+              img="/image/hero2.webp"
+              cust="Satisfied Customer"
+              desc="The platform has revolutionized the way I manage my business, highly recommended!"
               rating="3"
             />
           </div>
           <div className="hidden md:block">
             <TestimonialCard
-              name="Manish Kr."
-              img="/image/hero1.webp"
+              name="Salman Ali."
+              img="/image/hero3.webp"
               cust="Verified Customer"
-              desc="The connections you make at Web Summit are unparalleled, we met users all over the world."
+              desc="Excellent service and fast delivery, the best experience I've had shopping online."
               rating="1"
             />
           </div>
           <div className="hidden lg:block">
             <TestimonialCard
               name="Manish Kr."
-              img="/image/hero1.webp"
-              cust="Verified Customer"
-              desc="The connections you make at Web Summit are unparalleled, we met users all over the world."
+              img="/image/hero4.webp"
+              cust="Happy Customer"
+              desc="I love the wide variety of products and how easy it is to find what I need."
               rating="2"
             />{" "}
           </div>
@@ -65,10 +65,10 @@ export default function Testimonial() {
         >
           <div>
             <TestimonialCard
-              name="Manish Kr."
-              img="/image/hero1.webp"
+              name="Reyaz ali."
+              img="/image/hero5.webp"
               cust="Verified Customer"
-              desc="The connections you make at Web Summit are unparalleled, we met users all over the world."
+              desc="The customer support is amazing! They helped me resolve my issue within minutes."
               rating="3"
             />
           </div>
@@ -76,15 +76,15 @@ export default function Testimonial() {
             <TestimonialCard
               name="Manish Kr."
               img="/image/hero1.webp"
-              cust="Verified Customer"
-              desc="The connections you make at Web Summit are unparalleled, we met users all over the world."
+              cust="Satisfied Customer"
+              desc="A truly outstanding platform. The interface is user-friendly and the service is top-notch."
               rating="1"
             />
           </div>
           <div className="hidden lg:block">
             <TestimonialCard
-              name="Manish Kr."
-              img="/image/hero1.webp"
+              name="Naushad Ahmad."
+              img="/image/hero2.webp"
               cust="Verified Customer"
               desc="The connections you make at Web Summit are unparalleled, we met users all over the world."
               rating="2"
