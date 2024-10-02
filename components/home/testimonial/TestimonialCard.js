@@ -25,7 +25,7 @@ const TestimonialCard = ({ name, img, desc, cust, rating }) => {
     );
   }
   return (
-    <Card className="p-6 rounded-lg text-center shadow-lg border mb-5">
+    <Card className="h-[330px] p-6 rounded-lg text-center shadow-lg border mb-5">
       <div className="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4">
         <Image
           src={img}
