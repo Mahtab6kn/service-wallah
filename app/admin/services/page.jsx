@@ -37,6 +37,9 @@ const Services = () => {
     images: null,
   });
   const [imageUploaded, setimageUploaded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [allServices, setAllServices] = useState([]);
+
   const handleCreateService = async () => {
     try {
       if (serviceData.name === "") {
@@ -55,10 +58,6 @@ const Services = () => {
         toast.error("Please Upload the Images");
         return;
       }
-      // if (!images.icon && images.images.length === 0) {
-      //   alert("Invalid icon / Gallery Image");
-      //   return;
-      // }
       setimageUploaded(true);
       const iconRef = ref(
         storage,
@@ -104,6 +103,9 @@ const Services = () => {
         { cache: "no-store" }
       );
       const data = await response.json();
+
+      setAllServices([...allServices, data]);
+
       setimageUploaded(false);
       setServiceData({
         name: "",
@@ -121,14 +123,10 @@ const Services = () => {
         images: null,
       });
       setOpen(false);
-      window.location.reload();
     } catch (err) {
       console.error(err);
     }
   };
-  const [loading, setLoading] = useState(true);
-  const [allServices, setAllServices] = useState([]);
-
   const fetchingInitialData = async () => {
     try {
       const fetchedData = await fetch("/api/services", {

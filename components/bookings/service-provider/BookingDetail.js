@@ -17,6 +17,11 @@ import { useSelector } from "react-redux";
 import UpdateServiceStatus from "./UpdateServiceStatus";
 import Invoice from "./Invoice";
 import { useRouter } from "next/navigation";
+import UserDetail from "@/components/admin/bookings/single-booking/UserDetail";
+import LocationDetails from "@/components/admin/bookings/single-booking/LocationDetails";
+import BookingDetails from "@/components/admin/bookings/single-booking/BookingDetails";
+import BookingHeader from "@/components/admin/bookings/single-booking/BookingHeader";
+import ServiceDetails from "@/components/admin/bookings/single-booking/ServiceDetails";
 
 const mapContainerStyle = {
   width: "100%",
@@ -195,159 +200,43 @@ const BookingDetail = ({ booking, setBooking }) => {
   };
   return (
     <div className="px-8 py-2">
-      <div className="mb-8">
-        <h3 className="text-blue-700 text-2xl font-medium whitespace-nowrap">
-          Booking details
-        </h3>
-        <hr className="mb-2 mt-1" />
-        <div className="text-gray-500 mb-2">
-          Booking ID: {booking.bookingId}
-        </div>
-        <div className="grid md:grid-cols-2 grid-cols-1 gap-4 mb-4">
-          {booking?.cartItems?.map((item) => {
-            return (
-              <div className="flex items-center gap-3" key={item._id}>
-                <Image
-                  width={100}
-                  height={100}
-                  src={item.icon?.url}
-                  className="rounded-md w-28 h-28 object-cover"
-                  alt="Booking"
-                />
-                <div className="flex flex-col gap-1">
-                  <h3 className="md:text-2xl sm:text-2xl text-xl text-gray-700 ">
-                    {item.name}
-                  </h3>
-                  <p>
-                    Price:{" "}
-                    <strong className="text-teal-500 font-semibold">
-                      ₹{item.price}
-                    </strong>
-                  </p>
-                  <p>
-                    Qty:{" "}
-                    <strong className="text-gray-600">{item.quantity}</strong>
-                  </p>
-                </div>
+      <div className="mb-4">
+        <BookingHeader booking={booking} />
+        <ServiceDetails booking={booking} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-xl font-bold text-gray-800 mb-4">
+              Booking Information
+            </h3>
+            <div className="flex justify-between mb-3">
+              <div>
+                <p className="text-sm text-gray-500">Booking Date</p>
+                <p className="text-lg font-semibold text-gray-700">
+                  {booking.date}
+                </p>
               </div>
-            );
-          })}
-        </div>
-        <h3 className="text-blue-700 text-xl font-medium whitespace-nowrap">
-          Customer Information
-        </h3>
-        <div className=" flex flex-col gap-4 sm:flex-row justify-between">
-          <div className="w-full md:w-1/2 flex flex-col gap-1">
-            <p>
-              Full Name:{" "}
-              <strong className="text-gray-600">{booking?.fullname}</strong>
-            </p>
-            <p>
-              Phone:{" "}
-              <strong className="text-gray-600">
-                +91 {booking?.phoneNumber}
-              </strong>
-            </p>
-            <p>
-              Address:{" "}
-              <strong className="text-gray-600">{booking?.address}</strong>
-            </p>
-
-            <p>
-              Booking Date:{" "}
-              <strong className="text-gray-600">{booking?.date}</strong>
-            </p>
-            <p>
-              Status:{" "}
-              <strong className="text-gray-600">{booking?.status}</strong>
-            </p>
+              <div>
+                <p className="text-sm text-gray-500">Booking Time</p>
+                <p className="text-lg font-semibold text-gray-700">
+                  {booking.time}
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="w-full md:w-1/2 flex flex-col gap-1">
-            <p>
-              Day of departure:{" "}
-              <strong className="text-gray-600">{booking?.date}</strong>
-            </p>
-            <p>
-              Time of departure:{" "}
-              <strong className="text-gray-600">{booking?.time}</strong>
-            </p>
+          <div className="bg-white p-6 rounded-lg shadow w-full">
+            <h3 className="text-md md:text-xl font-semibold mb-4 text-gray-800">
+              Customer Details
+            </h3>
+            <UserDetail
+              name={booking.fullname}
+              profileImage={booking.profileImage}
+              email={booking.email}
+              phoneNumber={booking.phoneNumber}
+            />
           </div>
         </div>
       </div>
-      <LoadScriptNext
-        googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
-        loading="lazy"
-      >
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          zoom={14}
-          center={booking?.location}
-        >
-          <Marker position={booking?.location} />
-        </GoogleMap>
-      </LoadScriptNext>
-      <div className="mb-8 mt-4">
-        <table className="min-w-full">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 text-left font-julius lg:text-2xl md:text-xl sm:text-xl text-xl text-gray-700 font-bold">
-                Summary
-              </th>
-            </tr>
-          </thead>
-          <tbody className="text-gray-700">
-            <tr>
-              <td className="py-2 px-4 border-b">Subtotal</td>
-              <td className="py-2 px-4 border-b text-right">
-                ₹
-                {booking?.cartItems
-                  ? new Intl.NumberFormat("en-IN", {
-                      style: "currency",
-                      currency: "INR",
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })
-                      .format(
-                        booking.cartItems.reduce(
-                          (acc, cur) => acc + cur.price * cur.quantity,
-                          0
-                        )
-                      )
-                      .replace("₹", "")
-                      .trim()
-                  : "0.00"}
-              </td>
-            </tr>
-
-            <tr>
-              <td className="py-2 px-4 border-b">Convenience Fee</td>
-              <td className="py-2 px-4 border-b text-right">₹18.00</td>
-            </tr>
-            <tr className="text-gray-700 font-semibold">
-              <td className="py-2 px-4 border-b">Total</td>
-              <td className="py-2 px-4 border-b text-right">
-                ₹
-                {booking?.cartItems
-                  ? new Intl.NumberFormat("en-IN", {
-                      style: "currency",
-                      currency: "INR",
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })
-                      .format(
-                        booking.cartItems.reduce(
-                          (acc, cur) => acc + cur.price * cur.quantity,
-                          18
-                        )
-                      )
-                      .replace("₹", "")
-                      .trim()
-                  : "0.00"}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <LocationDetails booking={booking} />
       {booking?.acceptedByServiceProvider && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
           {otpVerified ? (

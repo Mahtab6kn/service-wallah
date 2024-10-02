@@ -33,8 +33,8 @@ const BookingLoader = ({
         <FaClipboard className="text-teal-500 text-2xl" />{" "}
         {/* Clipboard icon */}
         <div className="flex gap-2">
-          <span className="text-gray-700 font-semibold">Booking ID</span>
-          <div className="text-teal-500 font-bold">{booking?._id}</div>
+          <span className="text-gray-700 font-semibold">Booking ID:</span>
+          <div className="text-teal-500 font-bold">{booking?.bookingId}</div>
         </div>
       </div>
       <div className="flex flex-col lg:flex-row justify-between items-center ">
