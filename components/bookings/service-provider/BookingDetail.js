@@ -19,14 +19,9 @@ import Invoice from "./Invoice";
 import { useRouter } from "next/navigation";
 import UserDetail from "@/components/admin/bookings/single-booking/UserDetail";
 import LocationDetails from "@/components/admin/bookings/single-booking/LocationDetails";
-import BookingDetails from "@/components/admin/bookings/single-booking/BookingDetails";
 import BookingHeader from "@/components/admin/bookings/single-booking/BookingHeader";
 import ServiceDetails from "@/components/admin/bookings/single-booking/ServiceDetails";
-
-const mapContainerStyle = {
-  width: "100%",
-  height: "60vh",
-};
+import InvoiceDetail from "@/components/admin/bookings/single-booking/InvoiceDetail";
 
 const BookingDetail = ({ booking, setBooking }) => {
   const user = useSelector((state) => state.user.user);
@@ -203,6 +198,7 @@ const BookingDetail = ({ booking, setBooking }) => {
       <div className="mb-4">
         <BookingHeader booking={booking} />
         <ServiceDetails booking={booking} />
+        <InvoiceDetail booking={booking}/>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-bold text-gray-800 mb-4">
