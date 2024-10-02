@@ -34,7 +34,7 @@ const BookingContainer = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     fetchingBooking();
