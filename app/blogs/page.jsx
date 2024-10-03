@@ -6,7 +6,7 @@ import React, { Suspense } from "react";
 async function getBlogs(page = 1, limit = 9) {
   try {
     const res = await fetch(
-      `http://localhost:3000/api/blog?page=${page}&limit=${limit}`,
+      `${process.env.PHONEPE_REDIRECT_URL}/api/blog?page=${page}&limit=${limit}`,
       {
         method: "GET",
         cache: "no-store",
@@ -38,7 +38,7 @@ const page = async ({ searchParams: { page, size } }) => {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 place-items-center md:place-items-start px-2 sm:px-5 ">
-        {blogs.data.map((blog) => (
+        {blogs?.data?.map((blog) => (
           <BlogCard key={blog._id} blog={blog} page="user" />
         ))}
       </div>

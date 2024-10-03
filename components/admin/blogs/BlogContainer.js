@@ -46,16 +46,13 @@ const BlogPage = () => {
 
   const fetchBlogs = async (page) => {
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/blog?page=${page}&limit=9`,
-        {
-          method: "GET",
-          cache: "no-store",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`/api/blog?page=${page}&limit=9`, {
+        method: "GET",
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       const data = await response.json();
       setBlogs(data.data);
       setMeta(data.pagination);

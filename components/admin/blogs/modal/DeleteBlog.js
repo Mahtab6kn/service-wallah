@@ -21,12 +21,9 @@ const DeleteBlog = ({ open, setOpen, deleteBlog, setBlogs }) => {
           console.warn("Failed to delete image:", error);
         }
       }
-      const res = await fetch(
-        `http://localhost:3000/api/admin/blog/${deleteBlog._id}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const res = await fetch(`/api/admin/blog/${deleteBlog._id}`, {
+        method: "DELETE",
+      });
       if (res.ok) {
         toast.success(`Blog ${deleteBlog.title} deleted successfully!`);
         setBlogs((prev) => prev.filter((blog) => blog._id !== deleteBlog._id));

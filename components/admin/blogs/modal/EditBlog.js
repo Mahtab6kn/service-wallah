@@ -104,16 +104,13 @@ const EditBlog = ({ open, setOpen, blog, setBlogs }) => {
         image: imageObject,
       };
 
-      const res = await fetch(
-        `http://localhost:3000/api/admin/blog/${blog._id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(postData),
-        }
-      );
+      const res = await fetch(`/api/admin/blog/${blog._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postData),
+      });
 
       if (res.ok) {
         const updatedBlog = await res.json();
