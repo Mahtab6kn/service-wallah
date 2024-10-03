@@ -275,6 +275,9 @@ function Shipping() {
         otp,
       };
     }
+
+    console.log(postData);
+
     try {
       const response = await axios.post("/api/bookings/add", postData);
       const updatedUser = {
@@ -284,7 +287,7 @@ function Shipping() {
 
       // Request service provider of the new booking
 
-      availableServiceProviders.map(async (sp) => {
+      availableServiceProviders.forEach(async (sp) => {
         await axios.post("/api/users/update", {
           ...sp,
           bookings: [...sp.bookings, response.data._id],
