@@ -18,7 +18,7 @@ const CallToAction = dynamic(() => import("@/components/home/CallToAction"), {
 
 // Lazy load components
 const ServiceSection = lazy(() => import("../components/ServiceSection"));
-const Video = lazy(() => import("../components/home/Video"));
+const VideoCarousel = lazy(() => import("../components/home/VideoCarousel"));
 const TopServices = lazy(() => import("@/components/home/TopServices"));
 
 // Fetch top services function
@@ -55,7 +55,7 @@ export default function Home() {
         <HeroMovingIcons />
         <Hero />
         <TopServices topServices={topServices} />
-        <Video />
+        <VideoCarousel />
         <ServiceSection />
         <CallToAction />
         <Testimonial />
