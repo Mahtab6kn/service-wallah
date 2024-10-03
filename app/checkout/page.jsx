@@ -250,7 +250,9 @@ function Shipping() {
         }
       });
     });
+
     let availableServiceProviders = [];
+
     if (nearestServiceProviders.length >= 0) {
       availableServiceProviders = await getServiceProvidersForCartItems(
         cartItems,
@@ -258,6 +260,7 @@ function Shipping() {
       );
     }
     const otp = generateOTP();
+
     let postData = {
       ...formData,
       location,
@@ -276,8 +279,6 @@ function Shipping() {
       };
     }
 
-    console.log(postData);
-
     try {
       const response = await axios.post("/api/bookings/add", postData);
       const updatedUser = {
@@ -288,10 +289,30 @@ function Shipping() {
       // Request service provider of the new booking
 
       availableServiceProviders.forEach(async (sp) => {
-        await axios.post("/api/users/update", {
-          ...sp,
-          bookings: [...sp.bookings, response.data._id],
-        });
+        try {
+          // Fetch the latest version of the service provider's data
+          const { data: latestServiceProvider } = await axios.get(
+            `/api/users/${sp._id}`
+          );
+
+          if (latestServiceProvider.success === false) {
+            toast.error(latestServiceProvider.message);
+          }
+
+          // Merge the current bookings with the new booking
+          const updatedBookings = [
+            ...latestServiceProvider.bookings,
+            response.data._id,
+          ];
+
+          // Update the service provider with the latest bookings
+          await axios.post("/api/users/update", {
+            ...sp,
+            bookings: updatedBookings, // Ensure you are appending to the latest bookings array
+          });
+        } catch (error) {
+          console.log(`Error updating service provider ${sp._id}:`, error);
+        }
       });
 
       await axios.post("/api/users/update", updatedUser);
