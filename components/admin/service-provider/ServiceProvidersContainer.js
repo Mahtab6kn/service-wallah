@@ -96,7 +96,7 @@ export default function ServiceProvidersContainer() {
       <div className="flex flex-col gap-4 md:flex-row w-full py-4 justify-between px-10 items-center">
         <div className="flex gap-2 items-center text-gray-700">
           <FaUsers size={30} />
-          <span className="text-3xl font-bold">All Users</span>
+          <span className="text-3xl font-bold">All Service Provider</span>
         </div>
         <div className="flex md:w-fit w-full md:flex-row flex-col gap-3 items-center">
           <div className="md:w-72 w-full">
