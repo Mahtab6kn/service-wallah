@@ -38,7 +38,7 @@ const page = async ({ searchParams: { page, size } }) => {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 place-items-center md:place-items-start px-2 sm:px-5 ">
-        {blogs.data.map((blog) => (
+        {blogs?.data?.map((blog) => (
           <BlogCard key={blog._id} blog={blog} page="user" />
         ))}
       </div>
