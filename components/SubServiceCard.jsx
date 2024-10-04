@@ -45,7 +45,7 @@ const SubServiceCard = ({
 
   const deleteSubService = async () => {
     try {
-      if(subServices.length <= 1){
+      if (subServices.length <= 1) {
         toast.error("Cannot delete the last sub service");
         return;
       }

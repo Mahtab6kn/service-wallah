@@ -52,7 +52,7 @@ export default function Blogs() {
         </div>
 
         {/* Display blog cards */}
-        <div className="container grid grid-cols-1 md:grid-cols-3 gap-8 px-4 w-full mx-auto place-items-center">
+        <div className="container grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 px-4 w-full mx-auto place-items-center">
           {blogs?.data?.slice(0, 3).map((blog) => (
             <BlogCard key={blog._id} blog={blog} page="user" />
           ))}

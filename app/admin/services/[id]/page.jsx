@@ -97,19 +97,19 @@ const ServicePage = () => {
   const handleCreateSubService = async () => {
     try {
       if (serviceData.name === "") {
-        toast.error("Name is required");
+        toast.error("All fields are required");
         return;
       }
       if (serviceData.status === "") {
-        toast.error("Name is required");
+        toast.error("All fields are required");
         return;
       }
       if (serviceData.price === "") {
-        toast.error("Name is required");
+        toast.error("All fields are required");
         return;
       }
       if (!images) {
-        alert("Invalid icon / Gallery Image");
+        toast.error("Upload the icon");
         return;
       }
       setimageUploaded(true);
@@ -580,8 +580,8 @@ const ServicePage = () => {
               </div>
             </div>
 
-            <div className="flex gap-4 justify-between">
-              <div className="flex gap-4 items-center">
+            <div className="md:flex gap-4 justify-center md:justify-between">
+              <div className="flex gap-4 items-center justify-center md:justify-start mb-5 md:mb-0 ">
                 <Image
                   width={1000}
                   height={1000}
@@ -611,7 +611,7 @@ const ServicePage = () => {
                   <div className="text-sm">{formattedDate}</div>
                 </div>
               </div>
-              <div className="flex flex-col lg:flex-row gap-6 w-1/2">
+              <div className="flex flex-col lg:flex-row gap-6 w-full md:w-1/2">
                 <Carousel
                   className="rounded-md w-full max-h-72 overflow-hidden"
                   loop
@@ -767,7 +767,7 @@ const ServicePage = () => {
             </div>
             <div className="h-px bg-gray-400 w-full"></div>
 
-            <div className="flex justify-start gap-6">
+            <div className="flex justify-center md:justify-start flex-wrap gap-3 mx-auto">
               {subServices.map((sub, index) => {
                 return (
                   <SubServiceCard
