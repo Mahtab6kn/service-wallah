@@ -149,206 +149,295 @@ function Shipping() {
     }));
   }, [user]); // No router dependency here
 
-  function generateOTP() {
-    // Generate a random number between 1000 and 9999
-    const otp = Math.floor(1000 + Math.random() * 9000);
-    return otp.toString();
-  }
-  const getServiceProvidersForCartItems = async (
-    cartItems,
-    nearestServiceProviders
-  ) => {
-    const serviceProviderMap = new Map();
+  // function generateOTP() {
+  //   // Generate a random number between 1000 and 9999
+  //   const otp = Math.floor(1000 + Math.random() * 9000);
+  //   return otp.toString();
+  // }
+  // const getServiceProvidersForCartItems = async (
+  //   cartItems,
+  //   nearestServiceProviders
+  // ) => {
+  //   const serviceProviderMap = new Map();
 
-    // Function to process service provider services
-    const processServiceProvider = async (sp) => {
-      if (sp?.services?.length > 0 && !serviceProviderMap.has(sp._id)) {
-        try {
-          const response = await axios.post(
-            `/api/service-providers/services-from-array-of-id`,
-            sp?.services
-          );
-          serviceProviderMap.set(sp._id, response.data);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    };
+  //   // Function to process service provider services
+  //   const processServiceProvider = async (sp) => {
+  //     if (sp?.services?.length > 0 && !serviceProviderMap.has(sp._id)) {
+  //       try {
+  //         const response = await axios.post(
+  //           `/api/service-providers/services-from-array-of-id`,
+  //           sp?.services
+  //         );
+  //         serviceProviderMap.set(sp._id, response.data);
+  //       } catch (err) {
+  //         console.error(err);
+  //       }
+  //     }
+  //   };
 
-    // Fetch services for all service providers in parallel
-    await Promise.all(nearestServiceProviders.map(processServiceProvider));
+  //   // Fetch services for all service providers in parallel
+  //   await Promise.all(nearestServiceProviders.map(processServiceProvider));
 
-    const availableServiceProviders = [];
+  //   const availableServiceProviders = [];
 
-    // Function to check if a service provider has the cart item service
-    const checkServiceProviderForCartItem = (cartItem) => {
-      nearestServiceProviders.forEach((sp) => {
-        const services = serviceProviderMap.get(sp._id) || [];
-        services.forEach((service) => {
-          if (service.name === cartItem.name) {
-            availableServiceProviders.push(sp);
-          } else {
-            service?.subServices?.forEach((subService) => {
-              if (subService.name === cartItem.name) {
-                availableServiceProviders.push(sp);
-              }
-            });
-          }
-        });
-      });
-    };
+  //   // Function to check if a service provider has the cart item service
+  //   const checkServiceProviderForCartItem = (cartItem) => {
+  //     nearestServiceProviders.forEach((sp) => {
+  //       const services = serviceProviderMap.get(sp._id) || [];
+  //       services.forEach((service) => {
+  //         if (service.name === cartItem.name) {
+  //           availableServiceProviders.push(sp);
+  //         } else {
+  //           service?.subServices?.forEach((subService) => {
+  //             if (subService.name === cartItem.name) {
+  //               availableServiceProviders.push(sp);
+  //             }
+  //           });
+  //         }
+  //       });
+  //     });
+  //   };
 
-    // Check each cart item against the service providers
-    cartItems.forEach(checkServiceProviderForCartItem);
+  //   // Check each cart item against the service providers
+  //   cartItems.forEach(checkServiceProviderForCartItem);
 
-    return availableServiceProviders;
-  };
+  //   return availableServiceProviders;
+  // };
+
+  // const [redirectingLoading, setRedirectingLoading] = useState(false);
+  // const [disableRedirectingButton, setDisableRedirectingButton] =
+  //   useState(false);
+  // const [redirectingButtonClicked, setRedirectingButtonCLicked] = useState(0);
+
+  // const handleSubmitOrder = async (e) => {
+  //   e.preventDefault();
+
+  //   const today = new Date();
+
+  //   const day = String(today.getDate()).padStart(2, "0");
+  //   const month = String(today.getMonth() + 1).padStart(2, "0");
+  //   const year = today.getFullYear();
+  //   const formattedToday = `${day}-${month}-${year}`;
+
+  //   if (formData.date == formattedToday) {
+  //     if (formData.time <= getCurrentTime()) {
+  //       toast.error("Kindly choose a time that is at least one hour from now.");
+  //       return;
+  //     }
+  //   }
+
+  //   if (redirectingButtonClicked > 2) {
+  //     setDisableRedirectingButton(true);
+  //     toast.error("Too many attempts. Please try again later.");
+  //     return;
+  //   }
+  //   setRedirectingLoading(true);
+  //   setRedirectingButtonCLicked((prev) => prev + 1);
+
+  //   const location = JSON.parse(localStorage.getItem("location"));
+
+  //   const { lat, lng } = location;
+  //   const nearestServiceProviders = [];
+  //   const uniqueServiceProviders = new Set();
+  //   const serviceProviders = (await axios.get(`/api/service-providers`)).data;
+
+  //   serviceProviders.forEach((sp) => {
+  //     sp.locations.forEach((s) => {
+  //       const dis = getDistance(lat, lng, s.lat, s.lng);
+  //       if (dis <= 15 && !uniqueServiceProviders.has(sp._id)) {
+  //         nearestServiceProviders.push(sp);
+  //         uniqueServiceProviders.add(sp._id);
+  //       }
+  //     });
+  //   });
+
+  //   let availableServiceProviders = [];
+
+  //   if (nearestServiceProviders.length >= 0) {
+  //     availableServiceProviders = await getServiceProvidersForCartItems(
+  //       cartItems,
+  //       nearestServiceProviders
+  //     );
+  //   }
+  //   const otp = generateOTP();
+
+  //   let postData = {
+  //     ...formData,
+  //     location,
+  //     cartItems,
+  //     availableServiceProviders: availableServiceProviders,
+  //     otp,
+  //   };
+  //   if (availableServiceProviders.length <= 0) {
+  //     postData = {
+  //       ...formData,
+  //       location,
+  //       cartItems,
+  //       availableServiceProviders: availableServiceProviders,
+  //       noServiceProviderAvailable: true,
+  //       otp,
+  //     };
+  //   }
+
+  //   try {
+  //     const response = await axios.post("/api/bookings/add", postData);
+  //     const updatedUser = {
+  //       ...user,
+  //       bookings: [...user.bookings, response.data._id],
+  //     };
+
+  //     // Request service provider of the new booking
+
+  //     availableServiceProviders.forEach(async (sp) => {
+  //       try {
+  //         // Fetch the latest version of the service provider's data
+  //         const { data: latestServiceProvider } = await axios.get(
+  //           `/api/users/${sp._id}`
+  //         );
+
+  //         if (latestServiceProvider.success === false) {
+  //           toast.error(latestServiceProvider.message);
+  //         }
+
+  //         // Merge the current bookings with the new booking
+  //         const updatedBookings = [
+  //           ...latestServiceProvider.bookings,
+  //           response.data._id,
+  //         ];
+
+  //         // Update the service provider with the latest bookings
+  //         await axios.post("/api/users/update", {
+  //           ...sp,
+  //           bookings: updatedBookings, // Ensure you are appending to the latest bookings array
+  //         });
+  //       } catch (error) {
+  //         console.log(`Error updating service provider ${sp._id}:`, error);
+  //       }
+  //     });
+
+  //     await axios.post("/api/users/update", updatedUser);
+
+  //     // To update the booking of the service!
+  //     await axios.post(`/api/services/update-bookings`, {
+  //       cartItems,
+  //       orderId: response.data._id,
+  //     });
+  //     localStorage.removeItem("cart");
+  //     const amount = (
+  //       response.data.cartItems.reduce(
+  //         (acc, product) => acc + product.price * product.quantity,
+  //         0
+  //       ) + 18
+  //     ).toFixed(2);
+  //     const initiatePayment = await axios.post(
+  //       `/api/payments/initiate-payment`,
+  //       {
+  //         bookingId: response.data._id,
+  //         amount,
+  //         userId: user._id,
+  //         userPhoneNumber: response.data.phoneNumber,
+  //         invoice: false,
+  //       }
+  //     );
+  //     if (initiatePayment.data.success) {
+  //       const phonePeRedirectUrl =
+  //         initiatePayment.data.data.instrumentResponse.redirectInfo.url;
+  //       router.push(phonePeRedirectUrl);
+  //     } else {
+  //       toast.error(initiatePayment.data);
+  //     }
+  //   } catch (error) {
+  //     console.log(`Error updating service:`, error);
+  //     toast.error("An error occurred while placing order.");
+  //   } finally {
+  //     setRedirectingLoading(false);
+  //   }
+  // };
 
   const [redirectingLoading, setRedirectingLoading] = useState(false);
   const [disableRedirectingButton, setDisableRedirectingButton] =
     useState(false);
-  const [redirectingButtonClicked, setRedirectingButtonCLicked] = useState(0);
+  const [redirectingButtonClicked, setRedirectingButtonClicked] = useState(0);
 
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
 
     const today = new Date();
-
     const day = String(today.getDate()).padStart(2, "0");
     const month = String(today.getMonth() + 1).padStart(2, "0");
     const year = today.getFullYear();
     const formattedToday = `${day}-${month}-${year}`;
 
-    if (formData.date == formattedToday) {
+    if (formData.date === formattedToday) {
       if (formData.time <= getCurrentTime()) {
-        toast.error("Kindly choose a time that is at least one hour from now.");
+        toast.warning("Kindly choose a time that is at least one hour from now.");
         return;
       }
     }
 
     if (redirectingButtonClicked > 2) {
       setDisableRedirectingButton(true);
-      toast.error("Too many attempts. Please try again later.");
+      toast.warning("Too many attempts. Please try again later.");
       return;
     }
+
     setRedirectingLoading(true);
-    setRedirectingButtonCLicked((prev) => prev + 1);
+    setRedirectingButtonClicked((prev) => prev + 1);
 
     const location = JSON.parse(localStorage.getItem("location"));
 
-    const { lat, lng } = location;
-    const nearestServiceProviders = [];
-    const uniqueServiceProviders = new Set();
-    const serviceProviders = (await axios.get(`/api/service-providers`)).data;
-
-    serviceProviders.forEach((sp) => {
-      sp.locations.forEach((s) => {
-        const dis = getDistance(lat, lng, s.lat, s.lng);
-        if (dis <= 15 && !uniqueServiceProviders.has(sp._id)) {
-          nearestServiceProviders.push(sp);
-          uniqueServiceProviders.add(sp._id);
-        }
-      });
-    });
-
-    let availableServiceProviders = [];
-
-    if (nearestServiceProviders.length >= 0) {
-      availableServiceProviders = await getServiceProvidersForCartItems(
-        cartItems,
-        nearestServiceProviders
-      );
-    }
-    const otp = generateOTP();
-
-    let postData = {
-      ...formData,
-      location,
-      cartItems,
-      availableServiceProviders: availableServiceProviders,
-      otp,
-    };
-    if (availableServiceProviders.length <= 0) {
-      postData = {
-        ...formData,
+    try {
+      // Combine all API logic into a single POST request
+      const postData = {
+        formData,
         location,
         cartItems,
-        availableServiceProviders: availableServiceProviders,
-        noServiceProviderAvailable: true,
-        otp,
-      };
-    }
-
-    try {
-      const response = await axios.post("/api/bookings/add", postData);
-      const updatedUser = {
-        ...user,
-        bookings: [...user.bookings, response.data._id],
+        user,
       };
 
-      // Request service provider of the new booking
+      const response = await axios.post("/api/bookings", postData);
 
-      availableServiceProviders.forEach(async (sp) => {
-        try {
-          // Fetch the latest version of the service provider's data
-          const { data: latestServiceProvider } = await axios.get(
-            `/api/users/${sp._id}`
-          );
+      if (response.status === 201) {
+        const booking = response.data.booking;
 
-          if (latestServiceProvider.success === false) {
-            toast.error(latestServiceProvider.message);
+        // Initiate payment separately after booking is created
+        const amount = (
+          booking.cartItems.reduce(
+            (acc, product) => acc + product.price * product.quantity,
+            0
+          ) + 18
+        ).toFixed(2);
+
+        const paymentResponse = await axios.post(
+          `/api/payments/initiate-payment`,
+          {
+            bookingId: booking._id,
+            amount,
+            userId: user._id,
+            userPhoneNumber: booking.phoneNumber,
+            invoice: false,
           }
+        );
 
-          // Merge the current bookings with the new booking
-          const updatedBookings = [
-            ...latestServiceProvider.bookings,
-            response.data._id,
-          ];
-
-          // Update the service provider with the latest bookings
-          await axios.post("/api/users/update", {
-            ...sp,
-            bookings: updatedBookings, // Ensure you are appending to the latest bookings array
-          });
-        } catch (error) {
-          console.log(`Error updating service provider ${sp._id}:`, error);
+        if (paymentResponse.data.success) {
+          const phonePeRedirectUrl =
+            paymentResponse.data.data.instrumentResponse.redirectInfo.url;
+          router.push(phonePeRedirectUrl);
+        } else {
+          toast.error(
+            paymentResponse.data.message || "Payment initiation failed."
+          );
         }
-      });
 
-      await axios.post("/api/users/update", updatedUser);
-
-      // To update the booking of the service!
-      await axios.post(`/api/services/update-bookings`, {
-        cartItems,
-        orderId: response.data._id,
-      });
-      localStorage.removeItem("cart");
-      const amount = (
-        response.data.cartItems.reduce(
-          (acc, product) => acc + product.price * product.quantity,
-          0
-        ) + 18
-      ).toFixed(2);
-      const initiatePayment = await axios.post(
-        `/api/payments/initiate-payment`,
-        {
-          bookingId: response.data._id,
-          amount,
-          userId: user._id,
-          userPhoneNumber: response.data.phoneNumber,
-          invoice: false,
-        }
-      );
-      if (initiatePayment.data.success) {
-        const phonePeRedirectUrl =
-          initiatePayment.data.data.instrumentResponse.redirectInfo.url;
-        router.push(phonePeRedirectUrl);
+        // Clear cart after successful booking
+        localStorage.removeItem("cart");
       } else {
-        toast.error(initiatePayment.data);
+        const errorMessage = response.data?.error;
+        toast.error(errorMessage);
       }
     } catch (error) {
-      console.log(`Error updating service:`, error);
-      toast.error("An error occurred while placing order.");
+      console.log("Error in submitting order:", error);
+      toast.error("An error occurred while placing the order.");
     } finally {
       setRedirectingLoading(false);
     }
