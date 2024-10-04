@@ -2,8 +2,11 @@ import { isLoggedIn } from "@/libs/isLoggedIn";
 import connectMongoDB from "@/libs/mongodb";
 import Booking from "@/models/booking";
 import { NextResponse } from "next/server";
+import Service from "@/models/Service";
+import { getDistance } from "@/utils/distance";
+import User from "@/models/users";
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
 export async function GET(request) {
   try {
@@ -61,3 +64,117 @@ export async function GET(request) {
     );
   }
 }
+
+function generateOTP() {
+  // Generate a random number between 1000 and 9999
+  const otp = Math.floor(1000 + Math.random() * 9000);
+  return otp.toString();
+}
+
+export async function POST(request) {
+  try {
+    // Connect to MongoDB
+    await connectMongoDB();
+
+    // Parse the request body
+    const { formData, location, cartItems, user } = await request.json();
+    const otp = generateOTP();
+    const { lat, lng } = location;
+
+    // Fetch all service providers and filter based on proximity (within 15 km)
+    const serviceProviders = await User.find({
+      role: "service-provider",
+      active: true,
+    }).populate("services");
+    const uniqueServiceProviders = new Set();
+
+    serviceProviders.forEach((sp) => {
+      sp.locations.forEach((s) => {
+        const distance = getDistance(lat, lng, s.lat, s.lng);
+        if (distance <= 15 && !uniqueServiceProviders.has(sp._id.toString())) {
+          uniqueServiceProviders.add(sp._id.toString());
+        }
+      });
+    });
+
+    // Convert Set to array to use .map()
+    let nearestServiceProvidersArray = Array.from(uniqueServiceProviders);
+
+    // If no nearby service providers found
+    if (nearestServiceProvidersArray.length === 0) {
+      return NextResponse.json(
+        { error: "No service providers found within the specified range" },
+        { status: 404 }
+      );
+    }
+
+    // Find available service providers for cart items
+    const availableServiceProviders = [];
+    for (const cartItem of cartItems) {
+      for (const spId of nearestServiceProvidersArray) {
+        // Await the service provider query and population
+        const sp = await User.findById(spId).populate("services");
+
+        // Ensure services are populated and defined before iterating
+        if (sp?.services) {
+          sp.services.forEach((service) => {
+            if (service === cartItem.serviceId) {
+              availableServiceProviders.push(spId);
+            }
+          });
+        }
+      }
+    }
+
+    // Create the booking
+    const bookingData = {
+      ...formData,
+      location,
+      cartItems,
+      availableServiceProviders,
+      otp,
+      noServiceProviderAvailable: availableServiceProviders.length <= 0,
+    };
+    const booking = await Booking.create(bookingData);
+
+    // Update user's booking data in parallel
+    const updateUserPromise = User.findByIdAndUpdate(
+      user._id,
+      {
+        $push: { bookings: booking._id },
+      },
+      { new: true }
+    );
+
+    // Update service providers' bookings in parallel
+    const updateServiceProvidersPromises = availableServiceProviders.map(
+      (spId) =>
+        User.findByIdAndUpdate(spId, {
+          $push: { bookings: booking._id },
+        })
+    );
+
+    // Update services with the new booking in parallel
+    const updateServicesPromises = cartItems.map((cartItem) =>
+      Service.findByIdAndUpdate(cartItem.serviceId, {
+        $push: { bookings: { orderId: booking._id, subService: cartItem } },
+      })
+    );
+
+    // Wait for all updates to finish
+    const [updatedUser] = await Promise.all([
+      updateUserPromise,
+      ...updateServiceProvidersPromises,
+      ...updateServicesPromises,
+    ]);
+
+    return NextResponse.json({ booking, updatedUser }, { status: 201 });
+  } catch (error) {
+    console.error("Error handling order:", error);
+    return NextResponse.json(
+      { error: "An error occurred while processing the order" },
+      { status: 500 }
+    );
+  }
+}
+
