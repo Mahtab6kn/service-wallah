@@ -1,7 +1,7 @@
 import connectMongoDB from "@/libs/mongodb";
 import Service from "@/models/Service";
 import { NextResponse } from "next/server";
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 export async function POST(request, { params }) {
   const { subServiceId, id } = params;
@@ -45,19 +45,19 @@ export async function DELETE(request, { params }) {
 
     if (!updatedService) {
       return NextResponse.json(
-        { message: 'Service not found' },
+        { message: "Service not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json(
-      { message: 'Successfully deleted the sub-service' },
+      { message: "Successfully deleted the sub-service" },
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error deleting sub-service:', error);
+    console.error("Error deleting sub-service:", error);
     return NextResponse.json(
-      { message: 'Internal Server Error', error: error.message },
+      { message: "Internal Server Error", error: error.message },
       { status: 500 }
     );
   }

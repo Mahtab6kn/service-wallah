@@ -5,12 +5,12 @@ import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 
 const VideoCarousel = () => {
   const videos = [
-    "/Video/video1.mp4",
-    "/Video/video2.mp4",
-    "/Video/video3.mp4",
-    "/Video/video4.mp4",
-    "/Video/video5.mp4",
-    "/Video/video6.mp4",
+    "/video/video1.mp4",
+    "/video/video2.mp4",
+    "/video/video3.mp4",
+    "/video/video4.mp4",
+    "/video/video5.mp4",
+    "/video/video6.mp4",
   ];
 
   const [isMobile, setIsMobile] = useState(false);
