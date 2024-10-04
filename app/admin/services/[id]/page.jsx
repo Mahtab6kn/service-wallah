@@ -716,6 +716,9 @@ const ServicePage = () => {
                   <Input
                     color="teal"
                     label="Price"
+                    onInput={(e) => {
+                      e.target.value = e.target.value.replace(/\D/g, ""); // Only allows digits
+                    }}
                     onChange={(e) =>
                       setServiceData({ ...serviceData, price: e.target.value })
                     }
