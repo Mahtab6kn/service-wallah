@@ -131,14 +131,16 @@ const UserList = ({
             {openDialogId === user._id && (
               <Dialog
                 size="lg"
-                open={true}
+                open={openDialogId}
                 handler={handleClose}
                 className="bg-gray-200 px-4 md:px-10"
               >
                 <div>
                   <div className="flex justify-between items-center py-6">
                     <h1 className="text-2xl font-bold text-indigo-500 font-lato text-center">
-                      User Details
+                      {serviceProvider
+                        ? "Service Provider Details"
+                        : "User Details"}
                     </h1>
                     <button
                       onClick={handleClose}
@@ -155,9 +157,9 @@ const UserList = ({
                         <Image
                           src={user.image.url}
                           alt={user.name}
-                          width={100}
-                          height={100}
-                          className="w-32 h-full rounded-md object-cover drop-shadow-lg"
+                          width={500}
+                          height={500}
+                          className=" max-w-28 aspect-square h-full rounded-md object-cover drop-shadow-lg"
                         />
                       ) : (
                         <div className="w-32 h-32 text-6xl text-black rounded-full flex justify-center items-center font-junge bg-gray-400 cursor-pointer">
@@ -223,18 +225,18 @@ const UserList = ({
                       }}
                       className="flex items-center gap-1 rounded"
                     >
-                      <span>Delete User</span>
+                      {serviceProvider ? "Delete Service Provider" : "Delete User"}
                       <AiOutlineUserDelete />
                     </Button>
                     <Button
                       variant="gradient"
-                      color="indigo"
+                      color="blue"
                       size="sm"
                       onClick={() => userDeactivating(user)}
                       className="flex items-center gap-1 rounded"
                     >
                       <span>
-                        {user.active ? "Deactivate User" : "Activate User"}
+                        {user.active ? "Deactivate" : "Activate"}
                       </span>
                       <FaUserAltSlash />
                     </Button>

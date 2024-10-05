@@ -101,7 +101,7 @@ export default function ServiceProvidersContainer() {
         <div className="flex md:w-fit w-full md:flex-row flex-col gap-3 items-center">
           <div className="md:w-72 w-full">
             <Input
-              label="Search Users"
+              label="Search Service Provider"
               className="bg-white"
               icon={<IoIosSearch />}
               value={searchQuery}
@@ -135,6 +135,7 @@ export default function ServiceProvidersContainer() {
             allUsers={allUsers}
             userDeleting={userDeleting}
             userDeactivating={userDeactivating}
+            serviceProvider={true}
           />
           <PaginationBtn totalPages={meta.totalPages} />
         </>
