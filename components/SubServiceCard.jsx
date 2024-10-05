@@ -94,7 +94,11 @@ const SubServiceCard = ({
   const handleReplaceIcon = async (image) => {
     try {
       if (!image) return;
-      await deleteObject(ref(storage, subService.icon.name));
+      try {
+        await deleteObject(ref(storage, subService.icon.name));
+      } catch (error) {
+        console.log("Error deleting previous image:", error);
+      }
       const iconRef = ref(
         storage,
         `subServiceIcons/${image.lastModified + image.size + image.name}`

@@ -770,7 +770,7 @@ const ServicePage = () => {
             </div>
             <div className="h-px bg-gray-400 w-full"></div>
 
-            <div className="flex justify-center md:justify-start flex-wrap gap-3 mx-auto">
+            <div className="flex justify-center md:justify-start flex-wrap gap-3 mx-auto md:mx-0">
               {subServices.map((sub, index) => {
                 return (
                   <SubServiceCard

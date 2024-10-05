@@ -5,25 +5,39 @@ import mongoose from "mongoose";
 
 export async function POST(request, { params }) {
   const { subServiceId, id } = params;
-  const { data } = await request.json();
+  const data = await request.json();
+
   await connectMongoDB();
 
-  // Update the subService directly in the database without fetching the whole document
-  await Service.updateOne(
-    { _id: id, "subServices._id": subServiceId },
-    {
-      $set: {
-        "subServices.$.name": data.name,
-        "subServices.$.status": data.status,
-        "subServices.$.price": data.price,
-        "subServices.$.icon": data.icon,
-      },
-    }
-  );
+  console.log({data});
 
-  return NextResponse.json("Sub Services Updated Successfully", {
-    status: 201,
-  });
+  try {
+    // Update the subService directly in the database
+    const service = await Service.findById(id);
+    console.log({service});
+    service.subServices.forEach((subService) => {
+      console.log(subService._id.toString() === subServiceId.toString())
+      if (subService._id.toString() === subServiceId.toString()) {
+        subService.name = data.name;
+        subService.status = data.status;
+        subService.price = data.price;
+        subService.icon = data.icon;
+      }
+    });
+
+    await service.save();
+
+    return NextResponse.json(
+      { message: "Sub-Service updated successfully" },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Error updating sub-service:", error);
+    return NextResponse.json(
+      { message: "Failed to update sub-service", error },
+      { status: 500 }
+    );
+  }
 }
 
 export async function DELETE(request, { params }) {
