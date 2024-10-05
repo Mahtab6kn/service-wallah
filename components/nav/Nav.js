@@ -50,7 +50,7 @@ export default function Nav() {
       "resize",
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="mx-auto max-w-full px-4 py-2 rounded-none shadow-none bprder-none bg-transparent z-50">
