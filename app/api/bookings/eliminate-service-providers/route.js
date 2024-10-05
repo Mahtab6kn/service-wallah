@@ -8,10 +8,8 @@ export async function POST(request) {
 
     const { eliminateServiceProviders, bookingId } = await request.json();
 
-    const providerIds = eliminateServiceProviders.map((sp) => sp._id);
-
     await User.updateMany(
-      { _id: { $in: providerIds } },
+      { _id: { $in: eliminateServiceProviders } },
       { $pull: { bookings: bookingId } }
     );
 
@@ -20,7 +18,7 @@ export async function POST(request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error updating bookings:", error);
+    console.log("Error updating bookings:", error);
     return NextResponse.json(
       { success: false, message: "Failed to update bookings" },
       { status: 500 }

@@ -163,11 +163,11 @@ const BookingDetail = ({ booking, setBooking }) => {
   const handleAcceptRequest = async (id) => {
     const eliminateServiceProviders = booking.availableServiceProviders.filter(
       (serviceProvider) => {
-        return serviceProvider._id !== user._id;
+        return serviceProvider !== user._id;
       }
     );
     if (eliminateServiceProviders.length > 0) {
-      const res = await axios.post(`api/bookings/eliminate-service-providers`, {
+      const res = await axios.post(`/api/bookings/eliminate-service-providers`, {
         eliminateServiceProviders,
         bookingId: id,
       });
