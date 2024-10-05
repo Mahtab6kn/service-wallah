@@ -376,6 +376,9 @@ const CreateServiceProvider = () => {
               value={inputData.aadhar}
               minLength={12}
               maxLength={12}
+              onInput={(e) => {
+                e.target.value = e.target.value.replace(/\D/g, ""); // Only allows digits
+              }}
               onChange={(e) =>
                 setInputData({ ...inputData, aadhar: e.target.value })
               }
@@ -386,6 +389,9 @@ const CreateServiceProvider = () => {
               value={inputData.phoneNumber}
               minLength={10}
               maxLength={10}
+              onInput={(e) => {
+                e.target.value = e.target.value.replace(/\D/g, ""); // Only allows digits
+              }}
               onChange={(e) =>
                 setInputData({ ...inputData, phoneNumber: e.target.value })
               }

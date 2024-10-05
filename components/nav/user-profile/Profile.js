@@ -291,6 +291,9 @@ const Profile = ({
                       minLength={10}
                       maxLength={10}
                       value={loginData.phoneNumber}
+                      onInput={(e) => {
+                        e.target.value = e.target.value.replace(/\D/g, ""); // Only allows digits
+                      }}
                       onChange={(e) =>
                         setLoginData({
                           ...loginData,
@@ -379,6 +382,12 @@ const Profile = ({
                             }
                             label="Enter Your Phone Number"
                             required
+                            onInput={(e) => {
+                              e.target.value = e.target.value.replace(
+                                /\D/g,
+                                ""
+                              ); // Only allows digits
+                            }}
                             minLength={10}
                             maxLength={10}
                           />
@@ -483,6 +492,9 @@ const Profile = ({
                       minLength={10}
                       maxLength={10}
                       value={registerData.phoneNumber}
+                      onInput={(e) => {
+                        e.target.value = e.target.value.replace(/\D/g, ""); // Only allows digits
+                      }}
                       onChange={(e) =>
                         setRegisterData({
                           ...registerData,

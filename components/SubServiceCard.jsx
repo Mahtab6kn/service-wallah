@@ -324,6 +324,9 @@ const SubServiceCard = ({
                   className="bg-white"
                   color="indigo"
                   label="Price"
+                  onInput={(e) => {
+                    e.target.value = e.target.value.replace(/\D/g, ""); // Only allows digits
+                  }}
                   value={subService.price}
                   onChange={(e) =>
                     setSubService({ ...subService, price: e.target.value })
