@@ -36,13 +36,13 @@ const BlogCard = ({
     <>
       <Card className="w-full h-[510px] shadow-lg border group pt-5">
         <div className="relative w-[350px] h-[250px] mx-auto flex items-center justify-center group ">
-          <div className="w-[320px] h-[210px] bg-teal-100 -rotate-12 rounded-md transition-transform duration-300 ease-in-out group-hover:rotate-12"></div>
+          <div className="w-[280px] h-[180px] sm:w-[320px] sm:h-[210px] bg-teal-100 -rotate-12 rounded-md transition-transform duration-300 ease-in-out group-hover:rotate-12"></div>
           <Image
             src={blog.image.url}
             alt="Blog Image"
             width={328}
             height={230}
-            className="absolute top-2 left-2 z-10 object-cover object-top rounded-md group w-[328px] h-[225px]"
+            className="absolute top-2 left-2 z-10 object-cover object-top rounded-md group w-[300px] h-[200px] sm:w-[328px] sm:h-[225px]"
           />
         </div>
         <CardBody>
