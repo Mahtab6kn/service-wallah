@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
+import Sub from './subService'; // Import the Sub model
 
-const userSchema = new Schema(
+const serviceSchema = new Schema(
   {
     name: {
       type: String,
@@ -11,27 +12,22 @@ const userSchema = new Schema(
     },
     status: {
       type: String,
-      required: true
+      required: true,
     },
     images: {
       type: Array,
       default: [],
     },
-    // rank: {
-    //   type: String,
-    //   required: true,
-    // },
     bookings: {
       type: Array,
       default: [],
     },
-    subServices: {
-      type: Array,
-      default: [],
-    },
-    // tags: {
-    //   type: String,
-    // },
+    subServices: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Sub", // Now "Sub" will be properly recognized
+      },
+    ],
     reviews: {
       type: Array,
       default: [],
@@ -42,6 +38,6 @@ const userSchema = new Schema(
   }
 );
 
-const Service = mongoose.models.Service || mongoose.model("Service", userSchema);
+const Service = mongoose.models.Service || mongoose.model("Service", serviceSchema);
 
 export default Service;

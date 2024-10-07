@@ -32,9 +32,9 @@ import {
   getMetadata,
 } from "firebase/storage";
 import { storage } from "@/firebase";
-import SubServiceCard from "@/components/SubServiceCard";
 import Image from "next/image";
 import { toast } from "sonner";
+import SubServiceCard from "@/components/admin/services/SubServiceCard";
 
 const ServicePage = () => {
   const { id } = useParams();
@@ -52,9 +52,14 @@ const ServicePage = () => {
     try {
       const res = await fetch(`/api/services/${id}`);
       const data = await res.json();
-      setService(data);
-      setUpdateService(data);
-      setSubServices(data.subServices);
+      if (!data.success) {
+        toast.error(data.message);
+        router.back();
+        return;
+      }
+      setService(data.service);
+      setUpdateService(data.service);
+      setSubServices(data.service.subServices);
     } catch (err) {
       console.log(err);
     } finally {
@@ -94,6 +99,7 @@ const ServicePage = () => {
   });
   const [images, setImages] = useState(null);
   const [imageUploaded, setimageUploaded] = useState(false);
+
   const handleCreateSubService = async () => {
     try {
       if (serviceData.name === "") {
@@ -123,10 +129,11 @@ const ServicePage = () => {
       const postData = {
         ...serviceData,
         icon: iconObject,
+        serviceId: id,
       };
 
       const response = await fetch(
-        `/api/services/${id}/sub-service/create`,
+        `/api/sub-services`,
         {
           method: "POST",
           headers: {
@@ -137,8 +144,6 @@ const ServicePage = () => {
         { cache: "no-store" }
       );
       const data = await response.json();
-
-      console.log(data);
 
       setSubServices(data.subServices);
 
@@ -158,6 +163,7 @@ const ServicePage = () => {
       console.error(err);
     }
   };
+
   const handleDeleteService = async () => {
     try {
       // Ask for confirmation
@@ -206,19 +212,18 @@ const ServicePage = () => {
         }
       }
 
-      // Make the API call to delete the service from the database
-      const response = await fetch(`/api/services/${id}/delete`, {
+      const response = await fetch(`/api/services/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to delete service: ${response.statusText}`);
-      }
-
       const data = await response.json();
-      console.log("Service deleted:", data);
-
-      // Navigate back after successful deletion
+      if (!data.success) {
+        toast.error(data.message);
+      }
+      toast.success(data.message);
       router.back();
     } catch (err) {
       console.error("Error during service deletion", err);
@@ -227,14 +232,18 @@ const ServicePage = () => {
 
   const handleUpdateServiceDetails = async () => {
     try {
-      const response = await fetch(`/api/services/${id}/update`, {
-        method: "POST",
+      const response = await fetch(`/api/services/${id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(updateService),
       });
       const data = await response.json();
+      if (!data.success) {
+        toast.error(data.message);
+      }
+      toast.success(data.message);
       setService(data);
       setUpdateService(data);
       setSubServices(data.subServices);
@@ -262,14 +271,19 @@ const ServicePage = () => {
       ...updateService,
       icon: iconObject,
     };
-    const response = await fetch(`/api/services/${id}/update`, {
-      method: "POST",
+    const response = await fetch(`/api/services/${id}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(postData),
     });
-    await response.json();
+    const data = await response.json();
+
+    if (!data.success) {
+      toast.error(data.message);
+    }
+    toast.success(data.message);
   };
   const handleUploadImages = async (imgs) => {
     if (!imgs) {
@@ -296,13 +310,19 @@ const ServicePage = () => {
     setUpdateService(postData);
     setService(postData);
 
-    await fetch(`/api/services/${id}/update`, {
-      method: "POST",
+    const res = await fetch(`/api/services/${id}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(postData),
     });
+    const data = await res.json();
+
+    if (!data.success) {
+      toast.error(data.message);
+    }
+    toast.success(data.message);
   };
   const handleDeleteServiceImage = async (image) => {
     await deleteObject(ref(storage, image.name));
@@ -318,13 +338,20 @@ const ServicePage = () => {
       ...updateService,
       images: updateService.images.filter((e, i) => e.name !== image.name),
     };
-    await fetch(`/api/services/${id}/update`, {
-      method: "POST",
+    const res = await fetch(`/api/services/${id}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(postData),
     });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      toast.error(data.message);
+    }
+    toast.success(data.message);
   };
   const handleReplaceServiceImage = async (NewImage, oldImage) => {
     await deleteObject(ref(storage, oldImage.name));
@@ -345,13 +372,20 @@ const ServicePage = () => {
     };
     setUpdateService(postData);
     setService(postData);
-    await fetch(`/api/services/${id}/update`, {
-      method: "POST",
+    const res = await fetch(`/api/services/${id}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(postData),
     });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      toast.error(data.message);
+    }
+    toast.success(data.message);
   };
 
   return (
