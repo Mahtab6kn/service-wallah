@@ -92,7 +92,7 @@ const Services = () => {
         images: imagesUrlArray,
       };
       const response = await fetch(
-        "/api/services/create",
+        "/api/services",
         {
           method: "POST",
           headers: {
@@ -136,6 +136,7 @@ const Services = () => {
         },
       });
       const response = await fetchedData.json();
+      console.log(response);
       setAllServices(response);
     } catch (err) {
       console.error(err);

@@ -164,9 +164,10 @@ const Service = () => {
   useEffect(() => {
     const getService = async () => {
       try {
-        const res = await fetch(`/api/services/${id}`);
+        const res = await fetch(`/api/services/${id}`, { cache: "no-store" });
         const data = await res.json();
-        setService(data);
+        console.log(data);
+        setService(data.service);
       } catch (err) {
         console.log(err);
       } finally {
@@ -193,7 +194,6 @@ const Service = () => {
     e.preventDefault();
     // Assuming you have an endpoint to submit a review
     try {
-      
       const updatedReview = {
         ...review,
         name: user.name,
@@ -514,21 +514,18 @@ const Service = () => {
             {service.subServices?.length <= 4 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 place-items-center">
                 {service.subServices?.map((subService, index) => (
-                  <Card className="mb-3 max-w-72" key={index}>
-                    <CardHeader floated={false}>
-                      <Image
-                        width={100}
-                        height={100}
-                        src={subService.icon?.url}
-                        alt="Service Icon"
-                        className="object-cover w-64 h-48 shadow-lg"
-                      />
-                    </CardHeader>
-                    <CardBody>
-                      <div className="mb-1 flex flex-col justify-start gap-2">
-                        <div>
+                  <Card className="mb-3 max-w-72 overflow-hidden" key={index}>
+                    <Image
+                      width={100}
+                      height={100}
+                      src={subService.icon?.url}
+                      alt="Service Icon"
+                      className="object-cover w-64 aspect-square"
+                    />
+                    <div className="p-4">
+                      <div className="flex flex-col justify-start gap-2">
                           <span
-                            className={`border ${
+                            className={`border w-fit text-xs ${
                               subService.status === "active"
                                 ? "bg-teal-100"
                                 : "bg-red-100"
@@ -540,7 +537,6 @@ const Service = () => {
                           >
                             {subService.status}
                           </span>
-                        </div>
                         <Typography
                           variant="h6"
                           color="blue-gray"
@@ -552,7 +548,7 @@ const Service = () => {
                       <div className="text-2xl font-bold text-teal-500">
                         ₹{subService.price}
                       </div>
-                    </CardBody>
+                    </div>
                     <CardFooter className="pt-0 flex flex-col gap-2">
                       {cartItems.some((sub) => sub._id === subService._id) ? (
                         <Button

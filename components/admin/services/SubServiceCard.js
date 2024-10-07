@@ -68,18 +68,16 @@ const SubServiceCard = ({
         }
       }
 
-      const res = await fetch(
-        `/api/services/${serviceId}/sub-service/${subService._id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await fetch(`/api/sub-services`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: subService._id }),
+      });
       const data = await res.json();
 
-      if (res.ok) {
+      if (data.success) {
         toast.success(data.message);
         fetchingInitialData();
       } else {
@@ -108,16 +106,13 @@ const SubServiceCard = ({
       const iconObject = { url: iconUrl, name: iconRef._location.path_ };
       const postData = { ...subService, icon: iconObject };
       setSubService(postData);
-      const res = await fetch(
-        `/api/services/${serviceId}/sub-service/${subService._id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ data: postData }),
-        }
-      );
+      const res = await fetch(`/api/sub-services`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postData),
+      });
       const data = await res.json();
       if (data.error) {
         alert(data.error);
@@ -130,37 +125,31 @@ const SubServiceCard = ({
   };
   const handleUpdateSubServiceDetails = async () => {
     try {
-      const res = await fetch(
-        `/api/services/${serviceId}/sub-service/${subService._id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ data: subService }),
-        }
-      );
+      const res = await fetch(`/api/sub-services`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(subService),
+      });
       const data = await res.json();
       setOpenEditDailog(false);
       if (data.error) {
-        alert(data.error);
+        toast.error(data.error);
       }
     } catch (error) {
       console.log(error);
     }
   };
   return (
-    <Card className="w-full max-w-72 shadow-lg" key={index}>
-      <CardHeader floated={false} color="blue-gray">
-        <Image
-          width={1000}
-          height={1000}
-          src={subService.icon.url}
-          alt="Service Icon"
-          className="object-cover aspect-square"
-        />
-        {/* <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " /> */}
-      </CardHeader>
+    <Card className="w-full max-w-72" key={index}>
+      <Image
+        width={1000}
+        height={1000}
+        src={subService?.icon?.url}
+        alt="Service Icon"
+        className="object-cover aspect-square"
+      />
       <CardBody>
         <div className="mb-1 flex flex-col justify-start gap-2">
           <div>
@@ -224,7 +213,7 @@ const SubServiceCard = ({
               height={100}
               src={subService.icon?.url}
               alt=""
-              className="w-32 h-full rounded-md object-cover drop-shadow-lg"
+              className="w-32 h-full rounded-md object-cover drop-shadow-lg aspect-square"
             />
             <div className="flex flex-col gap-2 justify-center">
               <div>
@@ -245,36 +234,24 @@ const SubServiceCard = ({
               <h1 className="font-bold text-5xl text-gray-700">
                 {subService.name}
               </h1>
-              <div className="flex">
-                <label
-                  htmlFor="icon"
-                  className="flex items-center gap-1 px-2 py-1 bg-gray-700 text-white rounded-md cursor-pointer"
-                >
-                  Replace Icon <TiArrowRepeat size={18} />
-                  <input
-                    type="file"
-                    className="hidden"
-                    id="icon"
-                    onChange={(e) => handleReplaceIcon(e.target.files[0])}
-                  />
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-6 w-full my-4 px-6">
-            <div className="bg-white w-full p-4 grid grid-cols-1 gap-4 rounded-lg shadow-md">
-              <ListItem className="text-teal-500">
-                Price
-                <ListItemSuffix>₹{subService.price}</ListItemSuffix>
-              </ListItem>
-              <ListItem>
-                Bookings
-                <ListItemSuffix>{subService.bookings.length}</ListItemSuffix>
-              </ListItem>
+              <p className="text-xl text-teal-500 font-semibold">
+                ₹{subService.price}
+              </p>
             </div>
           </div>
           <DialogFooter>
+            <label
+              htmlFor="icon"
+              className="flex items-center gap-1 mr-1 h-full px-2 py-1 bg-gray-700 text-white rounded-md cursor-pointer"
+            >
+              Replace Icon <TiArrowRepeat size={18} />
+              <input
+                type="file"
+                className="hidden"
+                id="icon"
+                onChange={(e) => handleReplaceIcon(e.target.files[0])}
+              />
+            </label>
             <Button variant="gradient" color="red" className="mr-1">
               <span
                 className="flex items-center gap-1"
