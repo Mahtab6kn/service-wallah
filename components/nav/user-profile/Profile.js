@@ -16,7 +16,11 @@ import {
 } from "@material-tailwind/react";
 import { FaInfoCircle } from "react-icons/fa";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-import { AiFillQuestionCircle } from "react-icons/ai";
+import {
+  AiFillQuestionCircle,
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+} from "react-icons/ai";
 import { useState } from "react";
 import {
   IoPersonCircleOutline,
@@ -46,6 +50,11 @@ const Profile = ({
     phoneNumber: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   const dispatch = useDispatch();
 
   async function handleLogin(e) {
@@ -258,10 +267,22 @@ const Profile = ({
             </div>
 
             <TabsHeader className="relative z-0 ">
-              <Tab value="card" onClick={() => setType("card")}>
+              <Tab
+                value="card"
+                onClick={() => {
+                  setType("card");
+                  setShowPassword(false);
+                }}
+              >
                 LogIn
               </Tab>
-              <Tab value="paypal" onClick={() => setType("paypal")}>
+              <Tab
+                value="paypal"
+                onClick={() => {
+                  setType("paypal");
+                  setShowPassword(false);
+                }}
+              >
                 Register Now
               </Tab>
             </TabsHeader>
@@ -302,9 +323,9 @@ const Profile = ({
                       }
                     />
                   </div>
-                  <div className="w-full">
+                  <div className="w-full relative">
                     <Input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       label="Password"
                       required
                       value={loginData.password}
@@ -315,6 +336,16 @@ const Profile = ({
                         })
                       }
                     />
+                    <div
+                      className="absolute right-5 top-2.5 p-0 cursor-pointer"
+                      onClick={togglePasswordVisibility}
+                    >
+                      {showPassword ? (
+                        <AiOutlineEye size={20} color="gray" />
+                      ) : (
+                        <AiOutlineEyeInvisible size={20} color="gray" />
+                      )}
+                    </div>
                     <Typography
                       variant="small"
                       color="gray"
@@ -372,7 +403,7 @@ const Profile = ({
                         <div
                           className={`w-full flex flex-col gap-2 transition-all duration-500 absolute ${
                             forgotPasswordOtpVerified
-                              ? "-translate-x-[26rem]"
+                              ? "-translate-x-[40rem]"
                               : "-translate-x-0"
                           }`}
                         >
@@ -414,7 +445,7 @@ const Profile = ({
                           className={`flex flex-col items-center gap-2 transition-all duration-500 w-full absolute ${
                             forgotPasswordOtpVerified
                               ? "translate-x-0"
-                              : "translate-x-[26rem]"
+                              : "translate-x-[45rem]"
                           }`}
                         >
                           <Input
@@ -521,9 +552,9 @@ const Profile = ({
                       }}
                     />
                   </div>
-                  <div className="w-full">
+                  <div className="w-full relative">
                     <Input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       label="Password"
                       required
                       value={registerData.password}
@@ -534,6 +565,16 @@ const Profile = ({
                         })
                       }
                     />
+                    <div
+                      className="absolute right-5 top-2.5 p-0 cursor-pointer"
+                      onClick={togglePasswordVisibility}
+                    >
+                      {showPassword ? (
+                        <AiOutlineEye size={20} color="gray" />
+                      ) : (
+                        <AiOutlineEyeInvisible size={20} color="gray" />
+                      )}
+                    </div>
                     <Typography
                       variant="small"
                       color="gray"
