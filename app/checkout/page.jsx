@@ -165,7 +165,9 @@ function Shipping() {
 
     if (formData.date === formattedToday) {
       if (formData.time <= getCurrentTime()) {
-        toast.warning("Kindly choose a time that is at least one hour from now.");
+        toast.warning(
+          "Kindly choose a time that is at least one hour from now."
+        );
         return;
       }
     }
@@ -324,6 +326,9 @@ function Shipping() {
               className="bg-white"
               name="phoneNumber"
               value={formData.phoneNumber}
+              onInput={(e) => {
+                e.target.value = e.target.value.replace(/\D/g, ""); // Only allows digits
+              }}
               onChange={handleChange}
               required
               maxLength={10}
