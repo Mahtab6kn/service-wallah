@@ -1,6 +1,6 @@
 import { isLoggedIn } from "@/libs/isLoggedIn";
 import connectMongoDB from "@/libs/mongodb";
-import Service from "@/models/service";
+import Service from "@/models/service-model";
 import { NextResponse } from "next/server";
 
 export async function GET(request) {

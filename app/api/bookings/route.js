@@ -2,7 +2,7 @@ import { isLoggedIn } from "@/libs/isLoggedIn";
 import connectMongoDB from "@/libs/mongodb";
 import Booking from "@/models/booking";
 import { NextResponse } from "next/server";
-import Service from "@/models/service";
+import Service from "@/models/service-model";
 import { getDistance } from "@/utils/distance";
 import User from "@/models/users";
 

@@ -1,5 +1,5 @@
 import connectMongoDB from "@/libs/mongodb";
-import Service from "@/models/service";
+import Service from "@/models/service-model";
 import User from "@/models/users";
 import { NextResponse } from "next/server";
 
