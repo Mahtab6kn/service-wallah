@@ -70,15 +70,14 @@ const UpdateServiceStatus = ({ selectedNewBooking, setSelectedNewBooking }) => {
       setIsOtpButtonDisabled(false);
     }
   }, [timer]);
-  useEffect(() => {
-    console.log(selectedNewBooking);
-  }, [selectedNewBooking]);
+
   const handleUpdateServiceStatusByServiceProvider = async () => {
     try {
       if (completeOtp.join("") !== selectedNewBooking.serviceCompletedOtp) {
         toast.error("Invalid OTP!");
         return;
       }
+
       const updatedStatusBooking = {
         ...selectedNewBooking,
         status: "Service is Completed",
@@ -89,15 +88,46 @@ const UpdateServiceStatus = ({ selectedNewBooking, setSelectedNewBooking }) => {
         completed: true,
         invoices: { ...selectedNewBooking.invoices, paid: true },
       };
+
       setSelectedNewBooking(updatedStatusBooking);
+
       const res = await axios.put(
         `/api/bookings/${selectedNewBooking._id}`,
         updatedStatusBooking
       );
+
       if (res.status !== 201) {
         toast.error("Failed to update the status!");
         return;
       }
+
+      const total_amount = (
+        selectedNewBooking.cartItems.reduce(
+          (acc, product) => acc + product.price * product.quantity,
+          0
+        ) +
+        (18 + Number(selectedNewBooking.invoices.total))
+      ).toFixed(2);
+
+      // Percentage for the amount
+      const percentage = 80;
+
+      // Calculate the amount based on the percentage
+      const amount = (total_amount * (percentage / 100)).toFixed(2);
+
+      // Send payment request with the calculated amount
+      const paymentResponse = await axios.post(`/api/payment`, {
+        service_provider: selectedNewBooking.assignedServiceProviders._id,
+        bookingId: selectedNewBooking._id,
+        total_amount,
+        amount,
+        booking: selectedNewBooking._id,
+      });
+      if (!paymentResponse.data.success) {
+        toast.error(paymentResponse.data.message);
+        return;
+      }
+      toast.success(paymentResponse.data.message);
     } catch (err) {
       console.log(err);
     }
@@ -106,7 +136,7 @@ const UpdateServiceStatus = ({ selectedNewBooking, setSelectedNewBooking }) => {
   return (
     <>
       {selectedNewBooking.completed ? (
-        <div className="text-lg py-4 md:py-0 bg-white shadow-lg w-full flex justify-center items-center h-full rounded-lg text-teal-500">
+        <div className="text-lg py-4 md:py-8 lg:py-0 bg-white shadow-lg w-full flex justify-center items-center h-full rounded-lg text-teal-500">
           Service is completed!
         </div>
       ) : (

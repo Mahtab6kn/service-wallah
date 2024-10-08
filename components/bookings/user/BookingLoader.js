@@ -7,6 +7,7 @@ import { FaClipboard, FaWhatsapp } from "react-icons/fa";
 import { GrStatusInfo } from "react-icons/gr";
 import { IoMail } from "react-icons/io5";
 import CancelBookingDialog from "./CancelBookingDialog";
+import ContactQuery from "../ContactQuery";
 
 const BookingLoader = ({
   booking,
@@ -86,33 +87,7 @@ const BookingLoader = ({
               </div>
             ))}
           </div>
-          <div className="flex gap-1 items-center">
-            Contact for any query:{" "}
-            <div className="flex gap-2">
-              <Link
-                target="_blank"
-                href={`https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_WHATSAPP_NUMBER}/?text=Hello, i have created a service on ${process.env.NEXT_PUBLIC_COMPANY_NAME}!
-              
-              This is my booking id: ${booking._id}.
-              
-              
-              I am facing the issue: .....`}
-                className="flex items-center gap-2 text-xs px-3 py-1.5 bg-[#25D366] text-white rounded-md shadow-md hover:bg-[#20b358] transition-colors duration-200 cursor-pointer"
-              >
-                <FaWhatsapp className="text-lg" />
-                <span className="font-semibold">WhatsApp</span>
-              </Link>
-
-              <Link
-                target="_blank"
-                href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL_ID}`}
-                className="flex items-center gap-2 text-xs px-3 py-1.5 bg-gray-700 text-white rounded-md shadow-md hover:bg-gray-600 transition-colors duration-200 cursor-pointer"
-              >
-                <IoMail className="text-lg" />
-                <span className="font-semibold">Mail Us</span>
-              </Link>
-            </div>
-          </div>
+          <ContactQuery booking={booking} />
           <Button
             className="rounded"
             variant="outlined"
