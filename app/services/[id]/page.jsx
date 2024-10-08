@@ -78,47 +78,50 @@ const sliderSettings = {
 };
 
 const ReviewCard = ({ name, review, rating, image }) => (
-  <div className="w-full p-2 h-full">
-    <div className="bg-white p-4 h-full shadow rounded-lg flex items-start space-x-4">
-      <div className="relative w-12 h-12">
-        {image?.url ? (
-          <Image
-            width={100}
-            height={100}
-            src={image?.url}
-            alt={name}
-            className="rounded-full w-12 h-12 object-cover"
-          />
-        ) : (
-          <div className="w-12 h-12 text-xl text-black rounded-full flex justify-center items-center font-junge bg-gray-400">
-            {name && Array.from(name)[0].toUpperCase()}
-          </div>
-        )}
-      </div>
-      <div className="flex-1">
-        <div className="flex justify-between items-center">
-          <div>
-            <div className="flex">
-              {Array.from({ length: 5 }, (e, index) => {
-                let stars = rating;
-                return (
-                  <span key={index} className="text-[#FFB800]">
-                    {stars >= index + 1 ? (
-                      <IoIosStar size={15} />
-                    ) : stars >= index + 0.5 ? (
-                      <IoIosStarHalf size={15} />
-                    ) : (
-                      <IoIosStarOutline size={15} />
-                    )}
-                  </span>
-                );
-              })}
-            </div>
-            <h3 className="font-bold">{name}</h3>
-          </div>
+  <div className="bg-white p-4 rounded-xl flex space-x-4">
+    {/* Profile Image */}
+    <div className="w-14 h-14">
+      {image?.url ? (
+        <Image
+          width={100}
+          height={100}
+          src={image?.url}
+          alt={name}
+          className="rounded-full w-full h-full object-cover"
+        />
+      ) : (
+        <div className="w-full h-full text-xl text-black bg-gray-400 rounded-full flex justify-center items-center">
+          {name && name[0].toUpperCase()}
         </div>
-        <p className="text-gray-600">{review}</p>
+      )}
+    </div>
+    
+    {/* Review Content */}
+    <div className="flex-1">
+      <div className="flex justify-between">
+        <div>
+          {/* Stars */}
+          <div className="flex mb-1">
+            {Array.from({ length: 5 }, (e, index) => (
+              <span key={index} className="text-yellow-400">
+                {rating >= index + 1 ? (
+                  <IoIosStar size={16} />
+                ) : rating >= index + 0.5 ? (
+                  <IoIosStarHalf size={16} />
+                ) : (
+                  <IoIosStarOutline size={16} />
+                )}
+              </span>
+            ))}
+          </div>
+          {/* Name */}
+          <h3 className="text-lg font-semibold">{name}</h3>
+        </div>
       </div>
+      {/* Review Text */}
+      <p className="text-gray-600 mt-2 break-words whitespace-normal text-sm">
+        {review}
+      </p>
     </div>
   </div>
 );
@@ -203,13 +206,10 @@ const Service = () => {
         ...service,
         reviews: [...service.reviews, updatedReview],
       };
-      const res = await axios.post(
-        `/api/services/${id}/update`,
-        updatedService
-      );
-      if (res.status === 201) {
+      const res = await axios.put(`/api/services/${id}`, updatedService);
+      if (res.data.success) {
         // Add the new review to the existing reviews
-        setService(updatedService);
+        setService(res.data.data);
         // Reset the new review form
         setReview({
           image: {
@@ -524,19 +524,19 @@ const Service = () => {
                     />
                     <div className="p-4">
                       <div className="flex flex-col justify-start gap-2">
-                          <span
-                            className={`border w-fit text-xs ${
-                              subService.status === "active"
-                                ? "bg-teal-100"
-                                : "bg-red-100"
-                            } text-xs ${
-                              subService.status === "active"
-                                ? "text-teal-700"
-                                : "text-red-700"
-                            } px-2 py-1 rounded-full`}
-                          >
-                            {subService.status}
-                          </span>
+                        <span
+                          className={`border w-fit text-xs ${
+                            subService.status === "active"
+                              ? "bg-teal-100"
+                              : "bg-red-100"
+                          } text-xs ${
+                            subService.status === "active"
+                              ? "text-teal-700"
+                              : "text-red-700"
+                          } px-2 py-1 rounded-full`}
+                        >
+                          {subService.status}
+                        </span>
                         <Typography
                           variant="h6"
                           color="blue-gray"
@@ -671,65 +671,55 @@ const Service = () => {
               </span>
             </div>
           </div>
-          <div className="overflow-auto h-96 no-scrollbar">
-            <div className="flex flex-wrap m-2 h-full">
-              {service?.reviews?.length === 0 ? (
-                <div className="w-full h-full flex gap-2 flex-col justify-center items-center">
-                  <div className="font-julius text-2xl">
-                    Uh oh, There is no review yet.
-                  </div>
-                  <div className="flex gap-1 items-center text-gray-700">
-                    Make sure to give a review, if you liked {service.name}{" "}
-                    <FaArrowDown />
-                  </div>
+          <div className="flex flex-wrap h-full">
+            {service?.reviews?.length === 0 ? (
+              <div className="w-full h-full flex gap-2 flex-col justify-center items-center">
+                <div className="font-julius text-2xl">
+                  Uh oh, There is no review yet.
                 </div>
-              ) : (
-                <div className="w-full grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-2 gap-4">
-                  {service.reviews?.map((review, index) => (
-                    <div key={index} className="w-full h-full">
-                      <ReviewCard key={review.id} {...review} />
-                    </div>
-                  ))}
+                <div className="flex gap-1 items-center text-gray-700">
+                  Make sure to give a review if you liked {service.name}{" "}
+                  <FaArrowDown />
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="w-full overflow-auto max-h-96 grid lg:grid-cols-2 md:grid-cols-1 gap-4">
+                {service.reviews?.map((review, index) => (
+                  <ReviewCard key={review.id} {...review} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
-        <div className="flex justify-center bg-gray-100 ">
-          <div className="w-9/12 mb-8">
-            <div className="p-4 bg-white shadow rounded-lg space-x-4">
-              <h3 className="text-2xl text-blue-500 font-semibold mb-4 text-center">
-                Give a Review
-              </h3>
-              <form onSubmit={handleReviewSubmit} className="space-y-4">
-                <div className="flex gap-2">
-                  <label className="block text-lg font-medium text-gray-700">
-                    Rating
-                  </label>
-                  <Rating
-                    value={review.rating}
-                    required
-                    onChange={(e) => setReview({ ...review, rating: e })}
-                  />
-                </div>
-                <Textarea
-                  label="Message"
-                  color="blue-gray"
-                  value={review.review}
-                  onChange={(e) =>
-                    setReview({ ...review, review: e.target.value })
-                  }
-                  required
-                  rows="5"
-                />
-                <div className="flex justify-end">
-                  <Button type="submit" color="blue">
-                    Submit Review
-                  </Button>
-                </div>
-              </form>
+        <div className="p-4 bg-white shadow rounded-lg space-x-4 mx-4 md:mx-12 mb-12">
+          <h3 className="text-2xl text-blue-500 font-semibold mb-4 text-center">
+            Give a Review
+          </h3>
+          <form onSubmit={handleReviewSubmit} className="space-y-4">
+            <div className="flex gap-2">
+              <label className="block text-lg font-medium text-gray-700">
+                Rating
+              </label>
+              <Rating
+                value={review.rating}
+                required
+                onChange={(e) => setReview({ ...review, rating: e })}
+              />
             </div>
-          </div>
+            <Textarea
+              label="Message"
+              color="blue-gray"
+              value={review.review}
+              onChange={(e) => setReview({ ...review, review: e.target.value })}
+              required
+              rows="5"
+            />
+            <div className="flex justify-end">
+              <Button type="submit" color="blue">
+                Submit Review
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
     </>

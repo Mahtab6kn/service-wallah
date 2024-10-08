@@ -3,7 +3,11 @@ import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import formatDate from "@/utils/formatDate";
 import Link from "next/link";
 
-export default function PaymentTable({ payments, updatePayment }) {
+export default function PaymentTable({
+  serviceProvider = false,
+  payments,
+  updatePayment,
+}) {
   return (
     <div className="overflow-x-auto p-4 shadow-lg bg-white rounded-lg">
       <div className="min-w-full text-left text-sm">
@@ -87,16 +91,19 @@ export default function PaymentTable({ payments, updatePayment }) {
             <div className="p-4 w-full md:w-1/6 flex items-center justify-between md:justify-center">
               <span className="font-semibold md:hidden">Action: </span>
               <div className="flex justify-center gap-2 items-center">
-                <Button
-                  variant="gradient"
-                  color="blue"
-                  size="sm"
-                  onClick={() => {
-                    updatePayment({ ...payment, paid: !payment.paid });
-                  }}
-                >
-                  {payment.paid ? "Not Paid" : "Paid"}
-                </Button>
+                {!serviceProvider && (
+                  <Button
+                    variant="gradient"
+                    color="blue"
+                    size="sm"
+                    onClick={() => {
+                      updatePayment({ ...payment, paid: !payment.paid });
+                    }}
+                  >
+                    {payment.paid ? "Not Paid" : "Paid"}
+                  </Button>
+                )}
+
                 <Link href={`/admin/bookings/${payment.booking}`}>
                   <IconButton variant="text" color="blue-gray">
                     <ArrowTopRightOnSquareIcon className="h-5 w-5" />
