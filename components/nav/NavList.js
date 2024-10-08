@@ -162,7 +162,7 @@ export default function NavList() {
                 </h2>
                 <div className="h-px bg-gray-300 w-full"></div>
               </div>
-              <div className="grid gap-4 grid-cols-2 md:grid-cols-3 h-96 overflow-auto no-scrollbar">
+              <div className="grid gap-4 grid-cols-2 md:grid-cols-3  overflow-auto no-scrollbar">
                 {searchError ? (
                   <div>{searchError}</div>
                 ) : searchedData.length <= 0 ? (
@@ -191,6 +191,7 @@ export default function NavList() {
                                 color="blue"
                                 className="rounded w-full flex items-center gap-1"
                                 size="sm"
+                                onClick={handleOpen2}
                               >
                                 View <IoMdOpen />
                               </Button>
@@ -232,6 +233,7 @@ export default function NavList() {
                                 color="blue"
                                 className="rounded w-full flex items-center gap-1"
                                 size="sm"
+                                onClick={handleOpen2}
                               >
                                 View <IoMdOpen />
                               </Button>

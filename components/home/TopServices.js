@@ -1,8 +1,11 @@
 import React from "react";
-import Slider from "react-slick";
+import Slider from "react-slick"; // Correct import for Slider
 import ServiceShow from "../ServiceShow";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 
+// Next Arrow component
 const NextArrow = ({ onClick }) => {
   return (
     <div
@@ -14,6 +17,7 @@ const NextArrow = ({ onClick }) => {
   );
 };
 
+// Previous Arrow component
 const PrevArrow = ({ onClick }) => {
   return (
     <div
@@ -25,6 +29,7 @@ const PrevArrow = ({ onClick }) => {
   );
 };
 
+// Slider settings
 const settings = {
   dots: true,
   infinite: true,
@@ -63,20 +68,25 @@ const TopServices = ({ topServices }) => {
     >
       <div className="w-full flex flex-col justify-center items-center py-4 px-4">
         <h1 className="font-julius lg:text-5xl md:text-4xl sm:text-3xl text-3xl text-center text-gray-700">
-          FOR ALL YOUR NEEDS WE PROVIDES
+          FOR ALL YOUR NEEDS WE PROVIDE
         </h1>
-        <h2 className="font-cookie w-full md:w-auto flex justify-center md:justify-start lg:text-6xl md:text-6xl sm:text-5xl text-5xl text-center text-blue-500 ">
+        <h2 className="font-cookie w-full md:w-auto flex justify-center md:justify-start lg:text-6xl md:text-6xl sm:text-5xl text-5xl text-center text-blue-500">
           Best Services
         </h2>
       </div>
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-4 md:px-0 gap-4 items-center">
+
+      {/* Slider or Grid depending on the number of services */}
+      <div className="relative container mx-auto px-4 md:px-0 gap-2 items-center w-full">
         {topServices.length <= 3 ? (
-          topServices.map((service) => (
-            <div key={service._id} className="px-2">
-              <ServiceShow service={service} />
-            </div>
-          ))
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {topServices.map((service) => (
+              <div key={service._id} className="px-2">
+                <ServiceShow service={service} />
+              </div>
+            ))}
+          </div>
         ) : (
+          // Slick slider when there are more than 3 services
           <Slider {...settings}>
             {topServices.map((service) => (
               <div key={service._id} className="px-2">

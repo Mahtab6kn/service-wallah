@@ -115,8 +115,8 @@ const ServiceProvider = () => {
                 </span>
               </div>
             </div>
-            <div className="flex items-center md:flex-row flex-col justify-between w-full">
-              <div className="flex items-center md:flex-row flex-col gap-4 w-full">
+            <div className="flex items-center md:flex-row flex-col justify-end w-full">
+              {/* <div className="flex items-center md:flex-row flex-col gap-4 w-full">
                 <div className="bg-red-100 px-4 py-2 text-red-800 rounded-md w-fit flex items-center gap-10">
                   <div className="flex items-center gap-1 w-full">
                     <FaHistory />
@@ -131,7 +131,7 @@ const ServiceProvider = () => {
                   </div>
                   <span>₹6200</span>
                 </div>
-              </div>
+              </div> */}
               <Button
                 onClick={handleOpen}
                 variant="gradient"

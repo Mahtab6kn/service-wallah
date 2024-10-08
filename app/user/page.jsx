@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaRegEdit } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -48,6 +48,22 @@ const User = () => {
       name: "",
     },
   });
+  const [emailError, setEmailError] = useState("");
+
+  const handleEmailChange = (e) => {
+    const email = e.target.value;
+    setUpdateUser({ ...updateUser, email });
+
+    // Simple email validation regex
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+    // Check if the entered email matches the pattern
+    if (!emailPattern.test(email)) {
+      setEmailError("Please enter a valid email");
+    } else {
+      setEmailError(""); // Clear the error if the email is valid
+    }
+  };
   function formatDate(dateString) {
     const options = { year: "numeric", month: "long", day: "numeric" };
     const date = new Date(dateString);
@@ -103,6 +119,9 @@ const User = () => {
     }
   };
   const handleUpdate = async () => {
+    if (emailError) {
+      return toast.error("Please enter valid email address");
+    }
     const response = await fetch("/api/users/update", {
       method: "POST",
       headers: {
@@ -112,7 +131,7 @@ const User = () => {
     });
     const updatedUser = await response.json();
     if (response.ok) {
-      setUser(updatedUser)
+      setUser(updatedUser);
       setOpen(false);
     }
   };
@@ -122,7 +141,7 @@ const User = () => {
     const fetchingInitialData = async () => {
       try {
         const user = await axios.get("/api/users/check-authorization");
-        if (!user.data.success) { 
+        if (!user.data.success) {
           toast.error(user.data.message);
         }
         setUser(user.data.user);
@@ -212,7 +231,7 @@ const User = () => {
                   </div>
                   <div className="flex gap-4">
                     <Link
-                      href={`/booking`}
+                      href={`/user/bookings?page=1`}
                       className="px-4 py-2 bg-indigo-500 text-white font-bold rounded shadow"
                     >
                       bookings
@@ -237,6 +256,38 @@ const User = () => {
                       </h2>
                       <div className="p-6 flex gap-4 items-center h-full">
                         <div className="flex flex-col gap-4 w-full">
+                          <figure className="relative h-36 w-36 rounded-full mx-auto lg:hidden">
+                            {updateUser?.image?.url || user?.image?.url ? (
+                              <Image
+                                width={100}
+                                height={100}
+                                className="h-full w-full rounded-full object-cover object-center"
+                                src={updateUser?.image?.url || user?.image?.url}
+                                alt="Profile image"
+                              />
+                            ) : (
+                              <div className="bg-gray-700 h-full w-full font-junge text-white font-bold text-7xl flex justify-center items-center rounded-xl">
+                                {user?.name &&
+                                  Array.from(user?.name)[0].toUpperCase()}
+                              </div>
+                            )}
+                            <figcaption className="absolute bottom-5  right-0 flex w-3 h-3 -translate-x-2/4 justify-between rounded-lg text-gray-700 font-medium border border-white bg-white/75 shadow-lg shadow-black/5 saturate-200 backdrop-blur-sm">
+                              <label
+                                className="w-full h-1 text-center cursor-pointer"
+                                htmlFor="profile"
+                              >
+                                <FaRegEdit size={25} color="gray" />
+                              </label>
+                              <input
+                                type="file"
+                                className="hidden"
+                                id="profile"
+                                onChange={(e) => {
+                                  handleUploadProfile(e.target.files[0]);
+                                }}
+                              />
+                            </figcaption>
+                          </figure>
                           <Input
                             onChange={(e) =>
                               setUpdateUser({
@@ -248,6 +299,7 @@ const User = () => {
                             label="Fullname"
                           />
                           <Input
+                            disabled
                             onChange={(e) =>
                               setUpdateUser({
                                 ...updateUser,
@@ -258,15 +310,12 @@ const User = () => {
                             label="Phone Number"
                           />
                           <Input
-                            onChange={(e) =>
-                              setUpdateUser({
-                                ...updateUser,
-                                email: e.target.value,
-                              })
-                            }
+                            type="email"
+                            onChange={handleEmailChange}
                             value={updateUser.email}
                             label="Email"
                           />
+
                           <Select
                             label="Gender"
                             value={updateUser.gender}
@@ -292,7 +341,7 @@ const User = () => {
                             label="City"
                           />
                         </div>
-                        <figure className="relative h-72 w-3/5 rounded-md">
+                        <figure className="relative h-72 w-3/5 rounded-md hidden lg:block">
                           {updateUser?.image?.url || user?.image?.url ? (
                             <Image
                               width={100}
