@@ -20,7 +20,7 @@ const ServiceProviderBookingList = ({ booking }) => {
           key={index}
           className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col justify-between"
         >
-          <div className="bg-gray-300 text-gray-900 py-1 flex justify-center items-center uppercase truncate">
+          <div className="bg-gray-300 text-gray-900 py-1 flex justify-center items-center text-xs uppercase truncate">
             {service.status}
           </div>
           <div className="p-4 flex gap-4 flex-col">

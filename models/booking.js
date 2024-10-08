@@ -64,10 +64,12 @@ const bookingSchema = new Schema(
         name: "",
       },
     },
-    availableServiceProviders: {
-      type: Array,
-      default: [],
-    },
+    availableServiceProviders: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User", // Now "Sub" will be properly recognized
+      },
+    ],
     invoices: {
       type: {
         title: String,
