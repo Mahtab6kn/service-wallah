@@ -19,7 +19,7 @@ const Admin = () => {
 
   const getDashboardData = async () => {
     try {
-      const response = await fetch("/api/admin/dashboard", {
+      const response = await fetch("/api/admin", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
