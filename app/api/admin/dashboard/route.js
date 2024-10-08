@@ -1,7 +1,7 @@
 import connectMongoDB from "@/libs/mongodb";
-import Service from "@/models/service";
 import User from "@/models/users";
 import { NextResponse } from "next/server";
+import Service from "@/models/service";
 
 export async function GET() {
   await connectMongoDB();
