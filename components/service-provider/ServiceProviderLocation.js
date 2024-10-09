@@ -50,7 +50,7 @@ const ServiceProviderLocation = ({ serviceProvider }) => {
       };
 
       await axios.post(
-        `/api/service-providers/${serviceProvider._id}/`,
+        `/api/users/update`,
         postData
       );
       setSelectedPlace(null);

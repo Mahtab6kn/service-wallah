@@ -29,13 +29,14 @@ const AddServiceDialog = ({
   }, [open, updatedServices]);
 
   const handleUpdateServices = async () => {
-    const response = await fetch(`/api/service-providers/${user._id}`, {
+    const response = await fetch(`/api/users/update`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...user, services: selectedServices }),
     });
-    if (response.ok) {
-      setUser({ ...user, services: selectedServices });
+    const updatedUser = await response.json();
+    if (response.status === 201) {
+      setUser(updatedUser);
       setUpdatedServices(selectedServices); // Update the services
       handleOpen();
       fetchingServices();
@@ -107,10 +108,10 @@ const AddServiceDialog = ({
           onClick={handleOpen}
           className="mr-1"
         >
-          <span>Cancel</span>
+          Cancel
         </Button>
         <Button variant="gradient" color="green" onClick={handleUpdateServices}>
-          <span>Update</span>
+          Update
         </Button>
       </DialogFooter>
     </Dialog>

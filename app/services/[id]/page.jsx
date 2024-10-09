@@ -359,7 +359,7 @@ const Service = () => {
                 variant="gradient"
                 className="rounded flex items-center gap-1"
               >
-                Cart <FaCartShopping />
+                Next <FaCartShopping />
               </Button>
             </Link>
           </div>

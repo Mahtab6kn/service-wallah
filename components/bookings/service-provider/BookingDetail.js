@@ -22,6 +22,8 @@ import LocationDetails from "@/components/admin/bookings/single-booking/Location
 import BookingHeader from "@/components/admin/bookings/single-booking/BookingHeader";
 import ServiceDetails from "@/components/admin/bookings/single-booking/ServiceDetails";
 import InvoiceDetail from "@/components/admin/bookings/single-booking/InvoiceDetail";
+import { toast } from "sonner";
+import { AiOutlineLoading } from "react-icons/ai";
 
 const BookingDetail = ({ booking, setBooking }) => {
   const user = useSelector((state) => state.user.user);
@@ -69,30 +71,43 @@ const BookingDetail = ({ booking, setBooking }) => {
   };
 
   const [uploadedImage, setUploadedImage] = useState("");
+  const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const handleImageUpload = async (e) => {
+    setImageUploadLoading(true);
     const file = e.target.files[0];
     if (!file) {
+      setImageUploadLoading(false);
       return;
     }
-
-    if (booking?.verificationImage?.url) {
-      await deleteObject(ref(storage, booking?.verificationImage?.name));
+    try {
+      if (booking?.verificationImage?.url) {
+        try {
+          await deleteObject(ref(storage, booking?.verificationImage?.name));
+        } catch (err) {
+          toast.error("Failed to delete the previous image");
+        }
+      }
+      const imageRef = ref(
+        storage,
+        `service-provider-verification-image/${
+          file.lastModified + file.size + file.name
+        }`
+      );
+      await uploadBytes(imageRef, file);
+      const imageUrl = await getDownloadURL(imageRef); // Get the image URL directly
+      setUploadedImage(imageUrl);
+      const imageObject = { url: imageUrl, name: imageRef._location.path_ };
+      const postData = {
+        ...booking,
+        verificationImage: imageObject,
+      };
+      await axios.put(`/api/bookings/${booking._id}`, postData);
+    } catch (err) {
+      toast.error("Failed to upload the image");
+      console.log(err);
+    } finally {
+      setImageUploadLoading(false);
     }
-    const imageRef = ref(
-      storage,
-      `service-provider-verification-image/${
-        file.lastModified + file.size + file.name
-      }`
-    );
-    await uploadBytes(imageRef, file);
-    const imageUrl = await getDownloadURL(imageRef); // Get the image URL directly
-    setUploadedImage(imageUrl);
-    const imageObject = { url: imageUrl, name: imageRef._location.path_ };
-    const postData = {
-      ...booking,
-      verificationImage: imageObject,
-    };
-    await axios.put(`/api/bookings/${booking._id}`, postData);
   };
   useEffect(() => {
     if (booking?.otpVerified === true) {
@@ -150,7 +165,6 @@ const BookingDetail = ({ booking, setBooking }) => {
           `/api/bookings/${id}`,
           updateNoServiceProviderAvailableData
         );
-        console.log({ updateBookingResponse });
         router.push(`/service-provider/booking?page=1`);
         return;
       }
@@ -163,32 +177,32 @@ const BookingDetail = ({ booking, setBooking }) => {
   const handleAcceptRequest = async (id) => {
     const eliminateServiceProviders = booking.availableServiceProviders.filter(
       (serviceProvider) => {
-        return serviceProvider !== user._id;
+        return serviceProvider._id !== user._id;
       }
     );
-    if (eliminateServiceProviders.length > 0) {
-      const res = await axios.post(`/api/bookings/eliminate-service-providers`, {
-        eliminateServiceProviders,
-        bookingId: id,
-      });
+    try {
+      const res = await axios.post(
+        `/api/bookings/eliminate-service-providers`,
+        {
+          eliminateServiceProviders,
+          bookingId: id,
+          serviceProvider: user,
+        }
+      );
       const response = res.data;
+
+      console.log(response);
 
       if (!response.success) {
         toast.error(response.message);
+        if (response.acceptedByAnotherServiceProvider) {
+          router.push(`/service-provider/booking?page=1`);
+          return;
+        }
         return;
       }
-    }
-    const postData = {
-      ...booking,
-      acceptedByServiceProvider: true,
-      assignedServiceProviders: user,
-      status: "Service is not started",
-    };
-    try {
-      const response = await axios.put(`/api/bookings/${id}`, postData);
-      if (response.status === 201) {
-        setBooking(postData);
-      }
+      setBooking(response.booking);
+      toast.success("Successfully accepted service!");
     } catch (err) {
       console.log(err);
     }
@@ -198,7 +212,7 @@ const BookingDetail = ({ booking, setBooking }) => {
       <div className="mb-4">
         <BookingHeader booking={booking} />
         <ServiceDetails booking={booking} />
-        <InvoiceDetail booking={booking}/>
+        <InvoiceDetail booking={booking} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-bold text-gray-800 mb-4">
@@ -279,15 +293,20 @@ const BookingDetail = ({ booking, setBooking }) => {
 
           <div className="bg-white flex justify-center items-center rounded-lg shadow-md w-full min-h-44 p-4">
             <div className="flex gap-4 flex-col md:flex-row items-center justify-center">
-              <div className="flex justify-center">
+              {imageUploadLoading ? (
+                <div className="w-32 rounded-lg object-cover aspect-square bg-gray-300 flex justify-center items-center">
+                  <AiOutlineLoading size={32} className="animate-spin" />
+                </div>
+              ) : (
                 <Image
                   width={500}
                   height={500}
                   src={uploadedImage || "https://placehold.co/400"}
                   alt="Uploaded"
-                  className="w-32 h-32 rounded-lg object-cover"
+                  className="w-32 rounded-lg object-cover aspect-square"
                 />
-              </div>
+              )}
+
               <div className="flex flex-col items-center md:items-start justify-center gap-2">
                 <h2 className="md:text-xl sm:text-xl text-md text-gray-500 font-normal">
                   Upload verification image
