@@ -92,73 +92,75 @@ const OnGoingBooking = ({
 
       <ContactQuery booking={booking} />
 
-      <section className="w-full mt-4 flex justify-between items-center flex-col lg:flex-row gap-4">
-        <p className="font-medium text-red-600 text-sm">
-          Note: Order can be cancelled up to <strong>2 hours</strong> before the
-          scheduled time.
-        </p>
-        <div className="flex items-center justify-end gap-2 w-fit whitespace-nowrap">
-          {!cancelled && (
-            <Button
-              variant="outlined"
-              color="red"
-              disabled={disableCancelBookingButton}
-              onClick={handleCancellationReasonDialog}
-            >
-              Cancel Booking
-            </Button>
-          )}
-          <CancelBookingDialog
-            booking={booking}
-            cancellationReasonDialog={cancellationReasonDialog}
-            handleCancellationReasonDialog={handleCancellationReasonDialog}
-          />
-          {booking.transactionId == undefined ? (
-            <Button
-              variant="gradient"
-              color="teal"
-              className="rounded"
-              onClick={handlePayment}
-            >
-              Pay {amount}
-            </Button>
-          ) : (
-            !booking.paid && (
-              <Link
-                href={`/status/${booking.transactionId}?bookingId=${booking._id}&invoice=false`}
+      {!booking.completed && (
+        <section className="w-full mt-4 flex justify-between items-center flex-col lg:flex-row gap-4">
+          <p className="font-medium text-red-600 text-sm">
+            Note: Order can be cancelled up to <strong>2 hours</strong> before
+            the scheduled time.
+          </p>
+          <div className="flex items-center justify-end gap-2 w-fit whitespace-nowrap">
+            {!cancelled && (
+              <Button
+                variant="outlined"
+                color="red"
+                disabled={disableCancelBookingButton}
+                onClick={handleCancellationReasonDialog}
               >
-                <Button variant="gradient" color="teal" className="rounded">
-                  Check payment status
-                </Button>
-              </Link>
-            )
-          )}
-          {booking.invoices?.title && (
-            <div className="flex gap-2">
+                Cancel Booking
+              </Button>
+            )}
+            <CancelBookingDialog
+              booking={booking}
+              cancellationReasonDialog={cancellationReasonDialog}
+              handleCancellationReasonDialog={handleCancellationReasonDialog}
+            />
+            {booking.transactionId == undefined ? (
               <Button
                 variant="gradient"
-                color="blue"
+                color="teal"
                 className="rounded"
-                onClick={handleInvoiceDialog}
+                onClick={handlePayment}
               >
-                View invoice
+                Pay {amount}
               </Button>
-              {booking.invoices?.status === "Invoice Accepted" &&
-                !booking.invoices.paid && (
-                  <Button
-                    variant="gradient"
-                    color="teal"
-                    className="rounded"
-                    loading={redirectingLoading}
-                    onClick={handleInvoicePayment}
-                  >
-                    Pay ₹{booking.invoices.total}
+            ) : (
+              !booking.paid && (
+                <Link
+                  href={`/status/${booking.transactionId}?bookingId=${booking._id}&invoice=false`}
+                >
+                  <Button variant="gradient" color="teal" className="rounded">
+                    Check payment status
                   </Button>
-                )}
-            </div>
-          )}
-        </div>
-      </section>
+                </Link>
+              )
+            )}
+            {booking.invoices?.title && (
+              <div className="flex gap-2">
+                <Button
+                  variant="gradient"
+                  color="blue"
+                  className="rounded"
+                  onClick={handleInvoiceDialog}
+                >
+                  View invoice
+                </Button>
+                {booking.invoices?.status === "Invoice Accepted" &&
+                  !booking.invoices.paid && (
+                    <Button
+                      variant="gradient"
+                      color="teal"
+                      className="rounded"
+                      loading={redirectingLoading}
+                      onClick={handleInvoicePayment}
+                    >
+                      Pay ₹{booking.invoices.total}
+                    </Button>
+                  )}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
     </div>
   );
 };
