@@ -12,11 +12,17 @@ import {
 import axios from "axios";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from "react";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaInfoCircle } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { toast } from "sonner";
 
 const CreateServiceProvider = () => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   const [inputData, setInputData] = useState({
     name: "",
     phoneNumber: "",
@@ -102,7 +108,9 @@ const CreateServiceProvider = () => {
       toast.error("Password is required");
       isValid = false;
     } else if (
-      !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{10,}$/.test(inputData.password)
+      !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@#$!%*?&]{10,}$/.test(
+        inputData.password
+      )
     ) {
       toast.error(
         "Invalid Password: Minimum 10 characters, at least 1 letter and 1 number"
@@ -423,11 +431,11 @@ const CreateServiceProvider = () => {
               }
             />
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 relative">
               <Input
                 label="Password"
                 color="indigo"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 minLength={10}
                 maxLength={25}
                 value={inputData.password}
@@ -435,6 +443,16 @@ const CreateServiceProvider = () => {
                   setInputData({ ...inputData, password: e.target.value })
                 }
               />
+              <div
+                className="absolute right-14 top-2.5 p-0 cursor-pointer"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? (
+                  <AiOutlineEye size={20} color="gray" />
+                ) : (
+                  <AiOutlineEyeInvisible size={20} color="gray" />
+                )}
+              </div>
               <Tooltip
                 content="Password should be more than 10 characters long including letters and numbers"
                 placement="top-end"

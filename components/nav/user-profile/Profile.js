@@ -63,6 +63,10 @@ const Profile = ({
       toast.error("Invalid data");
       return;
     }
+    if (loginData.phoneNumber.length != 10) {
+      toast.error("Invalid Phone number");
+      return;
+    }
     try {
       const response = await fetch(
         "/api/users/login",
@@ -108,14 +112,42 @@ const Profile = ({
   }
   const [generatedOTP, setGeneratedOtp] = useState();
   const [type, setType] = useState("card");
+  const [emailError, setEmailError] = useState("");
+
+  const handleEmailChange = (e) => {
+    const email = e.target.value;
+    setRegisterData({
+      ...registerData,
+      email,
+    });
+
+    // Simple email validation regex
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+    // Check if the entered email matches the pattern
+    if (!emailPattern.test(email)) {
+      setEmailError("Please enter a valid email");
+    } else {
+      setEmailError(""); // Clear the error if the email is valid
+    }
+  };
   const verifyingRegisterOtp = async () => {
     if (
       !registerData.name ||
       !registerData.phoneNumber ||
-      !registerData.password
+      !registerData.password ||
+      !registerData.email
     ) {
       toast.error("Invalid data");
       return;
+    }
+
+    if (registerData.phoneNumber.length != 10) {
+      toast.error("Invalid Phone number");
+      return;
+    }
+    if (emailError) {
+      return toast.error("Please enter valid email address");
     }
     const response = await axios.post(`/api/users/checking`, registerData);
     const data = await response.data;
@@ -144,6 +176,7 @@ const Profile = ({
       toast.error("Invalid data");
       return;
     }
+
     try {
       if (otp === undefined || otp !== generatedOTP) {
         toast.error("Invalid OTP");
@@ -508,6 +541,12 @@ const Profile = ({
                       value={registerData.name}
                       minLength={4}
                       maxLength={30}
+                      onInput={(e) => {
+                        e.target.value = e.target.value.replace(
+                          /[^a-zA-Z\s]/g,
+                          ""
+                        ); // Only allows letters and spaces
+                      }}
                       onChange={(e) =>
                         setRegisterData({
                           ...registerData,
@@ -540,12 +579,7 @@ const Profile = ({
                       label="Email Address"
                       required
                       value={registerData.email}
-                      onChange={(e) =>
-                        setRegisterData({
-                          ...registerData,
-                          email: e.target.value,
-                        })
-                      }
+                      onChange={handleEmailChange}
                       className="pr-20"
                       containerProps={{
                         className: "min-w-0",
