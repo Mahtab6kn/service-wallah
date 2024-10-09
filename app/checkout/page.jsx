@@ -398,6 +398,12 @@ function Shipping() {
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded"
             />
+            <div className="text-sm text-red-600 flex items-center gap-1">
+              <IoMdInformationCircleOutline size={20} />
+              <p className="text-xs">
+                Please select the time between 8:00A.M to 8:00P.M
+              </p>
+            </div>
             <div className="text-sm text-gray-600 flex items-center gap-1">
               <IoMdInformationCircleOutline size={20} />
               <p className="text-xs">
