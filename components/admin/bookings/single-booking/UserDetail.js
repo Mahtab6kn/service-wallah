@@ -1,6 +1,8 @@
 "use client";
 import { IconButton, Tooltip } from "@material-tailwind/react";
 import Image from "next/image";
+import Link from "next/link";
+import { BsWhatsapp } from "react-icons/bs";
 import { FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 
 const UserDetail = ({ profileImage, name, phoneNumber, email }) => {
@@ -34,9 +36,24 @@ const UserDetail = ({ profileImage, name, phoneNumber, email }) => {
               unmount: { scale: 0, y: 25 },
             }}
           >
-            <IconButton variant="text">
-              <FaPhoneAlt className="text-teal-500 text-xl cursor-pointer" />
-            </IconButton>
+            <Link href={`tel:+91${phoneNumber}`} target="_blank">
+              <IconButton variant="text">
+                <FaPhoneAlt className="text-teal-500 text-xl cursor-pointer" />
+              </IconButton>
+            </Link>
+          </Tooltip>
+          <Tooltip
+            content={phoneNumber}
+            animate={{
+              mount: { scale: 1, y: 0 },
+              unmount: { scale: 0, y: 25 },
+            }}
+          >
+            <Link href={`https://wa.me/${phoneNumber}`} target="_blank">
+              <IconButton variant="text">
+                <BsWhatsapp color="green" className="text-xl" />
+              </IconButton>
+            </Link>
           </Tooltip>
           <Tooltip
             content={email}
@@ -45,9 +62,11 @@ const UserDetail = ({ profileImage, name, phoneNumber, email }) => {
               unmount: { scale: 0, y: 25 },
             }}
           >
-            <IconButton variant="text">
-              <FaEnvelope className="text-blue-700 text-xl cursor-pointer" />
-            </IconButton>
+            <Link href={`mailto:${email}`} target="_blank">
+              <IconButton variant="text">
+                <FaEnvelope className="text-blue-700 text-xl cursor-pointer" />
+              </IconButton>
+            </Link>
           </Tooltip>
         </div>
       </div>
