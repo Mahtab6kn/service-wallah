@@ -32,6 +32,7 @@ const fetchTopServices = async () => {
   }
 };
 
+
 export default function Home() {
   const [topServices, setTopServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,7 +44,6 @@ export default function Home() {
       setTopServices(services);
       setLoading(false);
     };
-
     getTopServices();
   }, []);
 

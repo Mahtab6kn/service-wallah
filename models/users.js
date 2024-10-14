@@ -87,6 +87,9 @@ const userSchema = new Schema(
       ],
       default: [], // Default to an empty array
     },
+    notificationToken: {
+      type: String,
+    },
   },
   {
     timestamps: true,

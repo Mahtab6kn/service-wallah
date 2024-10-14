@@ -10,6 +10,7 @@ import Profile from "./user-profile/Profile";
 import UserNavigation from "./user-profile/UserNavigation";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, setUserLoading } from "@/redux/slice/userSlice";
+import requestNotification from "@/utils/requestNotifiction";
 
 export default function Nav() {
   const [openNav, setOpenNav] = useState(false);
@@ -38,6 +39,29 @@ export default function Nav() {
           return toast.error(data.message);
         }
         dispatch(setUser(data.user));
+
+        if (!data.user.notificationToken) {
+          const token = await requestNotification();
+
+          if (token.success) {
+            const updatedUser = await fetch(`/api/users/update`, {
+              method: "POST",
+              body: JSON.stringify({
+                ...data.user,
+                notificationToken: token.token,
+              }),
+            });
+            const updatedUserData = await updatedUser.json();
+            if (updatedUser.ok) {
+              dispatch(setUser(updatedUserData));
+            } else {
+              console.error("Failed to update user");
+            }
+          } else {
+            toast.error(token.message);
+            return;
+          }
+        }
       } catch (err) {
         console.log(err);
         toast.error("Error fetching user");
