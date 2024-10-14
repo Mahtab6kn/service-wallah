@@ -1,14 +1,17 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { VscLoading } from "react-icons/vsc";
 import BookingDetail from "@/components/bookings/service-provider/BookingDetail";
+import { useSelector } from "react-redux";
 
 const Page = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(null);
+  const router = useRouter();
+  const user = useSelector((state) => state.user.user);
 
   useEffect(() => {
     const fetchBooking = async () => {
@@ -18,9 +21,9 @@ const Page = () => {
           toast.error(`Error fetching booking!`);
         }
         const data = await response.json();
-        if(!data.success){
+        if (!data.success) {
           toast.error(data.message);
-          return; 
+          return;
         }
         setBooking(data.booking);
       } catch (error) {
@@ -32,6 +35,18 @@ const Page = () => {
     };
     fetchBooking();
   }, [id]);
+
+  useEffect(() => {
+    if (booking && booking.assignedServiceProviders && user) {
+      console.log({
+        User: user?._id,
+        Booking: booking?.assignedServiceProviders?._id,
+      });
+      if (booking.assignedServiceProviders._id !== user._id) {
+        router.back();
+      }
+    }
+  }, [booking]);
 
   return (
     <div>
