@@ -10,7 +10,6 @@ import Profile from "./user-profile/Profile";
 import UserNavigation from "./user-profile/UserNavigation";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, setUserLoading } from "@/redux/slice/userSlice";
-import requestNotification from "@/utils/requestNotifiction";
 
 export default function Nav() {
   const [openNav, setOpenNav] = useState(false);
@@ -52,6 +51,26 @@ export default function Nav() {
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
   }, [dispatch]);
+
+  // const { token, notificationPermissionStatus } = useFcmToken();
+
+  // const handleTestNotification = async () => {
+  //   const response = await fetch("/api/send-notification", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       token: token,
+  //       title: "Test Notification",
+  //       message: "This is a test notification",
+  //       link: "/contact",
+  //     }),
+  //   });
+
+  //   const data = await response.json();
+  //   console.log(data);
+  // };
 
   return (
     <div className="mx-auto max-w-full px-4 py-2 rounded-none shadow-none bprder-none bg-transparent z-50">
