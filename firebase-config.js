@@ -12,6 +12,5 @@ const firebaseConfig = {
   universeDomain: process.env.NEXT_PUBLIC_FIREBASE_UNIVERSE_DOMAIN,
 };
 
-console.log(process.env.NEXT_PUBLIC_FIREBASE_PRIVATE_KEY)
 
 export default firebaseConfig;
