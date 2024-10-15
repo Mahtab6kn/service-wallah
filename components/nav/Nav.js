@@ -39,29 +39,6 @@ export default function Nav() {
           return toast.error(data.message);
         }
         dispatch(setUser(data.user));
-
-        if (!data.user.notificationToken) {
-          const token = await requestNotification();
-
-          if (token.success) {
-            const updatedUser = await fetch(`/api/users/update`, {
-              method: "POST",
-              body: JSON.stringify({
-                ...data.user,
-                notificationToken: token.token,
-              }),
-            });
-            const updatedUserData = await updatedUser.json();
-            if (updatedUser.ok) {
-              dispatch(setUser(updatedUserData));
-            } else {
-              console.error("Failed to update user");
-            }
-          } else {
-            toast.error(token.message);
-            return;
-          }
-        }
       } catch (err) {
         console.log(err);
         toast.error("Error fetching user");
