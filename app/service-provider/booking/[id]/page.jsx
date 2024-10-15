@@ -46,7 +46,7 @@ const Page = () => {
         router.back();
       }
     }
-  }, [booking]);
+  }, [booking, router, user]);
 
   return (
     <div>

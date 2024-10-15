@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
-import { getMessaging } from "firebase/messaging";
+import { getMessaging, onMessage } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDB6LO5AUsir9MQLnUavkhF13y_koKjGUc",
@@ -13,7 +13,21 @@ const firebaseConfig = {
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
-const messaging = getMessaging(firebaseApp);
+let messaging;
+// const messaging = getMessaging(firebaseApp);
+if (typeof window !== "undefined" && typeof navigator !== "undefined") {
+  // This code will only run on the client-side
+  messaging = getMessaging(firebaseApp);
+
+  onMessage(messaging, (payload) => {
+    console.log("Message received. ", payload);
+    // Handle the message as needed
+  });
+} else {
+  console.log(
+    "Firebase Messaging is not supported in the current environment."
+  );
+}
 const storage = getStorage(firebaseApp);
 
 export { storage, firebaseApp, messaging };
