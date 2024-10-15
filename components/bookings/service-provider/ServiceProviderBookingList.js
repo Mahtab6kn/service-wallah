@@ -3,13 +3,18 @@ import Link from "next/link";
 import React from "react";
 import { IoMdOpen } from "react-icons/io";
 
-
 const options = {
   year: "numeric",
   month: "long",
   day: "numeric",
   hour: "2-digit",
   minute: "2-digit",
+};
+
+const color = {
+  Cancelled: "bg-red-400 text-white",
+  "Service is not started": "bg-orange-400 text-white",
+  "Service is Completed": "bg-green-400 text-white",
 };
 
 const ServiceProviderBookingList = ({ booking }) => {
@@ -20,7 +25,11 @@ const ServiceProviderBookingList = ({ booking }) => {
           key={index}
           className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col justify-between"
         >
-          <div className="bg-gray-300 text-gray-900 py-1 flex justify-center items-center text-xs uppercase truncate">
+          <div
+            className={`${
+              color[service.status] || "bg-gray-300 text-gray-900"
+            } py-1 flex justify-center items-center text-xs uppercase truncate`}
+          >
             {service.status}
           </div>
           <div className="p-4 flex gap-4 flex-col">
@@ -49,7 +58,11 @@ const ServiceProviderBookingList = ({ booking }) => {
                     <h2 className="text-lg font-semibold text-gray-800">
                       {item.name}
                     </h2>
-                    <div className="flex items-center justify-between gap-4 mt-1">
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold text-black"> Id:</span>{" "}
+                      {service.bookingId}
+                    </p>
+                    <div className="flex items-center justify-between gap-4">
                       <p className="text-lg font-bold text-teal-600">
                         ₹{item.price}
                       </p>
