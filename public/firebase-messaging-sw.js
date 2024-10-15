@@ -4,13 +4,13 @@ importScripts(
 );
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDB6LO5AUsir9MQLnUavkhF13y_koKjGUc",
-  authDomain: "service-wallah-1ed8c.firebaseapp.com",
-  projectId: "service-wallah-1ed8c",
-  storageBucket: "service-wallah-1ed8c.appspot.com",
-  messagingSenderId: "239037401868",
-  appId: "1:239037401868:web:243caa96bd6234fa5f1729",
-  measurementId: "G-BJR3FR8EYE",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -30,4 +30,34 @@ messaging.onBackgroundMessage((payload) => {
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+self.addEventListener("notificationclick", function (event) {
+  console.log("[firebase-messaging-sw.js] Notification click received.");
+
+  event.notification.close();
+
+  // This checks if the client is already open and if it is, it focuses on the tab. If it is not open, it opens a new tab with the URL passed in the notification payload
+  event.waitUntil(
+    clients
+      // https://developer.mozilla.org/en-US/docs/Web/API/Clients/matchAll
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then(function (clientList) {
+        const url = event.notification.data.url;
+
+        if (!url) return;
+
+        // If relative URL is passed in firebase console or API route handler, it may open a new window as the client.url is the full URL i.e. https://example.com/ and the url is /about whereas if we passed in the full URL, it will focus on the existing tab i.e. https://example.com/about
+        for (const client of clientList) {
+          if (client.url === url && "focus" in client) {
+            return client.focus();
+          }
+        }
+
+        if (clients.openWindow) {
+          console.log("OPENWINDOW ON CLIENT");
+          return clients.openWindow(url);
+        }
+      })
+  );
 });

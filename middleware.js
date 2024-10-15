@@ -12,7 +12,6 @@ const protectedRoutes = {
   serviceProvider: ["/service-provider"], // Routes only accessible to service providers
   user: ["/user"], // Routes only accessible to users
 };
-
 export async function middleware(request) {
   const token = request.cookies.get("token")?.value;
 
