@@ -1,5 +1,6 @@
 import admin from "firebase-admin";
 import { NextResponse } from "next/server";
+import firebaseConfig from "@/firebase-config";
 
 const firebaseConfig = {
   type: "service_account",
