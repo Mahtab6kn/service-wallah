@@ -1,8 +1,9 @@
-importScripts("https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js");
+importScripts("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
 importScripts(
-  "https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"
+  "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"
 );
 
+// Replace these with your own Firebase config keys...
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -14,21 +15,25 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging.isSupported()
-  ? firebase.messaging()
-  : null;
+
+const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   console.log(
     "[firebase-messaging-sw.js] Received background message ",
     payload
   );
+
+  // payload.fcmOptions?.link comes from our backend API route handle
+  // payload.data.link comes from the Firebase Console where link is the 'key'
+  const link = payload.fcmOptions?.link || payload.data?.link;
+
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: payload.notification.image,
+    icon: "./logo.png",
+    data: { url: link },
   };
-
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
