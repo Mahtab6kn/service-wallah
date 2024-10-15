@@ -36,21 +36,21 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 // };
 
 const firebaseApp = initializeApp(firebaseConfig);
-let messaging;
+// let messaging;
 // const messaging = getMessaging(firebaseApp);
-if (typeof window !== "undefined" && typeof navigator !== "undefined") {
-  // This code will only run on the client-side
-  messaging = getMessaging(firebaseApp);
+// if (typeof window !== "undefined" && typeof navigator !== "undefined") {
+// This code will only run on the client-side
+// messaging = getMessaging(firebaseApp);
 
-  onMessage(messaging, (payload) => {
-    console.log("Message received. ", payload);
-    // Handle the message as needed
-  });
-} else {
-  console.log(
-    "Firebase Messaging is not supported in the current environment."
-  );
-}
+// onMessage(messaging, (payload) => {
+//   console.log("Message received. ", payload);
+// Handle the message as needed
+//   });
+// } else {
+//   console.log(
+//     "Firebase Messaging is not supported in the current environment."
+//   );
+// }
 const storage = getStorage(firebaseApp);
 
-export { storage, firebaseApp, messaging };
+export { storage, firebaseApp };
