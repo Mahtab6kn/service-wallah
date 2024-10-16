@@ -10,6 +10,7 @@ import Profile from "./user-profile/Profile";
 import UserNavigation from "./user-profile/UserNavigation";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, setUserLoading } from "@/redux/slice/userSlice";
+import useFcmToken from "@/hook/useFcmToken";
 
 export default function Nav() {
   const [openNav, setOpenNav] = useState(false);
@@ -52,25 +53,25 @@ export default function Nav() {
     );
   }, [dispatch]);
 
-  // const { token, notificationPermissionStatus } = useFcmToken();
+  const { token, notificationPermissionStatus } = useFcmToken();
 
-  // const handleTestNotification = async () => {
-  //   const response = await fetch("/api/send-notification", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       token: token,
-  //       title: "Test Notification",
-  //       message: "This is a test notification",
-  //       link: "/contact",
-  //     }),
-  //   });
+  const handleTestNotification = async () => {
+    const response = await fetch("/api/send-notification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: token,
+        title: "Test Notification",
+        message: "This is a test notification",
+        link: "/contact",
+      }),
+    });
 
-  //   const data = await response.json();
-  //   console.log(data);
-  // };
+    const data = await response.json();
+    console.log(data);
+  };
 
   return (
     <div className="mx-auto max-w-full px-4 py-2 rounded-none shadow-none bprder-none bg-transparent z-50">
@@ -80,6 +81,7 @@ export default function Nav() {
           className="mr-4 cursor-pointer font-extrabold py-1.5 lg:ml-2"
         >
           <Image
+            onClick={handleTestNotification}
             width={100}
             height={100}
             src="/logo/secoundary-logo-black.png"
