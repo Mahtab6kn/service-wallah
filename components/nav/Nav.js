@@ -82,8 +82,8 @@ export default function Nav() {
         >
           <Image
             onClick={handleTestNotification}
-            width={100}
-            height={100}
+            width={200}
+            height={200}
             src="/logo/secoundary-logo-black.png"
             alt="logo"
             className="cursor-pointer w-40 object-cover"

@@ -13,7 +13,7 @@ const ContactQuery = ({ booking }) => {
           href={`https://wa.me/${
             process.env.NEXT_PUBLIC_CONTACT_WHATSAPP_NUMBER
           }/?text=${encodeURIComponent(
-            `Hello, I have created a service on ${process.env.NEXT_PUBLIC_COMPANY_NAME}!, This is my booking ID: ${booking.bookingId}. I am facing the issue:`
+            `Hello, I have created a service on ${process.env.NEXT_PUBLIC_COMPANY_NAME}!,\nThis is my booking ID: ${booking.bookingId}.\nI am facing the issue:`
           )}`}
           className="flex items-center gap-2 text-xs px-3 py-1.5 bg-[#25D366] text-white rounded-md shadow-md hover:bg-[#20b358] transition-colors duration-200 cursor-pointer"
         >
