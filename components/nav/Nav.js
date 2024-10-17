@@ -53,9 +53,39 @@ export default function Nav() {
     );
   }, [dispatch]);
 
-  const { token, notificationPermissionStatus } = useFcmToken();
+  const { token, notificationPermissionStatus } = useFcmToken(!!user.name);
+
+  const updateUserToken = async () => {
+    if (user.name) {
+      if (user.notificationToken == token) return;
+      const res = await fetch(`/api/users/update`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...user,
+          notificationToken: token,
+        }),
+      });
+
+      const data = await res.json();
+
+      console.log(data);
+      dispatch(setUser(data));
+    }
+  };
+
+  useEffect(() => {
+    updateUserToken();
+  }, []);
 
   const handleTestNotification = async () => {
+    if (!token) {
+      console.error("No token available for notifications");
+      return;
+    }
+
     const response = await fetch("/api/send-notification", {
       method: "POST",
       headers: {
@@ -74,7 +104,7 @@ export default function Nav() {
   };
 
   return (
-    <div className="mx-auto max-w-full px-4 py-2 rounded-none shadow-none bprder-none bg-transparent z-50">
+    <div className="mx-auto max-w-full px-4 py-2 rounded-none shadow-none border-none bg-transparent z-50">
       <div className="flex items-center justify-between text-blue-gray-900 bg-transparent">
         <Link
           href={"/"}
