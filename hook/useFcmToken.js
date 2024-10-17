@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
 import { onMessage } from "firebase/messaging";
 import { fetchToken, messaging } from "@/firebase";
