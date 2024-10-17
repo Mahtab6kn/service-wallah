@@ -56,6 +56,7 @@ export default function Nav() {
   const { token, notificationPermissionStatus } = useFcmToken(!!user.name);
 
   const updateUserToken = async () => {
+    console.log("Update user token: ",token);
     if (user.name) {
       if (user.notificationToken == token) return;
       const res = await fetch(`/api/users/update`, {

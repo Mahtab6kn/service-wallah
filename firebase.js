@@ -13,8 +13,6 @@ import firebaseConfig from "./firebase-config";
 //   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 // };
 
-console.log(firebaseConfig)
-
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const storage = getStorage(app);
 
