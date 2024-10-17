@@ -167,13 +167,11 @@ export async function POST(request) {
       ...updateServiceProvidersPromises,
       ...updateServicesPromises,
     ]);
+    const baseURL = process.env.PHONEPE_REDIRECT_URL || "http://localhost:3000";
 
     const handleSendNotification = async (token, link) => {
-      const response = await fetch("/api/send-notification", {
+      await fetch(`${baseURL}/api/send-notification`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           token: token,
           title: "New Service Request!",
@@ -181,16 +179,19 @@ export async function POST(request) {
           link,
         }),
       });
-
-      const data = await response.json();
-      console.log(data);
     };
 
-    booking.availableServiceProviders.map(async (provider) => {
-      await handleSendNotification(
-        provider.notificationToken,
-        `${process.env.PHONEPE_REDIRECT_URL}/service-provider/booking/${booking._id}`
-      );
+    const newBooking = await Booking.findById(booking._id).populate(
+      "availableServiceProviders"
+    );
+
+    newBooking.availableServiceProviders.map(async (provider) => {
+      if (provider.notificationToken) {
+        await handleSendNotification(
+          provider.notificationToken,
+          `/service-provider/booking/${booking._id}`
+        );
+      }
     });
 
     return NextResponse.json({ booking, updatedUser }, { status: 201 });

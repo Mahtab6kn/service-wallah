@@ -56,7 +56,6 @@ export default function Nav() {
   const { token, notificationPermissionStatus } = useFcmToken(!!user.name);
 
   const updateUserToken = async () => {
-    console.log("Update user token: ",token);
     if (user.name) {
       if (user.notificationToken == token) return;
       const res = await fetch(`/api/users/update`, {
@@ -72,14 +71,13 @@ export default function Nav() {
 
       const data = await res.json();
 
-      console.log(data);
       dispatch(setUser(data));
     }
   };
 
   useEffect(() => {
     updateUserToken();
-  }, [user, token]);
+  }, [user, token, updateUserToken]);
 
   const handleTestNotification = async () => {
     if (!token) {
@@ -113,11 +111,11 @@ export default function Nav() {
         >
           <Image
             onClick={handleTestNotification}
-            width={200}
-            height={200}
-            src="/logo/secoundary-logo-black.png"
+            width={500}
+            height={500}
+            src="/logo/logo.svg"
             alt="logo"
-            className="cursor-pointer w-40 object-cover"
+            className="cursor-pointer w-56 object-cover"
           />
         </Link>
         <div className="hidden gap-2 lg:flex lg:items-center lg:justify-end w-full">

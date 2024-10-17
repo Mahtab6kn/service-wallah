@@ -32,7 +32,7 @@ export async function POST(request) {
       body: message,
     },
     webpush: link && {
-      fcmOptions: {
+      fcm_options: {
         link,
       },
     },

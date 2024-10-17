@@ -18,10 +18,6 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  console.log(
-    "[firebase-messaging-sw.js] Received background message ",
-    payload
-  );
 
   // payload.fcmOptions?.link comes from our backend API route handle
   // payload.data.link comes from the Firebase Console where link is the 'key'
