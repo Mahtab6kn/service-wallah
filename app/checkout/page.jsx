@@ -15,7 +15,6 @@ import Link from "next/link";
 import { MdOutlineMyLocation } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { getDistance } from "@/utils/distance";
 import { toast } from "sonner";
 import Image from "next/image";
 import { useSelector } from "react-redux";

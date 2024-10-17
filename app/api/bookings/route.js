@@ -168,6 +168,31 @@ export async function POST(request) {
       ...updateServicesPromises,
     ]);
 
+    const handleSendNotification = async (token, link) => {
+      const response = await fetch("/api/send-notification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: token,
+          title: "New Service Request!",
+          message: "You have get a new service request.",
+          link,
+        }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+    };
+
+    booking.availableServiceProviders.map(async (provider) => {
+      await handleSendNotification(
+        provider.notificationToken,
+        `${process.env.PHONEPE_REDIRECT_URL}/service-provider/booking/${booking._id}`
+      );
+    });
+
     return NextResponse.json({ booking, updatedUser }, { status: 201 });
   } catch (error) {
     console.error("Error handling order:", error);
@@ -177,4 +202,3 @@ export async function POST(request) {
     );
   }
 }
-
